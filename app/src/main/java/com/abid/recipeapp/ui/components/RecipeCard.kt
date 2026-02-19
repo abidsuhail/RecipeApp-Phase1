@@ -21,7 +21,7 @@ fun RecipeCard(recipe: RecipeModel){
         elevation = CardDefaults.cardElevation()) {
         AsyncImage(
             model = recipe.image,
-            contentDescription = "Network image",
+            contentDescription = "Recipe image",
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp),
