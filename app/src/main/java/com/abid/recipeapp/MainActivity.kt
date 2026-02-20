@@ -46,7 +46,9 @@ class MainActivity : ComponentActivity() {
                     ?.savedStateHandle
                     ?.get<RecipeModel>("recipe")
 
-                RecipeDetailsScreen(navController, recipe!!)
+                recipe?.let {
+                    RecipeDetailsScreen(navController, recipe)
+                }
             }
         }
     }

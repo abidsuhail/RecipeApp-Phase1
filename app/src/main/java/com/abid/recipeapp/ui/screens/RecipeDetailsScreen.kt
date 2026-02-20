@@ -6,12 +6,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.RecipeModel
@@ -19,17 +24,27 @@ import com.abid.recipeapp.data.model.RecipeModel
 @Composable
 fun RecipeDetailsScreen(navController: NavHostController, recipe: RecipeModel) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            Column {
+        Box() {
+            Box() {
                 AsyncImage(
                     model = recipe.image,
                     contentDescription = "Recipe image",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .height(300.dp),
                     contentScale = ContentScale.Crop
                 )
-                Text("Recipe details list : ${recipe}")
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 270.dp),
+                    colors = CardDefaults.cardColors(Color.White),
+                    shape = RoundedCornerShape(30.dp)
+                ) {
+                    Column(Modifier.padding(20.dp)) {
+                        Text(recipe.title, fontSize = 20.sp)
+                    }
+                }
             }
         }
     }
