@@ -1,5 +1,6 @@
 package com.abid.recipeapp.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,15 +41,33 @@ fun RecipeCard(recipe: RecipeModel){
         Box(modifier = Modifier.padding(10.dp)){
             Column {
                 Text(recipe.title, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
-                Text(recipe.description)
-                Spacer(Modifier.height(10.dp))
-                Row {
-                    Icon(imageVector = Icons.Filled.Info, contentDescription = "")
-                    Text("${(recipe.cookTime + recipe.prepTime)}min", modifier = Modifier.padding(horizontal = 4.dp))
-                    Icon(imageVector = Icons.Filled.Face, contentDescription = "")
-                    Text(recipe.servings.toString(),modifier = Modifier.padding(horizontal = 4.dp))
-                }
-            }
+                Text(recipe.description, fontSize = 13.sp)
+                RecipeCardBottomRow(recipe)
         }
+    }
+}
+}
+
+@Composable
+private fun RecipeCardBottomRow(recipe: RecipeModel) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Row {
+            Icon(imageVector = Icons.Filled.Info, contentDescription = "")
+            Text(
+                "${(recipe.cookTime + recipe.prepTime)}min",
+                modifier = Modifier.padding(horizontal = 4.dp),
+                fontSize = 14.sp
+            )
+            Icon(imageVector = Icons.Filled.Face, contentDescription = "")
+            Text(
+                recipe.servings.toString(),
+                modifier = Modifier.padding(horizontal = 4.dp),
+                fontSize = 14.sp
+            )
+        }
+        Text(recipe.difficulty,fontSize = 14.sp)
     }
 }
