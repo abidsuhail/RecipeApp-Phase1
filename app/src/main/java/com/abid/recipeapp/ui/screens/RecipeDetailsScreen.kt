@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -24,26 +25,24 @@ import com.abid.recipeapp.data.model.RecipeModel
 @Composable
 fun RecipeDetailsScreen(navController: NavHostController, recipe: RecipeModel) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        Box() {
-            Box() {
-                AsyncImage(
-                    model = recipe.image,
-                    contentDescription = "Recipe image",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp),
-                    contentScale = ContentScale.Crop
-                )
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 270.dp),
-                    colors = CardDefaults.cardColors(Color.White),
-                    shape = RoundedCornerShape(30.dp)
-                ) {
-                    Column(Modifier.padding(20.dp)) {
-                        Text(recipe.title, fontSize = 20.sp)
-                    }
+        Box {
+            AsyncImage(
+                model = recipe.image,
+                contentDescription = "Recipe image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp),
+                contentScale = ContentScale.Crop
+            )
+            Card(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .offset(y = 270.dp),
+                colors = CardDefaults.cardColors(Color.White),
+                shape = RoundedCornerShape(30.dp)
+            ) {
+                Column(Modifier.padding(20.dp)) {
+                    Text(recipe.title, fontSize = 20.sp)
                 }
             }
         }
