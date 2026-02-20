@@ -1,16 +1,20 @@
 package com.abid.recipeapp.util
 
 import androidx.navigation.NavController
+import com.abid.recipeapp.data.model.RecipeModel
 
 object NavHelper {
     sealed class Screen(val route: String) {
         data object RecipeList : Screen("recipe_list")
-        data object RecipeDetails : Screen("recipe_details/{recipe_id}") {
-            fun createRoute(recipeId: String) = "recipe_details/$recipeId"
+        data object RecipeDetails : Screen("recipe_details") {
+            fun createRoute() = "recipe_details"
         }
     }
 
-    fun NavController.goToRecipeDetailsScreen(recipeId: String) {
-        navigate(Screen.RecipeDetails.createRoute(recipeId))
+    fun NavController.goToRecipeDetailsScreen(recipe: RecipeModel) {
+        currentBackStackEntry
+            ?.savedStateHandle
+            ?.set("recipe", recipe)
+        navigate(Screen.RecipeDetails.createRoute())
     }
 }

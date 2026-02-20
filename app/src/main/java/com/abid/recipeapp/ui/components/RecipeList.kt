@@ -15,7 +15,7 @@ fun RecipeList(navController: NavHostController) {
     LazyColumn {
         items(items = MockData.mockRecipes) { recipe ->
             Box(modifier = Modifier.clickable {
-                navController.goToRecipeDetailsScreen(recipe.id)
+                navController.goToRecipeDetailsScreen(recipe)
             }) {
                 RecipeCard(recipe)
             }

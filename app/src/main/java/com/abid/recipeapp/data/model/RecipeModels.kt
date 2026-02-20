@@ -1,5 +1,9 @@
 package com.abid.recipeapp.data.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class RecipeModel(
     val id: String,
     val title: String,
@@ -17,16 +21,18 @@ data class RecipeModel(
     val ingredients: List<IngredientModel>,
     val instructions: List<String>,
     val nutrition: NutritionModel
-)
+) : Parcelable
 
+@Parcelize
 data class IngredientModel(
     val item: String,
     val amount: String
-)
+) : Parcelable
 
+@Parcelize
 data class NutritionModel(
     val calories: Int,
     val protein: Int,
     val carbs: Int,
     val fat: Int
-)
+) : Parcelable
