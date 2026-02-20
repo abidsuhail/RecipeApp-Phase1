@@ -19,15 +19,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.abid.recipeapp.ui.components.RecipeList
 
 @Composable
-fun RecipeListScreen() {
+fun RecipeListScreen(navController: NavHostController) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             Column(modifier = Modifier.padding(top = 10.dp)) {
                 RecipeListHeader()
-                RecipeList()
+                RecipeList(navController)
             }
         }
     }
