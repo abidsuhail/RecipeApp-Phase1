@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,6 @@ fun RecipeListScreen(){
 private fun RecipeListHeader(){
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp)) {
         Text("Discover Recipes", fontSize = 30.sp)
-        Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "Add button", modifier = Modifier.size(50.dp))
+        Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "Add button", modifier = Modifier.size(50.dp),tint = MaterialTheme.colorScheme.primary)
     }
 }
