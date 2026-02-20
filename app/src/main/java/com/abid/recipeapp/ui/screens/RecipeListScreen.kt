@@ -25,12 +25,16 @@ fun RecipeListScreen(){
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             Column(modifier = Modifier.padding(top = 10.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp)) {
-                    Text("Discover Recipes", fontSize = 30.sp)
-                    Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "Add button", modifier = Modifier.size(50.dp))
-                }
+                RecipeListHeader()
                 RecipeList()
             }
         }
+    }
+}
+@Composable
+private fun RecipeListHeader(){
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp)) {
+        Text("Discover Recipes", fontSize = 30.sp)
+        Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "Add button", modifier = Modifier.size(50.dp))
     }
 }
