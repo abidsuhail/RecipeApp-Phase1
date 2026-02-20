@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.abid.recipeapp.ui.components.RecipeList
 
 @Composable
-fun RecipeListScreen(){
+fun RecipeListScreen() {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             Column(modifier = Modifier.padding(top = 10.dp)) {
@@ -32,10 +32,22 @@ fun RecipeListScreen(){
         }
     }
 }
+
 @Composable
-private fun RecipeListHeader(){
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp)) {
+private fun RecipeListHeader() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 5.dp)
+    ) {
         Text("Discover Recipes", fontSize = 30.sp)
-        Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "Add button", modifier = Modifier.size(50.dp),tint = MaterialTheme.colorScheme.primary)
+        Icon(
+            imageVector = Icons.Filled.AddCircle,
+            contentDescription = "Add button",
+            modifier = Modifier.size(50.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
     }
 }
