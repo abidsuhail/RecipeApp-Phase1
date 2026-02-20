@@ -1,5 +1,7 @@
 package com.abid.recipeapp.ui.components
 
+import android.provider.CalendarContract.Colors
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,15 +10,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -68,6 +73,26 @@ private fun RecipeCardBottomRow(recipe: RecipeModel) {
                 fontSize = 14.sp
             )
         }
-        Text(recipe.difficulty,fontSize = 14.sp)
+        Card(colors = CardDefaults.cardColors(getDifficultyLvlBgColor(recipe.difficulty)), shape = RoundedCornerShape(5.dp)) {
+            Text(
+                recipe.difficulty, fontSize = 10.sp, modifier = Modifier.padding(horizontal = 5.dp)
+            )
+        }
+    }
+}
+private fun getDifficultyLvlBgColor(difficultyLvl: String):Color{
+    return when (difficultyLvl) {
+        "Easy" -> {
+            Color(0xFF81C784)
+        }
+        "Hard" -> {
+            Color(0xFFE57373)
+        }
+        "Medium" -> {
+            Color(0xFFFFB74D)
+        }
+        else -> {
+            Color.Gray
+        }
     }
 }
