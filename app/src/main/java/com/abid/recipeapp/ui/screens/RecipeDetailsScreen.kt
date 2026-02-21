@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -64,7 +63,7 @@ private fun RecipeDetailsCard(recipe: RecipeModel) {
     Card(
         modifier = Modifier
             .fillMaxSize()
-            .offset(y = 270.dp),
+            .padding(top = 270.dp),
         colors = CardDefaults.cardColors(Color.White),
         shape = RoundedCornerShape(30.dp)
     ) {
