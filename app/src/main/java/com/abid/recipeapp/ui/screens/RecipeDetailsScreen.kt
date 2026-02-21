@@ -99,7 +99,7 @@ private fun ServingsAndDurationRow(recipe: RecipeModel) {
         listOf(
             "${recipe.cookTime + recipe.prepTime} min",
             "${recipe.servings} servings",
-            recipe.servings
+            recipe.difficulty
         ).forEach {
             Card(
                 Modifier
