@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,7 +41,11 @@ import com.abid.recipeapp.ui.theme.Orange40
 @Composable
 fun RecipeDetailsScreen(navController: NavHostController, recipe: RecipeModel) {
     Scaffold { innerPadding ->
-        Box(Modifier.verticalScroll(rememberScrollState())) {
+        Box(
+            Modifier
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+        ) {
             AsyncImage(
                 model = recipe.image,
                 contentDescription = "Recipe image",
