@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
@@ -40,7 +40,7 @@ import com.abid.recipeapp.ui.theme.Orange40
 @Composable
 fun RecipeDetailsScreen(navController: NavHostController, recipe: RecipeModel) {
     Scaffold { innerPadding ->
-        Box {
+        Box(Modifier.verticalScroll(rememberScrollState())) {
             AsyncImage(
                 model = recipe.image,
                 contentDescription = "Recipe image",
@@ -105,8 +105,8 @@ private fun TopTabScreen(recipe: RecipeModel) {
 
 @Composable
 private fun IngredientsFragment(recipe: RecipeModel) {
-    LazyColumn {
-        items(items = recipe.ingredients) { ingredient ->
+    Column {
+        recipe.ingredients.forEach { ingredient ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -129,8 +129,8 @@ private fun IngredientsFragment(recipe: RecipeModel) {
 
 @Composable
 private fun InstructionsFragment(recipe: RecipeModel) {
-    LazyColumn {
-        items(items = recipe.instructions) { instruction ->
+    Column {
+        recipe.instructions.forEach { instruction ->
             Box(Modifier.padding(vertical = 10.dp)) {
                 Row {
                     Text("*")
