@@ -54,32 +54,37 @@ fun RecipeDetailsScreen(navController: NavHostController, recipe: RecipeModel) {
                     .height(300.dp),
                 contentScale = ContentScale.Crop
             )
+            RecipeDetailsCard(recipe)
+        }
+    }
+}
+
+@Composable
+fun RecipeDetailsCard(recipe: RecipeModel) {
+    Card(
+        modifier = Modifier
+            .fillMaxSize()
+            .offset(y = 270.dp),
+        colors = CardDefaults.cardColors(Color.White),
+        shape = RoundedCornerShape(30.dp)
+    ) {
+        Column(Modifier.padding(20.dp)) {
+            Text(recipe.title, fontSize = 25.sp)
+            Text("by ${recipe.author}", fontSize = 12.sp)
+            ServingsAndDurationRow(recipe)
+            Text(recipe.description, modifier = Modifier.padding(vertical = 10.dp))
             Card(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .offset(y = 270.dp),
-                colors = CardDefaults.cardColors(Color.White),
-                shape = RoundedCornerShape(30.dp)
+                Modifier
+                    .fillMaxWidth()
+                    .height(100.dp),
+                colors = CardDefaults.cardColors(Color.LightGray)
             ) {
-                Column(Modifier.padding(20.dp)) {
-                    Text(recipe.title, fontSize = 25.sp)
-                    Text("by ${recipe.author}", fontSize = 12.sp)
-                    ServingsAndDurationRow(recipe)
-                    Text(recipe.description, modifier = Modifier.padding(vertical = 10.dp))
-                    Card(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-                        colors = CardDefaults.cardColors(Color.LightGray)
-                    ) {
 
-                        // Text("Nutrition (per serving)")
-                        Text("TODO")
-                    }
-                    BottomTab(recipe)
-
-                }
+                // Text("Nutrition (per serving)")
+                Text("TODO")
             }
+            BottomTab(recipe)
+
         }
     }
 }
