@@ -60,7 +60,7 @@ fun RecipeDetailsScreen(navController: NavHostController, recipe: RecipeModel) {
 }
 
 @Composable
-fun RecipeDetailsCard(recipe: RecipeModel) {
+private fun RecipeDetailsCard(recipe: RecipeModel) {
     Card(
         modifier = Modifier
             .fillMaxSize()
