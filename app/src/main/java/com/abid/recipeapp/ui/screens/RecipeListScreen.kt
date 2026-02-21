@@ -1,5 +1,6 @@
 package com.abid.recipeapp.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Icon
@@ -26,8 +29,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.abid.recipeapp.ui.components.RecipeList
+import com.abid.recipeapp.ui.components.RecipeCard
 import com.abid.recipeapp.util.BottomNavOptions
+import com.abid.recipeapp.util.MockData
+import com.abid.recipeapp.util.NavHelper.goToRecipeDetailsScreen
 
 @Composable
 fun RecipeListScreen(navController: NavHostController) {
@@ -62,6 +67,18 @@ private fun RecipeListHeader() {
     }
 }
 
+@Composable
+private fun RecipeList(navController: NavHostController) {
+    LazyColumn {
+        items(items = MockData.mockRecipes) { recipe ->
+            Box(modifier = Modifier.clickable {
+                navController.goToRecipeDetailsScreen(recipe)
+            }) {
+                RecipeCard(recipe)
+            }
+        }
+    }
+}
 
 @Composable
 fun BottomBar(navController: NavController) {
