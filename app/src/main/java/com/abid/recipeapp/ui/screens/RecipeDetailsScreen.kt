@@ -76,7 +76,7 @@ fun RecipeDetailsScreen(navController: NavHostController, recipe: RecipeModel) {
                         // Text("Nutrition (per serving)")
                         Text("TODO")
                     }
-                    TopTabScreen(recipe)
+                    BottomTab(recipe)
 
                 }
             }
@@ -85,7 +85,42 @@ fun RecipeDetailsScreen(navController: NavHostController, recipe: RecipeModel) {
 }
 
 @Composable
-private fun TopTabScreen(recipe: RecipeModel) {
+private fun ServingsAndDurationRow(recipe: RecipeModel) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        listOf(
+            "${recipe.cookTime + recipe.prepTime} min",
+            "${recipe.servings} servings",
+            recipe.servings
+        ).forEach {
+            Card(
+                Modifier
+                    .weight(1f)
+                    .height(80.dp),
+                colors = CardDefaults.cardColors(Orange40)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Icon(imageVector = Icons.Filled.Info, contentDescription = "")
+                    Text(
+                        it.toString(),
+                        fontSize = 12.sp,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BottomTab(recipe: RecipeModel) {
     val tabs = listOf("Ingredients", "Instructions")
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
@@ -145,39 +180,4 @@ private fun InstructionsFragment(recipe: RecipeModel) {
         }
     }
 
-}
-
-@Composable
-private fun ServingsAndDurationRow(recipe: RecipeModel) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        listOf(
-            "${recipe.cookTime + recipe.prepTime} min",
-            "${recipe.servings} servings",
-            recipe.servings
-        ).forEach {
-            Card(
-                Modifier
-                    .weight(1f)
-                    .height(80.dp),
-                colors = CardDefaults.cardColors(Orange40)
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Icon(imageVector = Icons.Filled.Info, contentDescription = "")
-                    Text(
-                        it.toString(),
-                        fontSize = 12.sp,
-                    )
-                }
-            }
-        }
-    }
 }
