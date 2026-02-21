@@ -82,7 +82,7 @@ private fun RecipeDetailsCard(recipe: RecipeModel) {
                 // Text("Nutrition (per serving)")
                 Text("TODO")
             }
-            BottomTab(recipe)
+            RecipeDetailsBottomTab(recipe)
 
         }
     }
@@ -124,7 +124,7 @@ private fun ServingsAndDurationRow(recipe: RecipeModel) {
 }
 
 @Composable
-private fun BottomTab(recipe: RecipeModel) {
+private fun RecipeDetailsBottomTab(recipe: RecipeModel) {
     val tabs = listOf("Ingredients", "Instructions")
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
