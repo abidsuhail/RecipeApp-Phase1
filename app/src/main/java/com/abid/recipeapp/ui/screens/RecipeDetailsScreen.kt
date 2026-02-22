@@ -48,7 +48,9 @@ fun RecipeDetailsScreen(navController: NavHostController, recipe: RecipeModel) {
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = Orange40,
-                onClick = {}
+                onClick = {
+                    isFavorite = !isFavorite
+                }
             ) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
