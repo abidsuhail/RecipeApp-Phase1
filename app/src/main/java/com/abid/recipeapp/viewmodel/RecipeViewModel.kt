@@ -8,7 +8,6 @@ import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.ui.state.RecipeDetailUiState
 import com.abid.recipeapp.ui.state.RecipeListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,7 +25,6 @@ class RecipeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _allRecipes.value = RecipeListUiState.Loading
-                delay(1000)
                 val data = repository.getAllRecipes()
                 _allRecipes.value = RecipeListUiState.Success(data)
             } catch (e: Exception) {
@@ -39,7 +37,6 @@ class RecipeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _foundRecipe.value = RecipeDetailUiState.Loading
-                delay(1000)
                 val data = repository.getRecipeById(recipeId)
                 if (data != null) {
                     _foundRecipe.value = RecipeDetailUiState.Success(data)
