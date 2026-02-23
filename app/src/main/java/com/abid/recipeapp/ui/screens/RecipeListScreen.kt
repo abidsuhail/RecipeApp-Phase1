@@ -1,6 +1,8 @@
 package com.abid.recipeapp.ui.screens
 
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,9 +33,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.abid.recipeapp.ui.components.RecipeCard
+import com.abid.recipeapp.ui.navigation.NavHelper.goToRecipeDetailsScreen
 import com.abid.recipeapp.util.BottomNavOptions
 import com.abid.recipeapp.util.MockData
-import com.abid.recipeapp.util.NavHelper.goToRecipeDetailsScreen
 
 @Composable
 fun RecipeListScreen(navController: NavHostController) {
@@ -71,9 +74,13 @@ private fun RecipeListHeader() {
 private fun RecipeList(navController: NavHostController) {
     LazyColumn {
         items(items = MockData.mockRecipes, key = { recipe -> recipe.id }) { recipe ->
-            Box(modifier = Modifier.clickable {
-                navController.goToRecipeDetailsScreen(recipe)
-            }) {
+            Box(
+                modifier = Modifier.clickable(
+                    onClick = { navController.goToRecipeDetailsScreen(recipe.id) },
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = LocalIndication.current,
+                )
+            ) {
                 RecipeCard(recipe)
             }
         }

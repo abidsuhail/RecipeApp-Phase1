@@ -25,7 +25,9 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,15 +38,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.theme.Orange40
-import com.abid.recipeapp.util.MockData
+import com.abid.recipeapp.viewmodel.RecipeViewModel
 
 @Composable
-fun RecipeDetailsScreen(recipeId: String?) {
-    val recipe = MockData.mockRecipes.find { it.id == recipeId }
+fun RecipeDetailsScreen(recipeId: String?, recipeViewModel: RecipeViewModel = hiltViewModel()) {
+    val recipe by recipeViewModel.foundRecipe.observeAsState()
+    LaunchedEffect(recipeId) {
+        recipeViewModel.loadRecipe(recipeId)
+    }
     if (recipe == null) {
         ErrorStateBox("No recipe found!")
     } else {
@@ -70,14 +76,14 @@ fun RecipeDetailsScreen(recipeId: String?) {
                     .verticalScroll(rememberScrollState())
             ) {
                 AsyncImage(
-                    model = recipe.image,
+                    model = recipe!!.image,
                     contentDescription = "Recipe image",
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(300.dp),
                     contentScale = ContentScale.Crop
                 )
-                RecipeDetailsCard(recipe)
+                RecipeDetailsCard(recipe!!)
             }
         }
     }
