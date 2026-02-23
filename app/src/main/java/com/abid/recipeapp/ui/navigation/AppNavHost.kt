@@ -6,10 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.screens.RecipeDetailsScreen
 import com.abid.recipeapp.ui.screens.RecipeListScreen
-import com.abid.recipeapp.util.NavHelper
 
 @Composable
 fun AppNavHost() {
@@ -21,18 +19,13 @@ fun AppNavHost() {
         composable(route = NavHelper.Screen.RecipeList.route) { RecipeListScreen(navController) }
         composable(
             route = NavHelper.Screen.RecipeDetails.route,
-            arguments = listOf(navArgument("recipe") {
-                type = NavType.ParcelableType(RecipeModel::class.java)
+            arguments = listOf(navArgument(NavHelper.NAV_ARGS_RECIPE_ID_KEY) {
+                type = NavType.StringType
                 nullable = true
             })
-        ) { entry ->
-            val recipe = navController.previousBackStackEntry
-                ?.savedStateHandle
-                ?.get<RecipeModel>("recipe")
-
-            recipe?.let {
-                RecipeDetailsScreen(navController, recipe)
-            }
+        ) { backStackEntry ->
+            val recipeId = backStackEntry.arguments?.getString(NavHelper.NAV_ARGS_RECIPE_ID_KEY)
+            RecipeDetailsScreen(recipeId)
         }
     }
 }

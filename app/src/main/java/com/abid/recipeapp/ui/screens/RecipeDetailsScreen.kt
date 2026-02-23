@@ -36,43 +36,49 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.RecipeModel
+import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.util.MockData
 
 @Composable
-fun RecipeDetailsScreen(navController: NavHostController, recipe: RecipeModel) {
-    var isFavorite by remember { mutableStateOf(false) }
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                containerColor = Orange40,
-                onClick = {
-                    isFavorite = !isFavorite
+fun RecipeDetailsScreen(recipeId: String?) {
+    val recipe = MockData.mockRecipes.find { it.id == recipeId }
+    if (recipe == null) {
+        ErrorStateBox("No recipe found!")
+    } else {
+        var isFavorite by remember { mutableStateOf(false) }
+        Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(
+                    containerColor = Orange40,
+                    onClick = {
+                        isFavorite = !isFavorite
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Favorite",
+                    )
                 }
+            },
+        ) { innerPadding ->
+            Box(
+                Modifier
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
             ) {
-                Icon(
-                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = "Favorite",
+                AsyncImage(
+                    model = recipe.image,
+                    contentDescription = "Recipe image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp),
+                    contentScale = ContentScale.Crop
                 )
+                RecipeDetailsCard(recipe)
             }
-        },
-    ) { innerPadding ->
-        Box(
-            Modifier
-                .fillMaxHeight()
-                .verticalScroll(rememberScrollState())
-        ) {
-            AsyncImage(
-                model = recipe.image,
-                contentDescription = "Recipe image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp),
-                contentScale = ContentScale.Crop
-            )
-            RecipeDetailsCard(recipe)
         }
     }
 }
