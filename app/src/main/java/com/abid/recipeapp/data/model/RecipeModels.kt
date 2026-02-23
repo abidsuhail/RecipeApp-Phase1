@@ -1,6 +1,7 @@
 package com.abid.recipeapp.data.model
 
 import android.os.Parcelable
+import com.abid.recipeapp.util.RecipeDiffLvl
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -12,7 +13,7 @@ data class RecipeModel(
     val prepTime: Int,
     val cookTime: Int,
     val servings: Int,
-    val difficulty: String,
+    val difficulty: RecipeDiffLvl,
     val category: String,
     val cuisine: String,
     val author: String,
