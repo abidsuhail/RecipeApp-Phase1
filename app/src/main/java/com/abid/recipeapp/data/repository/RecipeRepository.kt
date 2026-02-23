@@ -11,7 +11,7 @@ class RecipeRepository @Inject constructor() {
     private val recipes = MockData.mockRecipes
 
     suspend fun getAllRecipes(): List<RecipeModel> {
-        return withContext(Dispatchers.IO) {  // ← switch to IO here
+        return withContext(Dispatchers.IO) {
             delay(1000)
             recipes
         }
@@ -19,7 +19,7 @@ class RecipeRepository @Inject constructor() {
 
     suspend fun getRecipeById(id: String?): RecipeModel? {
         if (id == null) return null
-        return withContext(Dispatchers.IO) {  // ← switch to IO here
+        return withContext(Dispatchers.IO) {
             delay(1000)
             recipes.find { it.id == id }
         }
