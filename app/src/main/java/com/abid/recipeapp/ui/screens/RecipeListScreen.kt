@@ -70,7 +70,7 @@ private fun RecipeListHeader() {
 @Composable
 private fun RecipeList(navController: NavHostController) {
     LazyColumn {
-        items(items = MockData.mockRecipes) { recipe ->
+        items(items = MockData.mockRecipes, key = { recipe -> recipe.id }) { recipe ->
             Box(modifier = Modifier.clickable {
                 navController.goToRecipeDetailsScreen(recipe)
             }) {
