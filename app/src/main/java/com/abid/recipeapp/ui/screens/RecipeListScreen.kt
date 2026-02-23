@@ -22,20 +22,26 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.abid.recipeapp.ui.components.ErrorStateBox
+import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.RecipeCard
 import com.abid.recipeapp.ui.navigation.NavHelper.goToRecipeDetailsScreen
+import com.abid.recipeapp.ui.state.RecipeListUiState
 import com.abid.recipeapp.util.BottomNavOptions
-import com.abid.recipeapp.util.MockData
+import com.abid.recipeapp.viewmodel.RecipeViewModel
 
 @Composable
 fun RecipeListScreen(navController: NavHostController) {
@@ -71,18 +77,44 @@ private fun RecipeListHeader() {
 }
 
 @Composable
-private fun RecipeList(navController: NavHostController) {
-    LazyColumn {
-        items(items = MockData.mockRecipes, key = { recipe -> recipe.id }) { recipe ->
-            Box(
-                modifier = Modifier.clickable(
-                    onClick = { navController.goToRecipeDetailsScreen(recipe.id) },
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = LocalIndication.current,
-                )
-            ) {
-                RecipeCard(recipe)
+private fun RecipeList(
+    navController: NavHostController,
+    recipeViewModel: RecipeViewModel = hiltViewModel()
+) {
+    val allRecipes by recipeViewModel.allRecipes.observeAsState()
+    LaunchedEffect(Unit) {
+        recipeViewModel.loadAllRecipes()
+    }
+    when (allRecipes) {
+        is RecipeListUiState.Loading -> {
+            LoadingStateBox()
+        }
+
+        is RecipeListUiState.Error -> {
+            ErrorStateBox("No recipes found!")
+        }
+
+        is RecipeListUiState.Success -> {
+            val state = (allRecipes as RecipeListUiState.Success)
+            val recipes = state.recipes
+            LazyColumn {
+                items(items = recipes, key = { recipe -> recipe.id }) { recipe ->
+                    Box(
+                        modifier = Modifier.clickable(
+                            onClick = { navController.goToRecipeDetailsScreen(recipe.id) },
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = LocalIndication.current,
+                        )
+                    ) {
+                        RecipeCard(recipe)
+                    }
+                }
             }
+        }
+
+        else -> {
+            ErrorStateBox("Something went wrong!")
+
         }
     }
 }

@@ -4,8 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.repository.RecipeRepository
+import com.abid.recipeapp.ui.state.RecipeDetailUiState
+import com.abid.recipeapp.ui.state.RecipeListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,20 +16,36 @@ class RecipeViewModel @Inject constructor(
     private val repository: RecipeRepository // assume you have one
 ) : ViewModel() {
 
-    private val _allRecipes = MutableLiveData<List<RecipeModel>>(emptyList())
-    val allRecipes: LiveData<List<RecipeModel>> = _allRecipes
-    private val _foundRecipe = MutableLiveData<RecipeModel>(null)
-    val foundRecipe: LiveData<RecipeModel> = _foundRecipe
+    private val _allRecipes = MutableLiveData<RecipeListUiState>(RecipeListUiState.Loading)
+    val allRecipes: LiveData<RecipeListUiState> = _allRecipes
+    private val _foundRecipe = MutableLiveData<RecipeDetailUiState>(RecipeDetailUiState.Loading)
+    val foundRecipe: LiveData<RecipeDetailUiState> = _foundRecipe
 
-    fun getAllRecipes() {
+    fun loadAllRecipes() {
         viewModelScope.launch {
-            _allRecipes.value = repository.getAllRecipes()
+            try {
+                _allRecipes.value = RecipeListUiState.Loading
+                val data = repository.getAllRecipes()
+                _allRecipes.value = RecipeListUiState.Success(data)
+            } catch (e: Exception) {
+                _allRecipes.value = RecipeListUiState.Error("There are no recipes available!")
+            }
         }
     }
 
     fun loadRecipe(recipeId: String?) {
         viewModelScope.launch {
-            _foundRecipe.value = repository.getRecipeById(recipeId)
+            try {
+                _foundRecipe.value = RecipeDetailUiState.Loading
+                val data = repository.getRecipeById(recipeId)
+                if (data != null) {
+                    _foundRecipe.value = RecipeDetailUiState.Success(data)
+                } else {
+                    _foundRecipe.value = RecipeDetailUiState.NotFound
+                }
+            } catch (e: Exception) {
+                _foundRecipe.value = RecipeDetailUiState.Error("Recipe not found!")
+            }
         }
     }
 }

@@ -42,50 +42,72 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
+import com.abid.recipeapp.ui.components.LoadingStateBox
+import com.abid.recipeapp.ui.state.RecipeDetailUiState
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.viewmodel.RecipeViewModel
 
 @Composable
 fun RecipeDetailsScreen(recipeId: String?, recipeViewModel: RecipeViewModel = hiltViewModel()) {
-    val recipe by recipeViewModel.foundRecipe.observeAsState()
+    val recipeState by recipeViewModel.foundRecipe.observeAsState()
     LaunchedEffect(recipeId) {
         recipeViewModel.loadRecipe(recipeId)
     }
-    if (recipe == null) {
-        ErrorStateBox("No recipe found!")
-    } else {
-        var isFavorite by remember { mutableStateOf(false) }
-        Scaffold(
-            floatingActionButton = {
-                FloatingActionButton(
-                    containerColor = Orange40,
-                    onClick = {
-                        isFavorite = !isFavorite
+    when (recipeState) {
+        is RecipeDetailUiState.Loading -> {
+            LoadingStateBox()
+        }
+
+        is RecipeDetailUiState.NotFound -> {
+            ErrorStateBox("Recipe not found!")
+        }
+
+        is RecipeDetailUiState.Error -> {
+            val state = (recipeState as RecipeDetailUiState.Error)
+            ErrorStateBox(state.message)
+        }
+
+        is RecipeDetailUiState.Success -> {
+            val state = (recipeState as RecipeDetailUiState.Success)
+            val recipe = state.recipe
+            var isFavorite by remember { mutableStateOf(false) }
+            Scaffold(
+                floatingActionButton = {
+                    FloatingActionButton(
+                        containerColor = Orange40,
+                        onClick = {
+                            isFavorite = !isFavorite
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorite",
+                        )
                     }
+                },
+            ) { innerPadding ->
+                Box(
+                    Modifier
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState())
                 ) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorite",
+                    AsyncImage(
+                        model = recipe.image,
+                        contentDescription = "Recipe image",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
+                        contentScale = ContentScale.Crop
                     )
+                    RecipeDetailsCard(recipe)
                 }
-            },
-        ) { innerPadding ->
-            Box(
-                Modifier
-                    .fillMaxHeight()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                AsyncImage(
-                    model = recipe!!.image,
-                    contentDescription = "Recipe image",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp),
-                    contentScale = ContentScale.Crop
-                )
-                RecipeDetailsCard(recipe!!)
             }
         }
+
+        else -> {
+            RecipeDetailUiState.Error("Something went wrong")
+        }
+
     }
 }
 
