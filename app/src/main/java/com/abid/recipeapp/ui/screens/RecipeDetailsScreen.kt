@@ -39,6 +39,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
@@ -46,12 +47,25 @@ import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.state.RecipeDetailUiState
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.viewmodel.RecipeViewModel
+import kotlinx.coroutines.delay
 
 @Composable
-fun RecipeDetailsScreen(recipeId: String?, recipeViewModel: RecipeViewModel = hiltViewModel()) {
+fun RecipeDetailsScreen(
+    recipeId: String?,
+    navController: NavController,
+    recipeViewModel: RecipeViewModel = hiltViewModel()
+) {
     val recipeState by recipeViewModel.foundRecipe.observeAsState()
     LaunchedEffect(recipeId) {
         recipeViewModel.loadRecipe(recipeId)
+    }
+    LaunchedEffect(recipeState) {
+        if (recipeState is RecipeDetailUiState.NotFound ||
+            recipeState is RecipeDetailUiState.Error
+        ) {
+            delay(1000)
+            navController.popBackStack()
+        }
     }
     when (recipeState) {
         is RecipeDetailUiState.Loading -> {
@@ -59,7 +73,8 @@ fun RecipeDetailsScreen(recipeId: String?, recipeViewModel: RecipeViewModel = hi
         }
 
         is RecipeDetailUiState.NotFound -> {
-            ErrorStateBox("Recipe not found!")
+            val state = (recipeState as RecipeDetailUiState.NotFound)
+            ErrorStateBox(state.message)
         }
 
         is RecipeDetailUiState.Error -> {

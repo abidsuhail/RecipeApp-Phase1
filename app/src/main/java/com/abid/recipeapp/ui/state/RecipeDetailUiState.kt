@@ -6,5 +6,5 @@ sealed class RecipeDetailUiState {
     data object Loading : RecipeDetailUiState()
     data class Success(val recipe: RecipeModel) : RecipeDetailUiState()
     data class Error(val message: String) : RecipeDetailUiState()
-    data object NotFound : RecipeDetailUiState()
+    data class NotFound(val message: String) : RecipeDetailUiState()
 }

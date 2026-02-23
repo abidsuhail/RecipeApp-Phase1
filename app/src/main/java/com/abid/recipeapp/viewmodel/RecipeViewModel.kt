@@ -41,10 +41,11 @@ class RecipeViewModel @Inject constructor(
                 if (data != null) {
                     _foundRecipe.value = RecipeDetailUiState.Success(data)
                 } else {
-                    _foundRecipe.value = RecipeDetailUiState.NotFound
+                    _foundRecipe.value =
+                        RecipeDetailUiState.NotFound("Recipe not found, going back...")
                 }
             } catch (e: Exception) {
-                _foundRecipe.value = RecipeDetailUiState.Error("Recipe not found!")
+                _foundRecipe.value = RecipeDetailUiState.Error("${e.message}, going back...")
             }
         }
     }

@@ -25,7 +25,7 @@ fun AppNavHost() {
             })
         ) { backStackEntry ->
             val recipeId = backStackEntry.arguments?.getString(NavHelper.NAV_ARGS_RECIPE_ID_KEY)
-            RecipeDetailsScreen(recipeId)
+            RecipeDetailsScreen(recipeId, navController)
         }
     }
 }
