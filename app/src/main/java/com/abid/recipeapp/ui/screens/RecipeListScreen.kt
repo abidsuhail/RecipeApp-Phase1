@@ -17,8 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,30 +26,26 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
+import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.RecipeCard
-import com.abid.recipeapp.ui.navigation.NavHelper.goToRecipeDetailsScreen
+import com.abid.recipeapp.ui.navigation.BottomBar
 import com.abid.recipeapp.ui.state.RecipeListUiState
-import com.abid.recipeapp.util.BottomNavOptions
 import com.abid.recipeapp.viewmodel.RecipeViewModel
 
 @Composable
-fun RecipeListScreen(navController: NavHostController) {
+fun RecipeListScreen(onClickRecipeItem: (RecipeModel) -> Unit) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = { BottomBar(navController) }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             Column(modifier = Modifier.padding(top = 10.dp)) {
                 RecipeListHeader()
-                RecipeList(navController)
+                RecipeList(onClickRecipeItem)
             }
         }
     }
@@ -78,7 +72,7 @@ private fun RecipeListHeader() {
 
 @Composable
 private fun RecipeList(
-    navController: NavHostController,
+    onClickRecipeItem: (RecipeModel) -> Unit,
     recipeViewModel: RecipeViewModel = hiltViewModel()
 ) {
     val allRecipes by recipeViewModel.allRecipes.observeAsState()
@@ -101,7 +95,9 @@ private fun RecipeList(
                 items(items = recipes, key = { recipe -> recipe.id }) { recipe ->
                     Box(
                         modifier = Modifier.clickable(
-                            onClick = { navController.goToRecipeDetailsScreen(recipe.id) },
+                            onClick = {
+                                onClickRecipeItem(recipe)
+                            },
                             interactionSource = remember { MutableInteractionSource() },
                             indication = LocalIndication.current,
                         )
@@ -115,32 +111,6 @@ private fun RecipeList(
         else -> {
             ErrorStateBox("Something went wrong!")
 
-        }
-    }
-}
-
-@Composable
-fun BottomBar(navController: NavController) {
-    val items = listOf<BottomNavOptions>(
-        BottomNavOptions.Home,
-        BottomNavOptions.Search,
-        BottomNavOptions.Favourite,
-        BottomNavOptions.Profile
-    )
-
-    NavigationBar(containerColor = Color.White) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-
-        items.forEach { screen ->
-            NavigationBarItem(
-                icon = { Icon(screen.icon, contentDescription = screen.label) },
-                label = { Text(screen.label) },
-                selected = currentRoute == screen.route,
-                onClick = {
-
-                }
-            )
         }
     }
 }

@@ -39,9 +39,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.RecipeModel
+import com.abid.recipeapp.ui.components.BackButton
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.state.RecipeDetailUiState
@@ -52,7 +52,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun RecipeDetailsScreen(
     recipeId: String?,
-    navController: NavController,
+    onClickBackBtn: () -> Unit,
     recipeViewModel: RecipeViewModel = hiltViewModel()
 ) {
     val recipeState by recipeViewModel.foundRecipe.observeAsState()
@@ -64,7 +64,7 @@ fun RecipeDetailsScreen(
             recipeState is RecipeDetailUiState.Error
         ) {
             delay(1000)
-            navController.popBackStack()
+            onClickBackBtn()
         }
     }
     when (recipeState) {
@@ -106,14 +106,24 @@ fun RecipeDetailsScreen(
                         .fillMaxHeight()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    AsyncImage(
-                        model = recipe.image,
-                        contentDescription = "Recipe image",
-                        modifier = Modifier
+                    Box(
+                        Modifier
                             .fillMaxWidth()
                             .height(300.dp),
-                        contentScale = ContentScale.Crop
-                    )
+                    ) {
+                        AsyncImage(
+                            model = recipe.image,
+                            contentDescription = "Recipe image",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                        BackButton {
+                            onClickBackBtn()
+                        }
+                    }
+
                     RecipeDetailsCard(recipe)
                 }
             }

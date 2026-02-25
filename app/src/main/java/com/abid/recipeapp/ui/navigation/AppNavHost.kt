@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.abid.recipeapp.ui.navigation.NavHelper.goToRecipeDetailsScreen
 import com.abid.recipeapp.ui.screens.RecipeDetailsScreen
 import com.abid.recipeapp.ui.screens.RecipeListScreen
 
@@ -16,7 +17,11 @@ fun AppNavHost() {
         navController = navController,
         startDestination = NavHelper.Screen.RecipeList.route
     ) {
-        composable(route = NavHelper.Screen.RecipeList.route) { RecipeListScreen(navController) }
+        composable(route = NavHelper.Screen.RecipeList.route) {
+            RecipeListScreen() { recipe ->
+                navController.goToRecipeDetailsScreen(recipe.id)
+            }
+        }
         composable(
             route = NavHelper.Screen.RecipeDetails.route,
             arguments = listOf(navArgument(NavHelper.NAV_ARGS_RECIPE_ID_KEY) {
@@ -25,7 +30,9 @@ fun AppNavHost() {
             })
         ) { backStackEntry ->
             val recipeId = backStackEntry.arguments?.getString(NavHelper.NAV_ARGS_RECIPE_ID_KEY)
-            RecipeDetailsScreen(recipeId, navController)
+            RecipeDetailsScreen(recipeId, {
+                navController.popBackStack()
+            })
         }
     }
 }
