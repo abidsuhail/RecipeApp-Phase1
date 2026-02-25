@@ -6,7 +6,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,8 +35,8 @@ import com.abid.recipeapp.ui.state.RecipeListUiState
 import com.abid.recipeapp.viewmodel.RecipeViewModel
 
 @Composable
-fun RecipeListScreen(innerPadding: PaddingValues, onClickRecipeItem: (RecipeModel) -> Unit) {
-    Box(modifier = Modifier.padding(innerPadding)) {
+fun RecipeListScreen(onClickRecipeItem: (RecipeModel) -> Unit) {
+    Box() {
         Column(modifier = Modifier.padding(top = 10.dp)) {
             RecipeListHeader()
             RecipeList(onClickRecipeItem)
