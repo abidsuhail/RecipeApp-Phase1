@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecipeViewModel @Inject constructor(
-    private val repository: RecipeRepository // assume you have one
+    private val repository: RecipeRepository
 ) : ViewModel() {
 
     private val _allRecipes = MutableLiveData<RecipeListUiState>(RecipeListUiState.Loading)

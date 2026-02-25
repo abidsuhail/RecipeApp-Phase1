@@ -140,19 +140,46 @@ private fun RecipeDetailsCard(recipe: RecipeModel) {
             Text("by ${recipe.author}", fontSize = 12.sp)
             ServingsAndDurationRow(recipe)
             Text(recipe.description, modifier = Modifier.padding(vertical = 10.dp))
-            Card(
-                Modifier
-                    .fillMaxWidth()
-                    .height(100.dp),
-                colors = CardDefaults.cardColors(Color.LightGray)
-            ) {
-
-                // Text("Nutrition (per serving)")
-                Text("TODO")
-            }
+            MacroCard(recipe)
             RecipeDetailsBottomTab(recipe)
 
         }
+    }
+}
+
+@Composable
+private fun MacroCard(recipe: RecipeModel) {
+    Card(
+        Modifier
+            .fillMaxWidth(),
+    ) {
+        Box(Modifier.padding(10.dp)) {
+            Column {
+                Text("Nutrition (per serving)")
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(15.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    MacroItemColumn("Calories", recipe.nutrition.calories, Orange40)
+                    MacroItemColumn("Protein", recipe.nutrition.protein, Color.Green)
+                    MacroItemColumn("Carbs", recipe.nutrition.carbs, Color.Yellow)
+                    MacroItemColumn("Fat", recipe.nutrition.fat, Color.Red)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MacroItemColumn(label: String, value: Int, valueColor: Color = Color.DarkGray) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(value.toString(), fontSize = 25.sp, color = valueColor)
+        Text(label)
     }
 }
 
