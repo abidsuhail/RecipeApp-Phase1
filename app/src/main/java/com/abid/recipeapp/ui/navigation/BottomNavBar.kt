@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun BottomBar(currentRoute: String?) {
+fun BottomNavBar(currentRoute: String?, onClickNavItem: (String?) -> Unit) {
     val items = listOf<BottomNavOptions>(
         BottomNavOptions.Home,
         BottomNavOptions.Search,
@@ -24,7 +24,7 @@ fun BottomBar(currentRoute: String?) {
                 label = { Text(screen.label) },
                 selected = currentRoute == screen.route,
                 onClick = {
-
+                    onClickNavItem(currentRoute)
                 }
             )
         }

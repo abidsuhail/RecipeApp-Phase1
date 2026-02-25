@@ -33,7 +33,7 @@ import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.RecipeCard
-import com.abid.recipeapp.ui.navigation.BottomBar
+import com.abid.recipeapp.ui.navigation.BottomNavBar
 import com.abid.recipeapp.ui.state.RecipeListUiState
 import com.abid.recipeapp.viewmodel.RecipeViewModel
 
@@ -41,7 +41,7 @@ import com.abid.recipeapp.viewmodel.RecipeViewModel
 fun RecipeListScreen(currentRoute: String?, onClickRecipeItem: (RecipeModel) -> Unit) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        bottomBar = { BottomBar(currentRoute) }) { innerPadding ->
+        bottomBar = { BottomNavBar(currentRoute) {} }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             Column(modifier = Modifier.padding(top = 10.dp)) {
                 RecipeListHeader()
