@@ -24,7 +24,7 @@ fun BottomNavBar(currentRoute: String?, onClickNavItem: (String?) -> Unit) {
                 label = { Text(screen.label) },
                 selected = currentRoute == screen.route,
                 onClick = {
-                    onClickNavItem(currentRoute)
+                    onClickNavItem(screen.route)
                 }
             )
         }

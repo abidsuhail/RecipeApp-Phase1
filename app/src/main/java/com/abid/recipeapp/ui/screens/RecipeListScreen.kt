@@ -6,8 +6,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,20 +32,15 @@ import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.RecipeCard
-import com.abid.recipeapp.ui.navigation.BottomNavBar
 import com.abid.recipeapp.ui.state.RecipeListUiState
 import com.abid.recipeapp.viewmodel.RecipeViewModel
 
 @Composable
-fun RecipeListScreen(currentRoute: String?, onClickRecipeItem: (RecipeModel) -> Unit) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = { BottomNavBar(currentRoute) {} }) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            Column(modifier = Modifier.padding(top = 10.dp)) {
-                RecipeListHeader()
-                RecipeList(onClickRecipeItem)
-            }
+fun RecipeListScreen(innerPadding: PaddingValues, onClickRecipeItem: (RecipeModel) -> Unit) {
+    Box(modifier = Modifier.padding(innerPadding)) {
+        Column(modifier = Modifier.padding(top = 10.dp)) {
+            RecipeListHeader()
+            RecipeList(onClickRecipeItem)
         }
     }
 }

@@ -11,19 +11,25 @@ import androidx.navigation.navArgument
 import com.abid.recipeapp.ui.navigation.NavHelper.goToRecipeDetailsScreen
 import com.abid.recipeapp.ui.screens.RecipeDetailsScreen
 import com.abid.recipeapp.ui.screens.RecipeListScreen
+import com.abid.recipeapp.ui.screens.SearchRecipeScreen
 
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
+ 
     NavHost(
         navController = navController,
-        startDestination = NavHelper.Screen.RecipeList.route
+        startDestination = NavHelper.Screen.Home.route
     ) {
-        composable(route = NavHelper.Screen.RecipeList.route) {
+        composable(route = NavHelper.Screen.Home.route) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
-            RecipeListScreen(currentRoute) { recipe ->
-                navController.goToRecipeDetailsScreen(recipe.id)
+            BottomNavBarContainer(
+                currentRoute = currentRoute,
+                onNavItemClicked = { navController.navigate(it!!) }) { paddingValues ->
+                RecipeListScreen(paddingValues) { recipe ->
+                    navController.goToRecipeDetailsScreen(recipe.id)
+                }
             }
         }
         composable(
@@ -38,5 +44,17 @@ fun AppNavHost() {
                 navController.popBackStack()
             })
         }
+        composable(
+            route = NavHelper.Screen.Search.route,
+        ) { backStackEntry ->
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+            BottomNavBarContainer(
+                currentRoute = currentRoute,
+                onNavItemClicked = { navController.navigate(it!!) }) { paddingValues ->
+                SearchRecipeScreen()
+            }
+        }
     }
 }
+

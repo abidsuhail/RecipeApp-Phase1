@@ -7,10 +7,12 @@ object NavHelper {
 
     sealed class Screen(val route: String) {
         data object Home : Screen("home")
-        data object Search : Screen("search")
+        data object Search : Screen("search") {
+            fun createRoute() = "search"
+        }
+
         data object Favourite : Screen("favourite")
         data object Profile : Screen("profile")
-        data object RecipeList : Screen("recipe_list")
         data object RecipeDetails : Screen("recipe_details/{${NAV_ARGS_RECIPE_ID_KEY}}") {
             fun createRoute(recipeId: String) = "recipe_details/${recipeId}"
         }
@@ -18,5 +20,9 @@ object NavHelper {
 
     fun NavController.goToRecipeDetailsScreen(recipeId: String) {
         navigate(Screen.RecipeDetails.createRoute(recipeId))
+    }
+
+    fun NavController.goToSearchScreen() {
+        navigate(Screen.Search.createRoute())
     }
 }
