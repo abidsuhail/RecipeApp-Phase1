@@ -1,9 +1,11 @@
 package com.abid.recipeapp.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.abid.recipeapp.ui.navigation.NavHelper.goToRecipeDetailsScreen
@@ -18,7 +20,9 @@ fun AppNavHost() {
         startDestination = NavHelper.Screen.RecipeList.route
     ) {
         composable(route = NavHelper.Screen.RecipeList.route) {
-            RecipeListScreen() { recipe ->
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+            RecipeListScreen(currentRoute) { recipe ->
                 navController.goToRecipeDetailsScreen(recipe.id)
             }
         }

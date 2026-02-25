@@ -38,10 +38,10 @@ import com.abid.recipeapp.ui.state.RecipeListUiState
 import com.abid.recipeapp.viewmodel.RecipeViewModel
 
 @Composable
-fun RecipeListScreen(onClickRecipeItem: (RecipeModel) -> Unit) {
+fun RecipeListScreen(currentRoute: String?, onClickRecipeItem: (RecipeModel) -> Unit) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        bottomBar = { BottomBar(navController) }) { innerPadding ->
+        bottomBar = { BottomBar(currentRoute) }) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             Column(modifier = Modifier.padding(top = 10.dp)) {
                 RecipeListHeader()
