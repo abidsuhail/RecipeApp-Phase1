@@ -46,6 +46,8 @@ import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.state.RecipeDetailUiState
 import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.util.getServingsAndUrList
+import com.abid.recipeapp.util.ingredientsAndInstTabItems
 import com.abid.recipeapp.viewmodel.RecipeViewModel
 import kotlinx.coroutines.delay
 
@@ -201,11 +203,7 @@ private fun ServingsAndDurationRow(recipe: RecipeModel) {
             .padding(top = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        listOf(
-            "${recipe.cookTime + recipe.prepTime} min",
-            "${recipe.servings} servings",
-            recipe.difficulty
-        ).forEach {
+        getServingsAndUrList(recipe).forEach {
             Card(
                 Modifier
                     .weight(1f)
@@ -230,14 +228,13 @@ private fun ServingsAndDurationRow(recipe: RecipeModel) {
 
 @Composable
 private fun RecipeDetailsBottomTab(recipe: RecipeModel) {
-    val tabs = listOf("Ingredients", "Instructions")
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     Column(modifier = Modifier.padding(vertical = 10.dp)) {
         TabRow(
             selectedTabIndex = selectedTabIndex
         ) {
-            tabs.forEachIndexed { index, title ->
+            ingredientsAndInstTabItems.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTabIndex == index,
                     onClick = { selectedTabIndex = index },

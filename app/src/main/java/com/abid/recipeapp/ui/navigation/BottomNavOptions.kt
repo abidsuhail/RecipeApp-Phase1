@@ -1,4 +1,4 @@
-package com.abid.recipeapp.util
+package com.abid.recipeapp.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
