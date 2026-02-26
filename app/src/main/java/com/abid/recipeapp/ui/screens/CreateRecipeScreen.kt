@@ -3,15 +3,19 @@ package com.abid.recipeapp.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,6 +30,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.abid.recipeapp.util.newRecipeCategories
+import com.abid.recipeapp.util.newRecipeCuisine
+import com.abid.recipeapp.util.newRecipeDifficultyLvl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +57,7 @@ fun CreateRecipeScreen() {
                 .padding(paddingValues)
                 .padding(12.dp)
         ) {
-            Column {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = {
@@ -60,7 +67,6 @@ fun CreateRecipeScreen() {
                     label = { Text("Recipe Title") },
                     isError = nameError != null,
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
                 )
                 OutlinedTextField(
                     value = desc,
@@ -101,6 +107,62 @@ fun CreateRecipeScreen() {
                             .weight(1f),
                     )
                 }
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = {
+                        name = it
+                        nameError = if (it.isBlank()) "Recipe Title cannot be empty" else null
+                    },
+                    label = { Text("Servings") },
+                    isError = nameError != null,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Spacer(Modifier.height(15.dp))
+                Text("Category")
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    newRecipeCategories.forEach { item ->
+                        Card() {
+                            Text(item, modifier = Modifier.padding(10.dp))
+                        }
+                    }
+                }
+                Spacer(Modifier.height(15.dp))
+                Text("Cuisine")
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    newRecipeCuisine.forEach { item ->
+                        Card() {
+                            Text(item, modifier = Modifier.padding(10.dp))
+                        }
+                    }
+                }
+                Spacer(Modifier.height(15.dp))
+                Text("Difficulty")
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    newRecipeDifficultyLvl.forEach { item ->
+                        Card() {
+                            Text(item.name, modifier = Modifier.padding(10.dp))
+                        }
+                    }
+                }
+
             }
         }
     }
