@@ -35,17 +35,17 @@ import com.abid.recipeapp.ui.state.RecipeListUiState
 import com.abid.recipeapp.viewmodel.RecipeViewModel
 
 @Composable
-fun RecipeListScreen(onClickRecipeItem: (RecipeModel) -> Unit) {
+fun RecipeListScreen(onClickRecipeItem: (RecipeModel) -> Unit, onClickAddRecipe: () -> Unit) {
     Box() {
         Column(modifier = Modifier.padding(top = 10.dp)) {
-            RecipeListHeader()
+            RecipeListHeader(onClickAddRecipe)
             RecipeList(onClickRecipeItem)
         }
     }
 }
 
 @Composable
-private fun RecipeListHeader() {
+private fun RecipeListHeader(onClickAddRecipe: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -57,8 +57,16 @@ private fun RecipeListHeader() {
         Icon(
             imageVector = Icons.Filled.AddCircle,
             contentDescription = "Add button",
-            modifier = Modifier.size(50.dp),
-            tint = MaterialTheme.colorScheme.primary
+            modifier = Modifier
+                .size(50.dp)
+                .clickable(
+                    onClick = {
+                        onClickAddRecipe()
+                    },
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = LocalIndication.current,
+                ),
+            tint = MaterialTheme.colorScheme.primary,
         )
     }
 }
