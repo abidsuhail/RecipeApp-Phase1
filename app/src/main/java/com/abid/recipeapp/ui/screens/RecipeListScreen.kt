@@ -32,7 +32,7 @@ import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.RecipeCard
 import com.abid.recipeapp.ui.state.RecipeListUiState
-import com.abid.recipeapp.viewmodel.RecipeViewModel
+import com.abid.recipeapp.viewmodel.RecipeListViewModel
 
 @Composable
 fun RecipeListScreen(onClickRecipeItem: (RecipeModel) -> Unit, onClickAddRecipe: () -> Unit) {
@@ -74,11 +74,11 @@ private fun RecipeListHeader(onClickAddRecipe: () -> Unit) {
 @Composable
 private fun RecipeList(
     onClickRecipeItem: (RecipeModel) -> Unit,
-    recipeViewModel: RecipeViewModel = hiltViewModel()
+    recipeListViewModel: RecipeListViewModel = hiltViewModel()
 ) {
-    val allRecipes by recipeViewModel.allRecipes.observeAsState()
+    val allRecipes by recipeListViewModel.allRecipes.observeAsState()
     LaunchedEffect(Unit) {
-        recipeViewModel.loadAllRecipes()
+        recipeListViewModel.loadAllRecipes()
     }
     when (allRecipes) {
         is RecipeListUiState.Loading -> {

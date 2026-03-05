@@ -99,7 +99,9 @@ private fun AppNavGraph(
         composable(
             route = NavHelper.Screen.CreateRecipeScreen.route,
         ) { backStackEntry ->
-            CreateRecipeScreen()
+            CreateRecipeScreen {
+                navController.popBackStack()
+            }
         }
     }
 }

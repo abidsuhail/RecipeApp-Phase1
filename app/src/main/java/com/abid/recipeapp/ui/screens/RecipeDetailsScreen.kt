@@ -48,18 +48,18 @@ import com.abid.recipeapp.ui.state.RecipeDetailUiState
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.util.getServingsAndUrList
 import com.abid.recipeapp.util.ingredientsAndInstTabItems
-import com.abid.recipeapp.viewmodel.RecipeViewModel
+import com.abid.recipeapp.viewmodel.RecipeListViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun RecipeDetailsScreen(
     recipeId: String?,
     onClickBackBtn: () -> Unit,
-    recipeViewModel: RecipeViewModel = hiltViewModel()
+    recipeListViewModel: RecipeListViewModel = hiltViewModel()
 ) {
-    val recipeState by recipeViewModel.foundRecipe.observeAsState()
+    val recipeState by recipeListViewModel.foundRecipe.observeAsState()
     LaunchedEffect(recipeId) {
-        recipeViewModel.loadRecipe(recipeId)
+        recipeListViewModel.loadRecipe(recipeId)
     }
     LaunchedEffect(recipeState) {
         if (recipeState is RecipeDetailUiState.NotFound ||

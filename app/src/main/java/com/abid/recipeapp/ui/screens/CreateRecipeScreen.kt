@@ -1,5 +1,8 @@
 package com.abid.recipeapp.ui.screens
 
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,31 +26,39 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.util.newRecipeCategories
 import com.abid.recipeapp.util.newRecipeCuisine
 import com.abid.recipeapp.util.newRecipeDifficultyLvl
+import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateRecipeScreen() {
+fun CreateRecipeScreen(onClickBackBtn: () -> Unit, vm: CreateRecipeViewModel = hiltViewModel()) {
     var name by rememberSaveable { mutableStateOf("") }
     var nameError by remember { mutableStateOf<String?>(null) }
 
     var desc by rememberSaveable { mutableStateOf("") }
     var descError by remember { mutableStateOf<String?>(null) }
 
+    val uiState by vm.allCategories.observeAsState()
+    LaunchedEffect(Unit) {
+        vm.getRecipeCategories()
+    }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    TopBar()
+                    TopBar(onClickBackBtn)
                 }
             )
         }
@@ -193,7 +204,7 @@ private fun RecipeTextField(
 }*/
 
 @Composable
-private fun TopBar() {
+private fun TopBar(onClickBackBtn: () -> Unit) {
     Box(
         Modifier
             .fillMaxWidth()
@@ -204,7 +215,12 @@ private fun TopBar() {
         ) {
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
-                contentDescription = "Back button"
+                contentDescription = "Back button",
+                modifier = Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = LocalIndication.current,
+                    onClick = onClickBackBtn
+                )
             )
             Text("Create Recipe")
             Icon(
