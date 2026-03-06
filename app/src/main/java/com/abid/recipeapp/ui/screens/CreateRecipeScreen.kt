@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -36,23 +37,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.abid.recipeapp.util.newRecipeCategories
+import com.abid.recipeapp.ui.state.RecipeCategoriesUiState
 import com.abid.recipeapp.util.newRecipeCuisine
 import com.abid.recipeapp.util.newRecipeDifficultyLvl
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateRecipeScreen(onClickBackBtn: () -> Unit, vm: CreateRecipeViewModel = hiltViewModel()) {
+fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackBtn: () -> Unit) {
     var name by rememberSaveable { mutableStateOf("") }
     var nameError by remember { mutableStateOf<String?>(null) }
 
     var desc by rememberSaveable { mutableStateOf("") }
     var descError by remember { mutableStateOf<String?>(null) }
 
-    val uiState by vm.allCategories.observeAsState()
+    val categoriesUiState by vm.allCategories.observeAsState()
+    val cuisinesUiState by vm.allCuisines.observeAsState()
+    val diffLvlUiState by vm.allDifficulties.observeAsState()
+
     LaunchedEffect(Unit) {
-        vm.getRecipeCategories()
+        vm.loadRecipeCategories()
+        vm.loadCuisines()
+        vm.loadRecipeDifficulties()
     }
     Scaffold(
         topBar = {
@@ -137,11 +143,34 @@ fun CreateRecipeScreen(onClickBackBtn: () -> Unit, vm: CreateRecipeViewModel = h
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    newRecipeCategories.forEach { item ->
-                        Card() {
-                            Text(item, modifier = Modifier.padding(10.dp))
+                    when (categoriesUiState) {
+                        is RecipeCategoriesUiState.Loading -> {
+                            CircularProgressIndicator()
+                        }
+
+                        is RecipeCategoriesUiState.Success -> {
+                            val state = categoriesUiState as RecipeCategoriesUiState.Success
+                            state.catList.forEach { item ->
+                                Card() {
+                                    Text(item, modifier = Modifier.padding(10.dp))
+                                }
+                            }
+                        }
+
+                        is RecipeCategoriesUiState.Error -> {
+                            Text("No categories found")
+                        }
+
+                        is RecipeCategoriesUiState.NotFound -> {
+                            Text("No categories found")
+
+                        }
+
+                        else -> {
+
                         }
                     }
+
                 }
                 Spacer(Modifier.height(15.dp))
                 Text("Cuisine")

@@ -5,8 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abid.recipeapp.data.repository.RecipeRepository
-import com.abid.recipeapp.ui.state.CreateRecipeUiState
-import com.abid.recipeapp.ui.state.RecipeDetailUiState
+import com.abid.recipeapp.ui.state.RecipeCategoriesUiState
+import com.abid.recipeapp.ui.state.RecipeCuisinesUiState
+import com.abid.recipeapp.ui.state.RecipeDifficultiesUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,53 +18,65 @@ class CreateRecipeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _allCategories =
-        MutableLiveData<CreateRecipeUiState>(CreateRecipeUiState.Loading)
-    val allCategories: LiveData<CreateRecipeUiState> = _allCategories
+        MutableLiveData<RecipeCategoriesUiState>(RecipeCategoriesUiState.Loading)
+    val allCategories: LiveData<RecipeCategoriesUiState> = _allCategories
 
+    private val _allCuisines =
+        MutableLiveData<RecipeCuisinesUiState>(RecipeCuisinesUiState.Loading)
+    val allCuisines: LiveData<RecipeCuisinesUiState> = _allCuisines
 
-    fun getRecipeCategories() {
+    private val _allDifficulties =
+        MutableLiveData<RecipeDifficultiesUiState>(RecipeDifficultiesUiState.Loading)
+    val allDifficulties: LiveData<RecipeDifficultiesUiState> = _allDifficulties
+
+    fun loadRecipeCategories() {
         viewModelScope.launch {
             try {
-                _allCategories.value = CreateRecipeUiState.Loading
+                _allCategories.value = RecipeCategoriesUiState.Loading
                 val data = repository.getRecipeCategories()
-                _allCategories.value = CreateRecipeUiState.Success(data)
+                if (data != null) {
+                    _allCategories.value = RecipeCategoriesUiState.Success(data)
+                } else {
+                    _allCategories.value = RecipeCategoriesUiState.NotFound("Categories not found!")
+                }
             } catch (e: Exception) {
                 _allCategories.value =
-                    CreateRecipeUiState.Error("There are no recipes categories!")
+                    RecipeCategoriesUiState.Error("There are no recipes categories!")
             }
         }
     }
 
-    fun getCuisines() {
+    fun loadCuisines() {
         viewModelScope.launch {
             try {
-                _foundRecipe.value = RecipeDetailUiState.Loading
+                _allCuisines.value = RecipeCuisinesUiState.Loading
                 val data = repository.getCuisines()
                 if (data != null) {
-                    _foundRecipe.value = RecipeDetailUiState.Success(data)
+                    _allCuisines.value = RecipeCuisinesUiState.Success(data)
                 } else {
-                    _foundRecipe.value =
-                        RecipeDetailUiState.NotFound("Recipe not found, going back...")
+                    _allCuisines.value =
+                        RecipeCuisinesUiState.NotFound("Cuisines not found")
                 }
             } catch (e: Exception) {
-                _foundRecipe.value = RecipeDetailUiState.Error("${e.message}, going back...")
+                _allCuisines.value = RecipeCuisinesUiState.Error("${e.message}, going back...")
             }
         }
     }
 
-    fun getRecipeDifficulties() {
+    fun loadRecipeDifficulties() {
         viewModelScope.launch {
             try {
-                _foundRecipe.value = RecipeDetailUiState.Loading
+                _allDifficulties.value = RecipeDifficultiesUiState.Loading
                 val data = repository.getRecipeDifficulties()
                 if (data != null) {
-                    _foundRecipe.value = RecipeDetailUiState.Success(data)
+                    _allDifficulties.value = RecipeDifficultiesUiState.Success(data)
                 } else {
-                    _foundRecipe.value =
-                        RecipeDetailUiState.NotFound("Recipe not found, going back...")
+                    _allDifficulties.value =
+                        RecipeDifficultiesUiState.NotFound("Recipe Difficulties not found")
                 }
             } catch (e: Exception) {
-                _foundRecipe.value = RecipeDetailUiState.Error("${e.message}, going back...")
+                _allDifficulties.value =
+                    RecipeDifficultiesUiState.Error("${e.message}")
             }
         }
     }
