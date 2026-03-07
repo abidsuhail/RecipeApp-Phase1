@@ -1,9 +1,6 @@
 package com.abid.recipeapp.util
 
-import com.abid.recipeapp.data.model.IngredientModel
-import com.abid.recipeapp.data.model.NutritionModel
-import com.abid.recipeapp.data.model.RecipeModel
-
+/*
 object MockData {
     val mockRecipes = listOf(
 
@@ -113,4 +110,4 @@ object MockData {
         // I stopped here intentionally.
     )
 
-}
+}*/

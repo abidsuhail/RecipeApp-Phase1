@@ -28,7 +28,8 @@ class RecipeListViewModel @Inject constructor(
                 val data = repository.getAllRecipes()
                 _allRecipes.value = RecipeListUiState.Success(data)
             } catch (e: Exception) {
-                _allRecipes.value = RecipeListUiState.Error("There are no recipes available!")
+                _allRecipes.value =
+                    RecipeListUiState.Error(e.message ?: "There are no recipes available!")
             }
         }
     }

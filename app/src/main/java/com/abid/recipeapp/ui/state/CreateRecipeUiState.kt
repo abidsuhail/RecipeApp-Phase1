@@ -1,11 +1,12 @@
 package com.abid.recipeapp.ui.state
 
+import com.abid.recipeapp.RecipeCategoriesDataModel
 import com.abid.recipeapp.util.RecipeDiffLvl
 
 
 sealed class RecipeCategoriesUiState {
     data object Loading : RecipeCategoriesUiState()
-    data class Success(val catList: List<String>) : RecipeCategoriesUiState()
+    data class Success(val catList: List<RecipeCategoriesDataModel>) : RecipeCategoriesUiState()
     data class Error(val message: String) : RecipeCategoriesUiState()
     data class NotFound(val message: String) : RecipeCategoriesUiState()
 }

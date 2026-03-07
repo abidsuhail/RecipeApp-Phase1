@@ -152,13 +152,14 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                             val state = categoriesUiState as RecipeCategoriesUiState.Success
                             state.catList.forEach { item ->
                                 Card() {
-                                    Text(item, modifier = Modifier.padding(10.dp))
+                                    Text(item.label, modifier = Modifier.padding(10.dp))
                                 }
                             }
                         }
 
                         is RecipeCategoriesUiState.Error -> {
-                            Text("No categories found")
+                            val state = categoriesUiState as RecipeCategoriesUiState.Error
+                            Text(state.message)
                         }
 
                         is RecipeCategoriesUiState.NotFound -> {

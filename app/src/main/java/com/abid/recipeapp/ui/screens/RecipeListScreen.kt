@@ -86,7 +86,8 @@ private fun RecipeList(
         }
 
         is RecipeListUiState.Error -> {
-            ErrorStateBox("No recipes found!")
+            val state = (allRecipes as RecipeListUiState.Error)
+            ErrorStateBox(state.message)
         }
 
         is RecipeListUiState.Success -> {
