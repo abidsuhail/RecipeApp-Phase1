@@ -15,16 +15,5 @@ fun getServingsAndUrList(recipe: RecipeModel): List<String> {
 }
 
 val ingredientsAndInstTabItems = listOf("Ingredients", "Instructions")
-val newRecipeCuisine = listOf(
-    "American",
-    "Italian",
-    "Mexican",
-    "Indian",
-    "Chinese",
-    "Thai",
-    "Greek",
-    "French",
-    "Japanese"
-)
-val newRecipeDifficultyLvl = listOf(RecipeDiffLvl.EASY, RecipeDiffLvl.MEDIUM, RecipeDiffLvl.HARD)
+
 

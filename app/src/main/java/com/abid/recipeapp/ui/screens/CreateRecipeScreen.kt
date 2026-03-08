@@ -34,11 +34,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.abid.recipeapp.util.newRecipeCuisine
-import com.abid.recipeapp.util.newRecipeDifficultyLvl
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,7 +71,7 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                 .padding(12.dp)
         ) {
             if (uiState?.isLoading == true) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 OutlinedTextField(
@@ -159,9 +158,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    newRecipeCuisine.forEach { item ->
+                    uiState?.cuisinesList?.forEach { item ->
                         Card() {
-                            Text(item, modifier = Modifier.padding(10.dp))
+                            Text(item.label, modifier = Modifier.padding(10.dp))
                         }
                     }
                 }
@@ -174,9 +173,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    newRecipeDifficultyLvl.forEach { item ->
+                    uiState?.difficultiesList?.forEach { item ->
                         Card() {
-                            Text(item.name, modifier = Modifier.padding(10.dp))
+                            Text(item.label.name, modifier = Modifier.padding(10.dp))
                         }
                     }
                 }

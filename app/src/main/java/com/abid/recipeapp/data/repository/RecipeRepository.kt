@@ -7,28 +7,12 @@ import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RecipeRepository @Inject constructor() {
-    /*    private val ingredientsAndInstTabItems = listOf("Ingredients", "Instructions")
-        private val newRecipeCategories =
-            listOf("Breakfast", "Lunch", "Dinner", "Dessert", "Salad", "Snack")*/
-    /*    private val newRecipeCuisine = listOf(
-            "American",
-            "Italian",
-            "Mexican",
-            "Indian",
-            "Chinese",
-            "Thai",
-            "Greek",
-            "French",
-            "Japanese"
-        )*/
-    /*    private val newRecipeDifficultyLvl =
-            listOf(RecipeDiffLvl.EASY, RecipeDiffLvl.MEDIUM, RecipeDiffLvl.HARD)*/
+
     private val db = FirebaseFirestore.getInstance()
 
     suspend fun getAllRecipes(): List<RecipeModel> {
@@ -70,8 +54,8 @@ class RecipeRepository @Inject constructor() {
     suspend fun getRecipeById(id: String?): RecipeModel? {
         if (id == null) return null
         return withContext(Dispatchers.IO) {
-            delay(1000)
-            null
+            val recipe = db.collection("recipes").document(id).get().await()
+            recipe.toObject(RecipeModel::class.java)
         }
     }
 }
