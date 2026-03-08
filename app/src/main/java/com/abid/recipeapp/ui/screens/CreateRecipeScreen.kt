@@ -37,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.abid.recipeapp.ui.state.RecipeCategoriesUiState
 import com.abid.recipeapp.util.newRecipeCuisine
 import com.abid.recipeapp.util.newRecipeDifficultyLvl
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
@@ -51,9 +50,7 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
     var desc by rememberSaveable { mutableStateOf("") }
     var descError by remember { mutableStateOf<String?>(null) }
 
-    val categoriesUiState by vm.allCategories.observeAsState()
-    val cuisinesUiState by vm.allCuisines.observeAsState()
-    val diffLvlUiState by vm.allDifficulties.observeAsState()
+    val uiState by vm.uiState.observeAsState()
 
     LaunchedEffect(Unit) {
         vm.loadRecipeCategories()
@@ -74,6 +71,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                 .padding(paddingValues)
                 .padding(12.dp)
         ) {
+            if (uiState?.isLoading == true) {
+                CircularProgressIndicator()
+            }
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 OutlinedTextField(
                     value = name,
@@ -143,32 +143,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    when (categoriesUiState) {
-                        is RecipeCategoriesUiState.Loading -> {
-                            CircularProgressIndicator()
-                        }
-
-                        is RecipeCategoriesUiState.Success -> {
-                            val state = categoriesUiState as RecipeCategoriesUiState.Success
-                            state.catList.forEach { item ->
-                                Card() {
-                                    Text(item.label, modifier = Modifier.padding(10.dp))
-                                }
-                            }
-                        }
-
-                        is RecipeCategoriesUiState.Error -> {
-                            val state = categoriesUiState as RecipeCategoriesUiState.Error
-                            Text(state.message)
-                        }
-
-                        is RecipeCategoriesUiState.NotFound -> {
-                            Text("No categories found")
-
-                        }
-
-                        else -> {
-
+                    uiState?.categoriesList?.forEach { item ->
+                        Card() {
+                            Text(item.label, modifier = Modifier.padding(10.dp))
                         }
                     }
 

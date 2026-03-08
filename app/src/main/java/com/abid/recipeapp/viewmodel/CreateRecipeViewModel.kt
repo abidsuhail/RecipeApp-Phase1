@@ -5,9 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abid.recipeapp.data.repository.RecipeRepository
-import com.abid.recipeapp.ui.state.RecipeCategoriesUiState
-import com.abid.recipeapp.ui.state.RecipeCuisinesUiState
-import com.abid.recipeapp.ui.state.RecipeDifficultiesUiState
+import com.abid.recipeapp.ui.state.CreateRecipeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,31 +15,24 @@ class CreateRecipeViewModel @Inject constructor(
     private val repository: RecipeRepository
 ) : ViewModel() {
 
-    private val _allCategories =
-        MutableLiveData<RecipeCategoriesUiState>(RecipeCategoriesUiState.Loading)
-    val allCategories: LiveData<RecipeCategoriesUiState> = _allCategories
+    private val _uiState = MutableLiveData(CreateRecipeUiState(isLoading = true))
+    val uiState: LiveData<CreateRecipeUiState> = _uiState
 
-    private val _allCuisines =
-        MutableLiveData<RecipeCuisinesUiState>(RecipeCuisinesUiState.Loading)
-    val allCuisines: LiveData<RecipeCuisinesUiState> = _allCuisines
-
-    private val _allDifficulties =
-        MutableLiveData<RecipeDifficultiesUiState>(RecipeDifficultiesUiState.Loading)
-    val allDifficulties: LiveData<RecipeDifficultiesUiState> = _allDifficulties
 
     fun loadRecipeCategories() {
         viewModelScope.launch {
             try {
-                _allCategories.value = RecipeCategoriesUiState.Loading
+                _uiState.value = _uiState.value?.copy(isLoading = true)
                 val data = repository.getRecipeCategories()
                 if (data != null) {
-                    _allCategories.value = RecipeCategoriesUiState.Success(data)
+                    _uiState.value = _uiState.value?.copy(isLoading = false, categoriesList = data)
                 } else {
-                    _allCategories.value = RecipeCategoriesUiState.NotFound("Categories not found!")
+                    _uiState.value =
+                        _uiState.value?.copy(isLoading = false, errorMsg = "Categories not found")
                 }
             } catch (e: Exception) {
-                _allCategories.value =
-                    RecipeCategoriesUiState.Error("There are no recipes categories!")
+                _uiState.value =
+                    _uiState.value?.copy(isLoading = false, errorMsg = e.message)
             }
         }
     }
@@ -49,16 +40,17 @@ class CreateRecipeViewModel @Inject constructor(
     fun loadCuisines() {
         viewModelScope.launch {
             try {
-                _allCuisines.value = RecipeCuisinesUiState.Loading
+                _uiState.value = _uiState.value?.copy(isLoading = true)
                 val data = repository.getCuisines()
                 if (data != null) {
-                    _allCuisines.value = RecipeCuisinesUiState.Success(data)
+                    _uiState.value = _uiState.value?.copy(isLoading = false, cuisinesList = data)
                 } else {
-                    _allCuisines.value =
-                        RecipeCuisinesUiState.NotFound("Cuisines not found")
+                    _uiState.value =
+                        _uiState.value?.copy(isLoading = false, errorMsg = "Cuisines not found")
                 }
             } catch (e: Exception) {
-                _allCuisines.value = RecipeCuisinesUiState.Error("${e.message}, going back...")
+                _uiState.value =
+                    _uiState.value?.copy(isLoading = false, errorMsg = e.message)
             }
         }
     }
@@ -66,17 +58,21 @@ class CreateRecipeViewModel @Inject constructor(
     fun loadRecipeDifficulties() {
         viewModelScope.launch {
             try {
-                _allDifficulties.value = RecipeDifficultiesUiState.Loading
+                _uiState.value = _uiState.value?.copy(isLoading = true)
                 val data = repository.getRecipeDifficulties()
                 if (data != null) {
-                    _allDifficulties.value = RecipeDifficultiesUiState.Success(data)
+                    _uiState.value =
+                        _uiState.value?.copy(isLoading = false, difficultiesList = data)
                 } else {
-                    _allDifficulties.value =
-                        RecipeDifficultiesUiState.NotFound("Recipe Difficulties not found")
+                    _uiState.value =
+                        _uiState.value?.copy(
+                            isLoading = false,
+                            errorMsg = "Difficulty level not found"
+                        )
                 }
             } catch (e: Exception) {
-                _allDifficulties.value =
-                    RecipeDifficultiesUiState.Error("${e.message}")
+                _uiState.value =
+                    _uiState.value?.copy(isLoading = false, errorMsg = e.message)
             }
         }
     }
