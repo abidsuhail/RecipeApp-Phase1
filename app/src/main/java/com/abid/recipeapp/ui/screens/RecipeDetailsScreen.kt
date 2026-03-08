@@ -40,106 +40,90 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.BackButton
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
-import com.abid.recipeapp.ui.state.RecipeDetailUiState
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.util.getServingsAndUrList
-import com.abid.recipeapp.util.ingredientsAndInstTabItems
-import com.abid.recipeapp.viewmodel.RecipeListViewModel
+import com.abid.recipeapp.viewmodel.RecipeDetailsViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun RecipeDetailsScreen(
     recipeId: String?,
     onClickBackBtn: () -> Unit,
-    recipeListViewModel: RecipeListViewModel = hiltViewModel()
+    vm: RecipeDetailsViewModel = hiltViewModel()
 ) {
-    val recipeState by recipeListViewModel.foundRecipe.observeAsState()
+    val uiState by vm.uiState.observeAsState()
     LaunchedEffect(recipeId) {
-        recipeListViewModel.loadRecipe(recipeId)
+        vm.loadRecipeById(recipeId)
+        vm.loadIngredientsTabs()
     }
-    LaunchedEffect(recipeState) {
-        if (recipeState is RecipeDetailUiState.NotFound ||
-            recipeState is RecipeDetailUiState.Error
-        ) {
+    LaunchedEffect(uiState?.errorMsg) {
+        if (uiState?.errorMsg != null) {
             delay(1000)
             onClickBackBtn()
         }
     }
-    when (recipeState) {
-        is RecipeDetailUiState.Loading -> {
-            LoadingStateBox()
-        }
-
-        is RecipeDetailUiState.NotFound -> {
-            val state = (recipeState as RecipeDetailUiState.NotFound)
-            ErrorStateBox(state.message)
-        }
-
-        is RecipeDetailUiState.Error -> {
-            val state = (recipeState as RecipeDetailUiState.Error)
-            ErrorStateBox(state.message)
-        }
-
-        is RecipeDetailUiState.Success -> {
-            val state = (recipeState as RecipeDetailUiState.Success)
-            val recipe = state.recipe
-            var isFavorite by remember { mutableStateOf(false) }
-            Scaffold(
-                floatingActionButton = {
-                    FloatingActionButton(
-                        containerColor = Orange40,
-                        onClick = {
-                            isFavorite = !isFavorite
-                        }
-                    ) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = "Favorite",
-                        )
+    if (uiState?.isLoading == true) {
+        LoadingStateBox()
+    }
+    if (uiState?.errorMsg != null) {
+        ErrorStateBox(uiState?.errorMsg!!)
+    }
+    if (uiState?.recipe != null) {
+        var isFavorite by remember { mutableStateOf(false) }
+        Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(
+                    containerColor = Orange40,
+                    onClick = {
+                        isFavorite = !isFavorite
                     }
-                },
-            ) { innerPadding ->
+                ) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Favorite",
+                    )
+                }
+            },
+        ) { innerPadding ->
+            Box(
+                Modifier
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+            ) {
                 Box(
                     Modifier
-                        .fillMaxHeight()
-                        .verticalScroll(rememberScrollState())
+                        .fillMaxWidth()
+                        .height(300.dp),
                 ) {
-                    Box(
-                        Modifier
+                    AsyncImage(
+                        model = uiState?.recipe!!.image,
+                        contentDescription = "Recipe image",
+                        modifier = Modifier
                             .fillMaxWidth()
                             .height(300.dp),
-                    ) {
-                        AsyncImage(
-                            model = recipe.image,
-                            contentDescription = "Recipe image",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(300.dp),
-                            contentScale = ContentScale.Crop
-                        )
-                        BackButton {
-                            onClickBackBtn()
-                        }
+                        contentScale = ContentScale.Crop
+                    )
+                    BackButton {
+                        onClickBackBtn()
                     }
-
-                    RecipeDetailsCard(recipe)
                 }
+
+                RecipeDetailsCard(uiState?.recipe!!, uiState?.ingredientsTabList!!)
             }
         }
-
-        else -> {
-            RecipeDetailUiState.Error("Something went wrong")
-        }
-
     }
 }
 
 @Composable
-private fun RecipeDetailsCard(recipe: RecipeModel) {
+private fun RecipeDetailsCard(
+    recipe: RecipeModel,
+    ingredientsTabModelList: List<IngredientsTabModel>
+) {
     Card(
         modifier = Modifier
             .fillMaxSize()
@@ -153,7 +137,7 @@ private fun RecipeDetailsCard(recipe: RecipeModel) {
             ServingsAndDurationRow(recipe)
             Text(recipe.description, modifier = Modifier.padding(vertical = 10.dp))
             MacroCard(recipe)
-            RecipeDetailsBottomTab(recipe)
+            RecipeDetailsBottomTab(recipe, ingredientsTabModelList)
 
         }
     }
@@ -227,18 +211,21 @@ private fun ServingsAndDurationRow(recipe: RecipeModel) {
 }
 
 @Composable
-private fun RecipeDetailsBottomTab(recipe: RecipeModel) {
+private fun RecipeDetailsBottomTab(
+    recipe: RecipeModel,
+    ingredientsTabModelList: List<IngredientsTabModel>,
+) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     Column(modifier = Modifier.padding(vertical = 10.dp)) {
         TabRow(
             selectedTabIndex = selectedTabIndex
         ) {
-            ingredientsAndInstTabItems.forEachIndexed { index, title ->
+            ingredientsTabModelList.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTabIndex == index,
                     onClick = { selectedTabIndex = index },
-                    text = { Text(title) }
+                    text = { Text(title.label) }
                 )
             }
         }

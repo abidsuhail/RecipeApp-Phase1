@@ -76,7 +76,7 @@ private fun RecipeList(
     onClickRecipeItem: (RecipeModel) -> Unit,
     recipeListViewModel: RecipeListViewModel = hiltViewModel()
 ) {
-    val allRecipes by recipeListViewModel.allRecipes.observeAsState()
+    val allRecipes by recipeListViewModel.uiState.observeAsState()
     LaunchedEffect(Unit) {
         recipeListViewModel.loadAllRecipes()
     }
