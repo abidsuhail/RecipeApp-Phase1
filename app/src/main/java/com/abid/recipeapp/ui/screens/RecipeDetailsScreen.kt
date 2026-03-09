@@ -46,7 +46,7 @@ import com.abid.recipeapp.ui.components.BackButton
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.theme.Orange40
-import com.abid.recipeapp.util.getServingsAndUrList
+import com.abid.recipeapp.util.Constants.getServingsAndUrList
 import com.abid.recipeapp.viewmodel.RecipeDetailsViewModel
 import kotlinx.coroutines.delay
 
