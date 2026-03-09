@@ -72,7 +72,8 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
         ) {
             if (uiState?.isLoading == true) {
                 LoadingStateBox()
-            } else if (uiState?.errorMsg != null) {
+            }
+            if (uiState?.errorMsg != null) {
                 ErrorStateBox(uiState?.errorMsg!!)
             }
             Column(Modifier.verticalScroll(rememberScrollState())) {
@@ -188,30 +189,6 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
         }
     }
 }
-
-/*@Composable
-private fun RecipeTextField(
-    label: String,
-    value: String,
-    isError: Boolean,
-    isSingleLine: Boolean = true,
-    onValueChange: (String, String?) -> Unit
-) {
-    val height = if (isSingleLine) 60.dp else 150.dp
-    Text(label)
-    OutlinedTextField(
-        value = value,
-        onValueChange = {
-            onValueChange(it, if (it.isBlank()) "Name cannot be empty" else null)
-        },
-        isError = isError,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(height),
-        singleLine = isSingleLine,
-        maxLines = if (isSingleLine) 5 else 1
-    )
-}*/
 
 @Composable
 private fun TopBar(onClickBackBtn: () -> Unit) {
