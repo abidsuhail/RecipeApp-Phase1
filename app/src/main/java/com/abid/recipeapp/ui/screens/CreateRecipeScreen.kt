@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Card
@@ -40,6 +42,11 @@ import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
 
+data class IngredientRowDataModel(
+    var ingredientName: String,
+    var ingredientAmount: String
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackBtn: () -> Unit) {
@@ -48,6 +55,20 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
 
     var desc by rememberSaveable { mutableStateOf("") }
     var descError by remember { mutableStateOf<String?>(null) }
+
+    var ingredientRowList by remember {
+        mutableStateOf<MutableList<IngredientRowDataModel>>(
+            mutableListOf(
+                IngredientRowDataModel("", "")
+            )
+        )
+    }
+    var currentIngredientRowModel by remember {
+        mutableStateOf<IngredientRowDataModel>(
+            IngredientRowDataModel("", "")
+        )
+    }
+
 
     val uiState by vm.uiState.observeAsState()
 
@@ -184,9 +205,67 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                         }
                     }
                 }
+                Spacer(Modifier.height(15.dp))
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Ingredients")
+                    Icon(
+                        imageVector = Icons.Filled.AddCircle,
+                        contentDescription = "Add Icon",
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = LocalIndication.current,
+                                onClick = {
+                                    val updatedList =
+                                        mutableListOf(*ingredientRowList.toTypedArray())
+                                    updatedList.add(currentIngredientRowModel)
+                                    ingredientRowList = updatedList
+                                }
+                            )
+                    )
+                }
+                ingredientRowList.forEach {
+                    IngredientRow(it, currentIngredientRowModel)
+                }
 
             }
         }
+    }
+}
+
+@Composable
+private fun IngredientRow(
+    ingredientRowDataModel: IngredientRowDataModel,
+    currentIngredientRow: IngredientRowDataModel,
+) {
+    Row {
+        OutlinedTextField(
+            value = ingredientRowDataModel.ingredientName,
+            onValueChange = {
+                currentIngredientRow.ingredientName = it
+            },
+            label = { Text("Ingredient name") },
+            isError = currentIngredientRow.ingredientName.isBlank(),
+            modifier = Modifier
+                .weight(1f)
+                .padding(5.dp)
+        )
+        OutlinedTextField(
+            value = ingredientRowDataModel.ingredientAmount,
+            onValueChange = {
+                currentIngredientRow.ingredientAmount = it
+            },
+            label = { Text("Amount") },
+            isError = currentIngredientRow.ingredientAmount.isBlank(),
+            modifier = Modifier
+                .weight(1f)
+                .padding(5.dp)
+
+        )
     }
 }
 
