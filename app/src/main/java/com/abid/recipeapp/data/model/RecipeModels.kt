@@ -1,7 +1,6 @@
 package com.abid.recipeapp.data.model
 
 import android.os.Parcelable
-import com.abid.recipeapp.util.RecipeDiffLvl
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

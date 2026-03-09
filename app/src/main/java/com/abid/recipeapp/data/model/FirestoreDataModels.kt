@@ -1,7 +1,5 @@
 package com.abid.recipeapp.data.model
 
-import com.abid.recipeapp.util.RecipeDiffLvl
-
 data class IngredientsTabModel(
     val id: String = "",
     val label: String = ""
