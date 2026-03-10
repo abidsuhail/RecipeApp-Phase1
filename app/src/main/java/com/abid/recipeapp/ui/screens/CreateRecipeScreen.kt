@@ -1,5 +1,6 @@
 package com.abid.recipeapp.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -35,7 +37,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
@@ -63,15 +67,10 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
             )
         )
     }
-    var currentIngredientRowModel by remember {
-        mutableStateOf<IngredientRowDataModel>(
-            IngredientRowDataModel("", "")
-        )
-    }
 
 
     val uiState by vm.uiState.observeAsState()
-
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         vm.loadRecipeCategories()
         vm.loadCuisines()
@@ -220,16 +219,41 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = LocalIndication.current,
                                 onClick = {
-                                    val updatedList =
-                                        mutableListOf(*ingredientRowList.toTypedArray())
-                                    updatedList.add(currentIngredientRowModel)
-                                    ingredientRowList = updatedList
+                                    ingredientRowList =
+                                        (ingredientRowList + IngredientRowDataModel(
+                                            "",
+                                            ""
+                                        )).toMutableList()
+                                    Toast
+                                        .makeText(
+                                            context,
+                                            "added ${ingredientRowList.size}",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                        .show()
                                 }
                             )
                     )
                 }
-                ingredientRowList.forEach {
-                    IngredientRow(it, currentIngredientRowModel)
+                ingredientRowList.forEachIndexed { index, ingredient ->
+                    IngredientRow(
+                        ingredientRowDataModel = ingredient,
+                        onIngredientNameChange = { newIngredientName ->
+                            ingredientRowList = ingredientRowList.toMutableList().also {
+                                it[index] = it[index].copy(ingredientName = newIngredientName)
+                            }
+
+                        },
+                        onIngredientAmountChange = { newIngredientAmount ->
+                            ingredientRowList = ingredientRowList.toMutableList().also {
+                                it[index] = it[index].copy(ingredientAmount = newIngredientAmount)
+                            }
+                        },
+                        onIngredientRemove = { ingredientToRemove ->
+                            ingredientRowList =
+                                ingredientRowList.filterIndexed { i, _ -> i != index }
+                                    .toMutableList()
+                        })
                 }
 
             }
@@ -240,31 +264,42 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
 @Composable
 private fun IngredientRow(
     ingredientRowDataModel: IngredientRowDataModel,
-    currentIngredientRow: IngredientRowDataModel,
+    onIngredientNameChange: (String) -> Unit,
+    onIngredientAmountChange: (String) -> Unit,
+    onIngredientRemove: (IngredientRowDataModel) -> Unit
 ) {
-    Row {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
             value = ingredientRowDataModel.ingredientName,
-            onValueChange = {
-                currentIngredientRow.ingredientName = it
-            },
+            onValueChange = onIngredientNameChange,
             label = { Text("Ingredient name") },
-            isError = currentIngredientRow.ingredientName.isBlank(),
+            isError = ingredientRowDataModel.ingredientName.isBlank(),
             modifier = Modifier
                 .weight(1f)
                 .padding(5.dp)
         )
         OutlinedTextField(
             value = ingredientRowDataModel.ingredientAmount,
-            onValueChange = {
-                currentIngredientRow.ingredientAmount = it
-            },
+            onValueChange = onIngredientAmountChange,
             label = { Text("Amount") },
-            isError = currentIngredientRow.ingredientAmount.isBlank(),
+            isError = ingredientRowDataModel.ingredientAmount.isBlank(),
             modifier = Modifier
                 .weight(1f)
                 .padding(5.dp)
 
+        )
+        Icon(
+            imageVector = Icons.Filled.Close,
+            contentDescription = "Close icon",
+            modifier = Modifier
+                .padding(horizontal = 5.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = LocalIndication.current,
+                    onClick = {
+                        onIngredientRemove(ingredientRowDataModel)
+                    }
+                )
         )
     }
 }
