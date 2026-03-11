@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,13 +38,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
+import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
+import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.create_recipe.IngredientRow
 import com.abid.recipeapp.ui.components.create_recipe.InstructionRow
+import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
 import kotlinx.coroutines.launch
 
@@ -59,6 +65,11 @@ data class InstructionRowDataModel(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackBtn: () -> Unit) {
+    var selectedCategory by rememberSaveable { mutableStateOf<RecipeCategoriesDataModel?>(null) }
+    var selectedCuisines by rememberSaveable { mutableStateOf<RecipeCuisinesDataModel?>(null) }
+    var selectedDiffLvl by rememberSaveable { mutableStateOf<RecipeDiffLvlDataModel?>(null) }
+
+
     var name by rememberSaveable { mutableStateOf("") }
     var nameError by remember { mutableStateOf<String?>(null) }
 
@@ -91,6 +102,7 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
     LaunchedEffect(ingredientRowList.size + instructionsRowList.size) {
         scrollState.animateScrollTo(scrollState.maxValue)
     }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -183,7 +195,22 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     uiState?.categoriesList?.forEach { item ->
-                        Card() {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (item == selectedCategory) {
+                                    Orange40
+                                } else {
+                                    Color.Unspecified
+                                }
+                            ),
+                            modifier = Modifier.clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                                onClick = {
+                                    selectedCategory = item
+                                }
+                            )
+                        ) {
                             Text(item.label, modifier = Modifier.padding(10.dp))
                         }
                     }
@@ -199,7 +226,22 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     uiState?.cuisinesList?.forEach { item ->
-                        Card() {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (item == selectedCuisines) {
+                                    Orange40
+                                } else {
+                                    Color.Unspecified
+                                }
+                            ),
+                            modifier = Modifier.clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                                onClick = {
+                                    selectedCuisines = item
+                                }
+                            )
+                        ) {
                             Text(item.label, modifier = Modifier.padding(10.dp))
                         }
                     }
@@ -214,7 +256,22 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     uiState?.difficultiesList?.forEach { item ->
-                        Card() {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (item == selectedDiffLvl) {
+                                    Orange40
+                                } else {
+                                    Color.Unspecified
+                                }
+                            ),
+                            modifier = Modifier.clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                                onClick = {
+                                    selectedDiffLvl = item
+                                }
+                            )
+                        ) {
                             Text(item.label.name, modifier = Modifier.padding(10.dp))
                         }
                     }
