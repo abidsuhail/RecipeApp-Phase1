@@ -19,7 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -37,13 +36,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
+import com.abid.recipeapp.ui.components.create_recipe.IngredientRow
+import com.abid.recipeapp.ui.components.create_recipe.InstructionRow
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
 import kotlinx.coroutines.launch
 
@@ -310,81 +310,6 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
     }
 }
 
-@Composable
-private fun InstructionRow(
-    instructionRowDataModel: InstructionRowDataModel,
-    onInstructionChange: (String) -> Unit,
-    onInstructionRemove: () -> Unit
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        OutlinedTextField(
-            value = instructionRowDataModel.instruction,
-            onValueChange = onInstructionChange,
-            label = { Text("Ingredient name") },
-            isError = instructionRowDataModel.instruction.isBlank(),
-            modifier = Modifier
-                .weight(1f)
-                .padding(5.dp)
-        )
-
-        Icon(
-            imageVector = Icons.Filled.Close,
-            contentDescription = "Close icon",
-            modifier = Modifier
-                .padding(horizontal = 5.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = LocalIndication.current,
-                    onClick = {
-                        onInstructionRemove()
-                    }
-                )
-        )
-    }
-}
-
-@Composable
-private fun IngredientRow(
-    ingredientRowDataModel: IngredientRowDataModel,
-    onIngredientNameChange: (String) -> Unit,
-    onIngredientAmountChange: (String) -> Unit,
-    onIngredientRemove: () -> Unit
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        OutlinedTextField(
-            value = ingredientRowDataModel.ingredientName,
-            onValueChange = onIngredientNameChange,
-            label = { Text("Ingredient name") },
-            isError = ingredientRowDataModel.ingredientName.isBlank(),
-            modifier = Modifier
-                .weight(1f)
-                .padding(5.dp)
-        )
-        OutlinedTextField(
-            value = ingredientRowDataModel.ingredientAmount,
-            onValueChange = onIngredientAmountChange,
-            label = { Text("Amount") },
-            isError = ingredientRowDataModel.ingredientAmount.isBlank(),
-            modifier = Modifier
-                .weight(1f)
-                .padding(5.dp)
-
-        )
-        Icon(
-            imageVector = Icons.Filled.Close,
-            contentDescription = "Close icon",
-            modifier = Modifier
-                .padding(horizontal = 5.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = LocalIndication.current,
-                    onClick = {
-                        onIngredientRemove()
-                    }
-                )
-        )
-    }
-}
 
 @Composable
 private fun TopBar(onClickBackBtn: () -> Unit) {
