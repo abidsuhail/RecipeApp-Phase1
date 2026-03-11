@@ -1,6 +1,5 @@
 package com.abid.recipeapp.ui.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -35,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,10 +45,15 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
+import kotlinx.coroutines.launch
 
 data class IngredientRowDataModel(
     var ingredientName: String,
     var ingredientAmount: String
+)
+
+data class InstructionRowDataModel(
+    var instruction: String,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,15 +64,22 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
 
     var desc by rememberSaveable { mutableStateOf("") }
     var descError by remember { mutableStateOf<String?>(null) }
-
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
     var ingredientRowList by remember {
-        mutableStateOf<MutableList<IngredientRowDataModel>>(
+        mutableStateOf(
             mutableListOf(
                 IngredientRowDataModel("", "")
             )
         )
     }
-
+    var instructionsRowList by remember {
+        mutableStateOf(
+            mutableListOf(
+                InstructionRowDataModel("")
+            )
+        )
+    }
 
     val uiState by vm.uiState.observeAsState()
     val context = LocalContext.current
@@ -75,6 +87,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
         vm.loadRecipeCategories()
         vm.loadCuisines()
         vm.loadRecipeDifficulties()
+    }
+    LaunchedEffect(ingredientRowList.size + instructionsRowList.size) {
+        scrollState.animateScrollTo(scrollState.maxValue)
     }
     Scaffold(
         topBar = {
@@ -96,7 +111,7 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
             if (uiState?.errorMsg != null) {
                 ErrorStateBox(uiState?.errorMsg!!)
             }
-            Column(Modifier.verticalScroll(rememberScrollState())) {
+            Column(Modifier.verticalScroll(scrollState)) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = {
@@ -219,18 +234,13 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = LocalIndication.current,
                                 onClick = {
-                                    ingredientRowList =
-                                        (ingredientRowList + IngredientRowDataModel(
-                                            "",
-                                            ""
-                                        )).toMutableList()
-                                    Toast
-                                        .makeText(
-                                            context,
-                                            "added ${ingredientRowList.size}",
-                                            Toast.LENGTH_SHORT
-                                        )
-                                        .show()
+                                    coroutineScope.launch {
+                                        ingredientRowList =
+                                            (ingredientRowList + IngredientRowDataModel(
+                                                "",
+                                                ""
+                                            )).toMutableList()
+                                    }
                                 }
                             )
                     )
@@ -249,9 +259,48 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                                 it[index] = it[index].copy(ingredientAmount = newIngredientAmount)
                             }
                         },
-                        onIngredientRemove = { ingredientToRemove ->
+                        onIngredientRemove = {
                             ingredientRowList =
                                 ingredientRowList.filterIndexed { i, _ -> i != index }
+                                    .toMutableList()
+                        })
+                }
+                Spacer(Modifier.height(15.dp))
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Instructions")
+                    Icon(
+                        imageVector = Icons.Filled.AddCircle,
+                        contentDescription = "Add Icon",
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = LocalIndication.current,
+                                onClick = {
+                                    coroutineScope.launch {
+                                        instructionsRowList =
+                                            (instructionsRowList + InstructionRowDataModel(
+                                                "",
+                                            )).toMutableList()
+                                    }
+                                }
+                            )
+                    )
+                }
+                instructionsRowList.forEachIndexed { index, instruction ->
+                    InstructionRow(
+                        instructionRowDataModel = instruction,
+                        onInstructionChange = { newInstruction ->
+                            instructionsRowList = instructionsRowList.toMutableList().also {
+                                it[index] = it[index].copy(instruction = newInstruction)
+                            }
+                        },
+                        onInstructionRemove = {
+                            instructionsRowList =
+                                instructionsRowList.filterIndexed { i, _ -> i != index }
                                     .toMutableList()
                         })
                 }
@@ -262,11 +311,44 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
 }
 
 @Composable
+private fun InstructionRow(
+    instructionRowDataModel: InstructionRowDataModel,
+    onInstructionChange: (String) -> Unit,
+    onInstructionRemove: () -> Unit
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        OutlinedTextField(
+            value = instructionRowDataModel.instruction,
+            onValueChange = onInstructionChange,
+            label = { Text("Ingredient name") },
+            isError = instructionRowDataModel.instruction.isBlank(),
+            modifier = Modifier
+                .weight(1f)
+                .padding(5.dp)
+        )
+
+        Icon(
+            imageVector = Icons.Filled.Close,
+            contentDescription = "Close icon",
+            modifier = Modifier
+                .padding(horizontal = 5.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = LocalIndication.current,
+                    onClick = {
+                        onInstructionRemove()
+                    }
+                )
+        )
+    }
+}
+
+@Composable
 private fun IngredientRow(
     ingredientRowDataModel: IngredientRowDataModel,
     onIngredientNameChange: (String) -> Unit,
     onIngredientAmountChange: (String) -> Unit,
-    onIngredientRemove: (IngredientRowDataModel) -> Unit
+    onIngredientRemove: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
@@ -297,7 +379,7 @@ private fun IngredientRow(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = LocalIndication.current,
                     onClick = {
-                        onIngredientRemove(ingredientRowDataModel)
+                        onIngredientRemove()
                     }
                 )
         )
