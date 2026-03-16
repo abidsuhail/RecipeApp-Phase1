@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.abid.recipeapp.data.model.IngredientModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
@@ -53,14 +54,6 @@ import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
 import kotlinx.coroutines.launch
 
-data class IngredientRowDataModel(
-    var ingredientName: String,
-    var ingredientAmount: String
-)
-
-data class InstructionRowDataModel(
-    var instruction: String,
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,14 +73,14 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
     var ingredientRowList by remember {
         mutableStateOf(
             mutableListOf(
-                IngredientRowDataModel("", "")
+                IngredientModel("", "")
             )
         )
     }
     var instructionsRowList by remember {
         mutableStateOf(
             mutableListOf(
-                InstructionRowDataModel("")
+                ""
             )
         )
     }
@@ -293,7 +286,7 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                                 onClick = {
                                     coroutineScope.launch {
                                         ingredientRowList =
-                                            (ingredientRowList + IngredientRowDataModel(
+                                            (ingredientRowList + IngredientModel(
                                                 "",
                                                 ""
                                             )).toMutableList()
@@ -304,16 +297,16 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                 }
                 ingredientRowList.forEachIndexed { index, ingredient ->
                     IngredientRow(
-                        ingredientRowDataModel = ingredient,
+                        ingredientModel = ingredient,
                         onIngredientNameChange = { newIngredientName ->
                             ingredientRowList = ingredientRowList.toMutableList().also {
-                                it[index] = it[index].copy(ingredientName = newIngredientName)
+                                it[index] = it[index].copy(item = newIngredientName)
                             }
 
                         },
                         onIngredientAmountChange = { newIngredientAmount ->
                             ingredientRowList = ingredientRowList.toMutableList().also {
-                                it[index] = it[index].copy(ingredientAmount = newIngredientAmount)
+                                it[index] = it[index].copy(amount = newIngredientAmount)
                             }
                         },
                         onIngredientRemove = {
@@ -339,9 +332,7 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                                 onClick = {
                                     coroutineScope.launch {
                                         instructionsRowList =
-                                            (instructionsRowList + InstructionRowDataModel(
-                                                "",
-                                            )).toMutableList()
+                                            (instructionsRowList + "").toMutableList()
                                     }
                                 }
                             )
@@ -349,10 +340,10 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                 }
                 instructionsRowList.forEachIndexed { index, instruction ->
                     InstructionRow(
-                        instructionRowDataModel = instruction,
+                        instruction = instruction,
                         onInstructionChange = { newInstruction ->
                             instructionsRowList = instructionsRowList.toMutableList().also {
-                                it[index] = it[index].copy(instruction = newInstruction)
+                                it[index] = newInstruction
                             }
                         },
                         onInstructionRemove = {

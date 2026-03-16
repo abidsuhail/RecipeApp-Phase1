@@ -15,30 +15,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.abid.recipeapp.ui.screens.IngredientRowDataModel
+import com.abid.recipeapp.data.model.IngredientModel
 
 @Composable
 fun IngredientRow(
-    ingredientRowDataModel: IngredientRowDataModel,
+    ingredientModel: IngredientModel,
     onIngredientNameChange: (String) -> Unit,
     onIngredientAmountChange: (String) -> Unit,
     onIngredientRemove: () -> Unit
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
-            value = ingredientRowDataModel.ingredientName,
+            value = ingredientModel.item,
             onValueChange = onIngredientNameChange,
             label = { Text("Ingredient name") },
-            isError = ingredientRowDataModel.ingredientName.isBlank(),
+            isError = ingredientModel.item.isBlank(),
             modifier = Modifier
                 .weight(1f)
                 .padding(5.dp)
         )
         OutlinedTextField(
-            value = ingredientRowDataModel.ingredientAmount,
+            value = ingredientModel.amount,
             onValueChange = onIngredientAmountChange,
             label = { Text("Amount") },
-            isError = ingredientRowDataModel.ingredientAmount.isBlank(),
+            isError = ingredientModel.amount.isBlank(),
             modifier = Modifier
                 .weight(1f)
                 .padding(5.dp)

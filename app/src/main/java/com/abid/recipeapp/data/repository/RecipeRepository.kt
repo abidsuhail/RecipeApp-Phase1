@@ -63,4 +63,12 @@ class RecipeRepository @Inject constructor(
             recipe.toObject(RecipeModel::class.java)
         }
     }
+
+    suspend fun saveRecipe(id: String?): RecipeModel? {
+        if (id == null) return null
+        return withContext(Dispatchers.IO) {
+            val recipe = db.collection(RECIPES).document(id).get().await()
+            recipe.toObject(RecipeModel::class.java)
+        }
+    }
 }
