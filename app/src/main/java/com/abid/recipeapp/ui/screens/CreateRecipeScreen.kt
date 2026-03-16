@@ -46,6 +46,7 @@ import com.abid.recipeapp.data.model.IngredientModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
+import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.create_recipe.IngredientRow
@@ -58,18 +59,30 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackBtn: () -> Unit) {
+
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+
     var selectedCategory by rememberSaveable { mutableStateOf<RecipeCategoriesDataModel?>(null) }
     var selectedCuisines by rememberSaveable { mutableStateOf<RecipeCuisinesDataModel?>(null) }
     var selectedDiffLvl by rememberSaveable { mutableStateOf<RecipeDiffLvlDataModel?>(null) }
 
 
-    var name by rememberSaveable { mutableStateOf("") }
-    var nameError by remember { mutableStateOf<String?>(null) }
+    var recipeName by rememberSaveable { mutableStateOf("") }
+    var recipeNameError by remember { mutableStateOf<String?>(null) }
 
     var desc by rememberSaveable { mutableStateOf("") }
     var descError by remember { mutableStateOf<String?>(null) }
-    val scrollState = rememberScrollState()
-    val coroutineScope = rememberCoroutineScope()
+
+    var prepTime by rememberSaveable { mutableStateOf("") }
+    var prepTimeError by remember { mutableStateOf<String?>(null) }
+
+    var cookTimeMin by rememberSaveable { mutableStateOf("") }
+    var cookTimeMinError by remember { mutableStateOf<String?>(null) }
+
+    var servings by rememberSaveable { mutableStateOf("") }
+    var servingsError by remember { mutableStateOf<String?>(null) }
+
     var ingredientRowList by remember {
         mutableStateOf(
             mutableListOf(
@@ -100,7 +113,22 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    TopBar(onClickBackBtn)
+                    TopBar(onClickBackBtn = onClickBackBtn, onClickSubmitBtn = {
+                        vm.saveRecipe(
+                            RecipeModel(
+                                title = recipeName,
+                                description = desc,
+                                prepTime = prepTime.toInt(),
+                                cookTime = cookTimeMin.toInt(),
+                                servings = servings.toInt(),
+                                category = selectedCategory?.label!!,
+                                cuisine = selectedCuisines?.label!!,
+                                difficulty = selectedDiffLvl?.label!!,
+                                ingredients = ingredientRowList,
+                                instructions = instructionsRowList
+                            )
+                        )
+                    })
                 }
             )
         }
@@ -118,13 +146,13 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
             }
             Column(Modifier.verticalScroll(scrollState)) {
                 OutlinedTextField(
-                    value = name,
+                    value = recipeName,
                     onValueChange = {
-                        name = it
-                        nameError = if (it.isBlank()) "Recipe Title cannot be empty" else null
+                        recipeName = it
+                        recipeNameError = if (it.isBlank()) "Recipe Title cannot be empty" else null
                     },
                     label = { Text("Recipe Title") },
-                    isError = nameError != null,
+                    isError = recipeNameError != null,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 OutlinedTextField(
@@ -143,39 +171,39 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                 )
                 Row {
                     OutlinedTextField(
-                        value = desc,
+                        value = prepTime,
                         onValueChange = {
-                            desc = it
-                            descError =
+                            prepTime = it
+                            prepTimeError =
                                 if (it.isBlank()) "Description cannot be empty" else null
                         },
                         label = { Text("Prep Time(min)") },
-                        isError = descError != null,
+                        isError = prepTimeError != null,
                         modifier = Modifier
                             .weight(1f),
                     )
                     Spacer(Modifier.width(5.dp))
                     OutlinedTextField(
-                        value = desc,
+                        value = cookTimeMin,
                         onValueChange = {
-                            desc = it
-                            descError =
+                            cookTimeMin = it
+                            cookTimeMinError =
                                 if (it.isBlank()) "Description cannot be empty" else null
                         },
                         label = { Text("Cook Time(min)") },
-                        isError = descError != null,
+                        isError = cookTimeMinError != null,
                         modifier = Modifier
                             .weight(1f),
                     )
                 }
                 OutlinedTextField(
-                    value = name,
+                    value = servings,
                     onValueChange = {
-                        name = it
-                        nameError = if (it.isBlank()) "Recipe Title cannot be empty" else null
+                        servings = it
+                        servingsError = if (it.isBlank()) "Recipe Title cannot be empty" else null
                     },
                     label = { Text("Servings") },
-                    isError = nameError != null,
+                    isError = servingsError != null,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Spacer(Modifier.height(15.dp))
@@ -360,7 +388,7 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
 
 
 @Composable
-private fun TopBar(onClickBackBtn: () -> Unit) {
+private fun TopBar(onClickBackBtn: () -> Unit, onClickSubmitBtn: () -> Unit) {
     Box(
         Modifier
             .fillMaxWidth()
@@ -381,7 +409,12 @@ private fun TopBar(onClickBackBtn: () -> Unit) {
             Text("Create Recipe")
             Icon(
                 imageVector = Icons.Filled.ThumbUp,
-                contentDescription = "Back button"
+                contentDescription = "Back button",
+                modifier = Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = LocalIndication.current,
+                    onClick = onClickSubmitBtn
+                )
             )
         }
     }

@@ -10,6 +10,7 @@ import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CATEGORIES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CUISINES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_DIFFICULTY_LEVELS
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_INGREDIENTS_INST_TAB
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -64,11 +65,11 @@ class RecipeRepository @Inject constructor(
         }
     }
 
-    suspend fun saveRecipe(id: String?): RecipeModel? {
-        if (id == null) return null
+    suspend fun saveRecipe(recipeModel: RecipeModel): Task<Void> {
         return withContext(Dispatchers.IO) {
-            val recipe = db.collection(RECIPES).document(id).get().await()
-            recipe.toObject(RecipeModel::class.java)
+            val docRef = db.collection(RECIPES).document()
+            val recipe = recipeModel.copy(id = docRef.id)
+            docRef.set(recipe)
         }
     }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.ui.state.CreateRecipeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -64,6 +65,28 @@ class CreateRecipeViewModel @Inject constructor(
                     _uiState.value =
                         _uiState.value?.copy(isLoading = false, difficultiesList = data)
                 } else {
+                    _uiState.value =
+                        _uiState.value?.copy(
+                            isLoading = false,
+                            errorMsg = "Difficulty level not found"
+                        )
+                }
+            } catch (e: Exception) {
+                _uiState.value =
+                    _uiState.value?.copy(isLoading = false, errorMsg = e.message)
+            }
+        }
+    }
+
+    fun saveRecipe(recipeModel: RecipeModel) {
+        viewModelScope.launch {
+            try {
+                _uiState.value = _uiState.value?.copy(isLoading = true)
+                val listener = repository.saveRecipe(recipeModel)
+                listener.addOnSuccessListener {
+                    _uiState.value =
+                        _uiState.value?.copy(isLoading = false, savedRecipe = recipeModel)
+                }.addOnFailureListener {
                     _uiState.value =
                         _uiState.value?.copy(
                             isLoading = false,
