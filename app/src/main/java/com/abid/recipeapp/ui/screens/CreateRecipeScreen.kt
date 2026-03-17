@@ -1,5 +1,10 @@
 package com.abid.recipeapp.ui.screens
 
+import android.content.Context
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -9,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,10 +46,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.IngredientModel
+import com.abid.recipeapp.data.model.NutritionModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
@@ -113,6 +123,7 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
 
     val uiState by vm.uiState.observeAsState()
     val context = LocalContext.current
+
     LaunchedEffect(Unit) {
         vm.loadRecipeCategories()
         vm.loadCuisines()
@@ -138,7 +149,13 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                                 cuisine = selectedCuisines?.label!!,
                                 difficulty = selectedDiffLvl?.label!!,
                                 ingredients = ingredientRowList,
-                                instructions = instructionsRowList
+                                instructions = instructionsRowList,
+                                nutrition = NutritionModel(
+                                    calories = nutritionCalories.toInt(),
+                                    protein = nutritionProtein.toInt(),
+                                    carbs = nutritionCarbs.toInt(),
+                                    fat = nutritionFats.toInt()
+                                )
                             )
                         )
                     })
@@ -158,6 +175,7 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                 ErrorStateBox(uiState?.errorMsg!!)
             }
             Column(Modifier.verticalScroll(scrollState)) {
+                ImagePicker(context)
                 OutlinedTextField(
                     value = recipeName,
                     onValueChange = {
@@ -457,6 +475,56 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
     }
 }
 
+@Composable
+private fun ImagePicker(context: Context) {
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    // Gallery
+    val galleryLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri -> imageUri = uri }
+
+    // Camera
+    var cameraUri by remember { mutableStateOf<Uri?>(null) }
+    val cameraLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success -> if (success) imageUri = cameraUri }
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            cameraLauncher.launch(cameraUri!!)  // launch only after granted
+        } else {
+            Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+    // Gallery button
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = LocalIndication.current,
+                onClick = {
+                    galleryLauncher.launch("image/*")
+                }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        imageUri?.let {
+            AsyncImage(
+                model = it,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.FillBounds
+            )
+        }
+        Text(
+            "Click here to pick from gallery",
+            textAlign = TextAlign.Center
+        )
+    }
+}
 
 @Composable
 private fun TopBar(onClickBackBtn: () -> Unit, onClickSubmitBtn: () -> Unit) {
