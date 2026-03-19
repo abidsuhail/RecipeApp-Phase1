@@ -11,6 +11,7 @@ data class CreateRecipeUiState(
     var difficultiesList: List<RecipeDiffLvlDataModel> = emptyList(),
     var categoriesList: List<RecipeCategoriesDataModel> = emptyList(),
     var savedRecipe: RecipeModel? = null,
+    var uploadedImageUrl: String? = null,
     var errorMsg: String? = null
 )
 

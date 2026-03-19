@@ -1,5 +1,6 @@
 package com.abid.recipeapp.data.repository
 
+import android.net.Uri
 import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
@@ -12,9 +13,11 @@ import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_DIFFICULTY_L
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_INGREDIENTS_INST_TAB
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.UUID
 import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(
@@ -70,6 +73,23 @@ class RecipeRepository @Inject constructor(
             val docRef = db.collection(RECIPES).document()
             val recipe = recipeModel.copy(id = docRef.id)
             docRef.set(recipe)
+        }
+    }
+
+    suspend fun uploadImage(imageUri: Uri): String {
+        val storage = FirebaseStorage.getInstance()
+        val imageRef = storage.reference.child("recipe_images/${UUID.randomUUID()}.jpg")
+
+        return try {
+            // Upload the file
+            imageRef.putFile(imageUri).await()
+
+            // Get and return the download URL
+            val downloadUrl = imageRef.downloadUrl.await()
+            downloadUrl.toString()
+
+        } catch (e: Exception) {
+            throw Exception("Upload failed: ${e.message}")
         }
     }
 }

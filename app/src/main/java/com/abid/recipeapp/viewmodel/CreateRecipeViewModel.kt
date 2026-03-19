@@ -1,5 +1,6 @@
 package com.abid.recipeapp.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -78,19 +79,37 @@ class CreateRecipeViewModel @Inject constructor(
         }
     }
 
-    fun saveRecipe(recipeModel: RecipeModel) {
+    fun saveRecipe(recipeModel: RecipeModel, imageUri: Uri?) {
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value?.copy(isLoading = true)
+                if (imageUri == null) {
+                    _uiState.value =
+                        _uiState.value?.copy(
+                            isLoading = false,
+                            errorMsg = "Image uri is null"
+                        )
+                    return@launch
+                }
+                val uploadedImageUrl = repository.uploadImage(imageUri)
+                if (uploadedImageUrl.isNotBlank()) {
+                    recipeModel.image = uploadedImageUrl
+                } else {
+                    recipeModel.image = ""
+                }
                 val listener = repository.saveRecipe(recipeModel)
                 listener.addOnSuccessListener {
                     _uiState.value =
-                        _uiState.value?.copy(isLoading = false, savedRecipe = recipeModel)
+                        _uiState.value?.copy(
+                            isLoading = false,
+                            savedRecipe = recipeModel,
+                            uploadedImageUrl = uploadedImageUrl.ifBlank { null }
+                        )
                 }.addOnFailureListener {
                     _uiState.value =
                         _uiState.value?.copy(
                             isLoading = false,
-                            errorMsg = "Difficulty level not found"
+                            errorMsg = "Unable to save recipe"
                         )
                 }
             } catch (e: Exception) {
@@ -99,4 +118,5 @@ class CreateRecipeViewModel @Inject constructor(
             }
         }
     }
+
 }

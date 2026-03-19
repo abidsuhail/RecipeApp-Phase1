@@ -1,10 +1,6 @@
 package com.abid.recipeapp.ui.screens
 
-import android.content.Context
 import android.net.Uri
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,8 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -46,12 +39,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.IngredientModel
 import com.abid.recipeapp.data.model.NutritionModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
@@ -60,6 +50,8 @@ import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
+import com.abid.recipeapp.ui.components.create_recipe.CreateRecipeTopBar
+import com.abid.recipeapp.ui.components.create_recipe.ImagePicker
 import com.abid.recipeapp.ui.components.create_recipe.IngredientRow
 import com.abid.recipeapp.ui.components.create_recipe.InstructionRow
 import com.abid.recipeapp.ui.theme.Orange40
@@ -106,6 +98,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
     var nutritionFats by rememberSaveable { mutableStateOf("") }
     var nutritionFatsError by remember { mutableStateOf<String?>(null) }
 
+    var uploadedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+
     var ingredientRowList by remember {
         mutableStateOf(
             mutableListOf(
@@ -137,7 +132,7 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    TopBar(onClickBackBtn = onClickBackBtn, onClickSubmitBtn = {
+                    CreateRecipeTopBar(onClickBackBtn = onClickBackBtn, onClickSubmitBtn = {
                         vm.saveRecipe(
                             RecipeModel(
                                 title = recipeName,
@@ -156,7 +151,8 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                                     carbs = nutritionCarbs.toInt(),
                                     fat = nutritionFats.toInt()
                                 )
-                            )
+                            ),
+                            uploadedImageUri
                         )
                     })
                 }
@@ -174,8 +170,11 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
             if (uiState?.errorMsg != null) {
                 ErrorStateBox(uiState?.errorMsg!!)
             }
+
             Column(Modifier.verticalScroll(scrollState)) {
-                ImagePicker(context)
+                ImagePicker { uri ->
+                    uploadedImageUri = uri
+                }
                 OutlinedTextField(
                     value = recipeName,
                     onValueChange = {
@@ -471,90 +470,6 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                 }
 
             }
-        }
-    }
-}
-
-@Composable
-private fun ImagePicker(context: Context) {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    // Gallery
-    val galleryLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri -> imageUri = uri }
-
-    // Camera
-    var cameraUri by remember { mutableStateOf<Uri?>(null) }
-    val cameraLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.TakePicture()
-    ) { success -> if (success) imageUri = cameraUri }
-    val cameraPermissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        if (granted) {
-            cameraLauncher.launch(cameraUri!!)  // launch only after granted
-        } else {
-            Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
-        }
-    }
-    // Gallery button
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = LocalIndication.current,
-                onClick = {
-                    galleryLauncher.launch("image/*")
-                }
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        imageUri?.let {
-            AsyncImage(
-                model = it,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillBounds
-            )
-        }
-        Text(
-            "Click here to pick from gallery",
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
-private fun TopBar(onClickBackBtn: () -> Unit, onClickSubmitBtn: () -> Unit) {
-    Box(
-        Modifier
-            .fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                contentDescription = "Back button",
-                modifier = Modifier.clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = LocalIndication.current,
-                    onClick = onClickBackBtn
-                )
-            )
-            Text("Create Recipe")
-            Icon(
-                imageVector = Icons.Filled.ThumbUp,
-                contentDescription = "Back button",
-                modifier = Modifier.clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = LocalIndication.current,
-                    onClick = onClickSubmitBtn
-                )
-            )
         }
     }
 }

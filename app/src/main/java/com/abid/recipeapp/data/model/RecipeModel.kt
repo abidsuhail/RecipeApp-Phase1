@@ -8,7 +8,7 @@ data class RecipeModel(
     val id: String = "",
     val title: String = "",
     val description: String = "",
-    val image: String = "",
+    var image: String = "",
     val prepTime: Int = 0,
     val cookTime: Int = 0,
     val servings: Int = 0,
