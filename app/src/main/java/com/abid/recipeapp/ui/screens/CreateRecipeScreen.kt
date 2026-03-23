@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.IngredientModel
@@ -207,6 +209,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                             prepTimeError =
                                 if (it.isBlank()) "Description cannot be empty" else null
                         },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
                         label = { Text("Prep Time(min)") },
                         isError = prepTimeError != null,
                         modifier = Modifier
@@ -339,6 +344,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                         },
                         label = { Text("Calories") },
                         isError = nutritionCaloriesError != null,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
                         modifier = Modifier
                             .weight(1f)
                             .padding(5.dp)
@@ -350,6 +358,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                             nutritionProteinError =
                                 if (it.isBlank()) "Please enter the protein" else null
                         },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
                         label = { Text("Calories") },
                         isError = nutritionProteinError != null,
                         modifier = Modifier
@@ -367,6 +378,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                         },
                         label = { Text("Carbs") },
                         isError = nutritionCarbsError != null,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
                         modifier = Modifier
                             .weight(1f)
                             .padding(5.dp)
@@ -379,7 +393,11 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                                 if (it.isBlank()) "Please enter the fats" else null
                         },
                         label = { Text("Fats") },
+
                         isError = nutritionFatsError != null,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
                         modifier = Modifier
                             .weight(1f)
                             .padding(5.dp)

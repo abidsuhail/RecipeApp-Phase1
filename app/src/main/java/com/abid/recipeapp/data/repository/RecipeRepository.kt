@@ -11,14 +11,19 @@ import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CATEGORIES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CUISINES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_DIFFICULTY_LEVELS
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_INGREDIENTS_INST_TAB
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.util.UUID
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+
 
 class RecipeRepository @Inject constructor(
     private val db: FirebaseFirestore
@@ -77,19 +82,32 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun uploadImage(imageUri: Uri): String {
-        val storage = FirebaseStorage.getInstance()
-        val imageRef = storage.reference.child("recipe_images/${UUID.randomUUID()}.jpg")
+        return suspendCancellableCoroutine { continuation ->
+            MediaManager.get()
+                .upload(imageUri)
+                .unsigned("Abid_android")
+                .callback(object : UploadCallback {
 
-        return try {
-            // Upload the file
-            imageRef.putFile(imageUri).await()
+                    override fun onStart(requestId: String) {}
 
-            // Get and return the download URL
-            val downloadUrl = imageRef.downloadUrl.await()
-            downloadUrl.toString()
+                    override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
 
-        } catch (e: Exception) {
-            throw Exception("Upload failed: ${e.message}")
+                    override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                        val imageUrl = resultData["secure_url"] as? String
+                        if (imageUrl != null) {
+                            continuation.resume(imageUrl) // ✅ returns the URL
+                        } else {
+                            continuation.resumeWithException(Exception("Invalid image url"))
+                        }
+                    }
+
+                    override fun onError(requestId: String?, error: ErrorInfo) {
+                        continuation.resumeWithException(Exception(error.description)) // ✅ throws error
+                    }
+
+                    override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
+                })
+                .dispatch()
         }
     }
 }
