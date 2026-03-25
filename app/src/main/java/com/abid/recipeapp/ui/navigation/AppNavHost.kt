@@ -16,6 +16,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.abid.recipeapp.ui.navigation.NavHelper.getScreenByRoute
+import com.abid.recipeapp.ui.navigation.NavHelper.goToCreateHomeScreen
 import com.abid.recipeapp.ui.navigation.NavHelper.goToCreateRecipeScreen
 import com.abid.recipeapp.ui.navigation.NavHelper.goToRecipeDetailsScreen
 import com.abid.recipeapp.ui.screens.CreateRecipeScreen
@@ -99,9 +100,11 @@ private fun AppNavGraph(
         composable(
             route = NavHelper.Screen.CreateRecipeScreen.route,
         ) { backStackEntry ->
-            CreateRecipeScreen {
-                navController.popBackStack()
-            }
+            CreateRecipeScreen(
+                onClickBackBtn = { navController.popBackStack() },
+                handleGotoHomeScreen = {
+                    navController.goToCreateHomeScreen()
+                })
         }
     }
 }

@@ -64,4 +64,8 @@ object NavHelper {
     fun NavController.goToCreateRecipeScreen() {
         navigate(Screen.CreateRecipeScreen.route)
     }
+
+    fun NavController.goToCreateHomeScreen() {
+        navigate(Screen.HomeRecipeListScreen.route)
+    }
 }

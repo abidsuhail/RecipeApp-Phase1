@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.ui.state.CreateRecipeUiState
+import com.abid.recipeapp.ui.state.RecipeSaveState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -97,13 +98,16 @@ class CreateRecipeViewModel @Inject constructor(
                 } else {
                     recipeModel.image = ""
                 }
+                _uiState.value =
+                    _uiState.value?.copy(
+                        uploadedImageUrl = uploadedImageUrl.ifBlank { null }
+                    )
                 val listener = repository.saveRecipe(recipeModel)
                 listener.addOnSuccessListener {
                     _uiState.value =
                         _uiState.value?.copy(
                             isLoading = false,
-                            savedRecipe = recipeModel,
-                            uploadedImageUrl = uploadedImageUrl.ifBlank { null }
+                            recipeSaveState = RecipeSaveState.Success(recipeModel),
                         )
                 }.addOnFailureListener {
                     _uiState.value =

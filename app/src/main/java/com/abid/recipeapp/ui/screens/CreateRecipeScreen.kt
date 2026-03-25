@@ -35,7 +35,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +55,7 @@ import com.abid.recipeapp.ui.components.create_recipe.CreateRecipeTopBar
 import com.abid.recipeapp.ui.components.create_recipe.ImagePicker
 import com.abid.recipeapp.ui.components.create_recipe.IngredientRow
 import com.abid.recipeapp.ui.components.create_recipe.InstructionRow
+import com.abid.recipeapp.ui.state.RecipeSaveState
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
 import kotlinx.coroutines.launch
@@ -63,41 +63,45 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackBtn: () -> Unit) {
+fun CreateRecipeScreen(
+    vm: CreateRecipeViewModel = hiltViewModel(),
+    onClickBackBtn: () -> Unit,
+    handleGotoHomeScreen: () -> Unit
+) {
 
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
+    var isFirstRender by remember { mutableStateOf(true) }
+    var selectedCategory by remember { mutableStateOf<RecipeCategoriesDataModel?>(null) }
+    var selectedCuisines by remember { mutableStateOf<RecipeCuisinesDataModel?>(null) }
+    var selectedDiffLvl by remember { mutableStateOf<RecipeDiffLvlDataModel?>(null) }
 
-    var selectedCategory by rememberSaveable { mutableStateOf<RecipeCategoriesDataModel?>(null) }
-    var selectedCuisines by rememberSaveable { mutableStateOf<RecipeCuisinesDataModel?>(null) }
-    var selectedDiffLvl by rememberSaveable { mutableStateOf<RecipeDiffLvlDataModel?>(null) }
 
-
-    var recipeName by rememberSaveable { mutableStateOf("") }
+    var recipeName by remember { mutableStateOf("") }
     var recipeNameError by remember { mutableStateOf<String?>(null) }
 
-    var desc by rememberSaveable { mutableStateOf("") }
+    var desc by remember { mutableStateOf("") }
     var descError by remember { mutableStateOf<String?>(null) }
 
-    var prepTime by rememberSaveable { mutableStateOf("") }
+    var prepTime by remember { mutableStateOf("") }
     var prepTimeError by remember { mutableStateOf<String?>(null) }
 
-    var cookTimeMin by rememberSaveable { mutableStateOf("") }
+    var cookTimeMin by remember { mutableStateOf("") }
     var cookTimeMinError by remember { mutableStateOf<String?>(null) }
 
-    var servings by rememberSaveable { mutableStateOf("") }
+    var servings by remember { mutableStateOf("") }
     var servingsError by remember { mutableStateOf<String?>(null) }
 
-    var nutritionCalories by rememberSaveable { mutableStateOf("") }
+    var nutritionCalories by remember { mutableStateOf("") }
     var nutritionCaloriesError by remember { mutableStateOf<String?>(null) }
 
-    var nutritionProtein by rememberSaveable { mutableStateOf("") }
+    var nutritionProtein by remember { mutableStateOf("") }
     var nutritionProteinError by remember { mutableStateOf<String?>(null) }
 
-    var nutritionCarbs by rememberSaveable { mutableStateOf("") }
+    var nutritionCarbs by remember { mutableStateOf("") }
     var nutritionCarbsError by remember { mutableStateOf<String?>(null) }
 
-    var nutritionFats by rememberSaveable { mutableStateOf("") }
+    var nutritionFats by remember { mutableStateOf("") }
     var nutritionFatsError by remember { mutableStateOf<String?>(null) }
 
     var uploadedImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -127,6 +131,10 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
         vm.loadRecipeDifficulties()
     }
     LaunchedEffect(ingredientRowList.size + instructionsRowList.size) {
+        if (isFirstRender) {
+            isFirstRender = false
+            return@LaunchedEffect
+        }
         scrollState.animateScrollTo(scrollState.maxValue)
     }
 
@@ -171,6 +179,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
             }
             if (uiState?.errorMsg != null) {
                 ErrorStateBox(uiState?.errorMsg!!)
+            }
+            if (uiState?.recipeSaveState is RecipeSaveState.Success) {
+                handleGotoHomeScreen()
             }
 
             Column(Modifier.verticalScroll(scrollState)) {
@@ -225,6 +236,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                             cookTimeMinError =
                                 if (it.isBlank()) "Description cannot be empty" else null
                         },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
                         label = { Text("Cook Time(min)") },
                         isError = cookTimeMinError != null,
                         modifier = Modifier
@@ -238,6 +252,9 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                         servingsError = if (it.isBlank()) "Recipe Title cannot be empty" else null
                     },
                     label = { Text("Servings") },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number
+                    ),
                     isError = servingsError != null,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -361,7 +378,7 @@ fun CreateRecipeScreen(vm: CreateRecipeViewModel = hiltViewModel(), onClickBackB
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
                         ),
-                        label = { Text("Calories") },
+                        label = { Text("Protein") },
                         isError = nutritionProteinError != null,
                         modifier = Modifier
                             .weight(1f)
