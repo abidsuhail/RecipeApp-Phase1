@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.abid.recipeapp.data.model.NutritionModel
+import com.abid.recipeapp.data.model.RecipeDiffLvl
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.ui.state.CreateRecipeUiState
@@ -20,6 +22,37 @@ class CreateRecipeViewModel @Inject constructor(
 
     private val _uiState = MutableLiveData(CreateRecipeUiState(isLoading = true))
     val uiState: LiveData<CreateRecipeUiState> = _uiState
+
+    private fun updateRecipe(update: RecipeModel.() -> RecipeModel) {
+        _uiState.value = _uiState.value?.let { state ->
+            state.copy(recipeModel = state.recipeModel.update())
+        }
+    }
+
+    private fun updateNutrition(update: NutritionModel.() -> NutritionModel) = updateRecipe {
+        copy(nutrition = nutrition.update())
+    }
+
+    fun onTitleChange(value: String) = updateRecipe { copy(title = value) }
+    fun onDescriptionChange(value: String) = updateRecipe { copy(description = value) }
+    fun onCategoryChange(value: String) = updateRecipe { copy(category = value) }
+    fun onCuisineChange(value: String) = updateRecipe { copy(cuisine = value) }
+
+    fun onPrepTimeChange(value: String) = updateRecipe { copy(prepTime = value.toIntOrNull() ?: 0) }
+    fun onCookTimeChange(value: String) = updateRecipe { copy(cookTime = value.toIntOrNull() ?: 0) }
+    fun onServingsChange(value: String) = updateRecipe { copy(servings = value.toIntOrNull() ?: 0) }
+
+    fun onDifficultyChange(value: RecipeDiffLvl) = updateRecipe { copy(difficulty = value) }
+
+
+    fun onCaloriesChange(value: String) =
+        updateNutrition { copy(calories = value.toIntOrNull() ?: 0) }
+
+    fun onProteinChange(value: String) =
+        updateNutrition { copy(protein = value.toIntOrNull() ?: 0) }
+
+    fun onCarbsChange(value: String) = updateNutrition { copy(carbs = value.toIntOrNull() ?: 0) }
+    fun onFatChange(value: String) = updateNutrition { copy(fat = value.toIntOrNull() ?: 0) }
 
 
     fun loadRecipeCategories() {

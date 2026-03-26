@@ -6,15 +6,15 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class RecipeModel(
     val id: String = "",
-    val title: String = "",
-    val description: String = "",
+    var title: String = "",
+    var description: String = "",
     var image: String = "",
     val prepTime: Int = 0,
     val cookTime: Int = 0,
     val servings: Int = 0,
-    val difficulty: RecipeDiffLvl = RecipeDiffLvl.EASY,  // ⚠️ Change enum → String
-    val category: String = "",
-    val cuisine: String = "",
+    var difficulty: RecipeDiffLvl = RecipeDiffLvl.EASY,  // ⚠️ Change enum → String
+    var category: String = "",
+    var cuisine: String = "",
     val author: String = "",
     val createdAt: String = "",
     val tags: List<String> = emptyList(),

@@ -44,11 +44,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.IngredientModel
-import com.abid.recipeapp.data.model.NutritionModel
-import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
-import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
-import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
-import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.create_recipe.CreateRecipeTopBar
@@ -72,40 +67,17 @@ fun CreateRecipeScreen(
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     var isFirstRender by remember { mutableStateOf(true) }
-    var selectedCategory by remember { mutableStateOf<RecipeCategoriesDataModel?>(null) }
-    var selectedCuisines by remember { mutableStateOf<RecipeCuisinesDataModel?>(null) }
-    var selectedDiffLvl by remember { mutableStateOf<RecipeDiffLvlDataModel?>(null) }
 
-
-    var recipeName by remember { mutableStateOf("") }
     var recipeNameError by remember { mutableStateOf<String?>(null) }
-
-    var desc by remember { mutableStateOf("") }
     var descError by remember { mutableStateOf<String?>(null) }
-
-    var prepTime by remember { mutableStateOf("") }
     var prepTimeError by remember { mutableStateOf<String?>(null) }
-
-    var cookTimeMin by remember { mutableStateOf("") }
     var cookTimeMinError by remember { mutableStateOf<String?>(null) }
-
-    var servings by remember { mutableStateOf("") }
     var servingsError by remember { mutableStateOf<String?>(null) }
-
-    var nutritionCalories by remember { mutableStateOf("") }
     var nutritionCaloriesError by remember { mutableStateOf<String?>(null) }
-
-    var nutritionProtein by remember { mutableStateOf("") }
     var nutritionProteinError by remember { mutableStateOf<String?>(null) }
-
-    var nutritionCarbs by remember { mutableStateOf("") }
     var nutritionCarbsError by remember { mutableStateOf<String?>(null) }
-
-    var nutritionFats by remember { mutableStateOf("") }
     var nutritionFatsError by remember { mutableStateOf<String?>(null) }
-
     var uploadedImageUri by remember { mutableStateOf<Uri?>(null) }
-
 
     var ingredientRowList by remember {
         mutableStateOf(
@@ -144,24 +116,7 @@ fun CreateRecipeScreen(
                 title = {
                     CreateRecipeTopBar(onClickBackBtn = onClickBackBtn, onClickSubmitBtn = {
                         vm.saveRecipe(
-                            RecipeModel(
-                                title = recipeName,
-                                description = desc,
-                                prepTime = prepTime.toInt(),
-                                cookTime = cookTimeMin.toInt(),
-                                servings = servings.toInt(),
-                                category = selectedCategory?.label!!,
-                                cuisine = selectedCuisines?.label!!,
-                                difficulty = selectedDiffLvl?.label!!,
-                                ingredients = ingredientRowList,
-                                instructions = instructionsRowList,
-                                nutrition = NutritionModel(
-                                    calories = nutritionCalories.toInt(),
-                                    protein = nutritionProtein.toInt(),
-                                    carbs = nutritionCarbs.toInt(),
-                                    fat = nutritionFats.toInt()
-                                )
-                            ),
+                            uiState!!.recipeModel,
                             uploadedImageUri
                         )
                     })
@@ -189,9 +144,9 @@ fun CreateRecipeScreen(
                     uploadedImageUri = uri
                 }
                 OutlinedTextField(
-                    value = recipeName,
+                    value = uiState!!.recipeModel.title,
                     onValueChange = {
-                        recipeName = it
+                        vm.onTitleChange(it)
                         recipeNameError = if (it.isBlank()) "Recipe Title cannot be empty" else null
                     },
                     label = { Text("Recipe Title") },
@@ -199,9 +154,9 @@ fun CreateRecipeScreen(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 OutlinedTextField(
-                    value = desc,
+                    value = uiState!!.recipeModel.description,
                     onValueChange = {
-                        desc = it
+                        vm.onDescriptionChange(it)
                         descError = if (it.isBlank()) "Description cannot be empty" else null
                     },
                     label = { Text("Description") },
@@ -214,9 +169,9 @@ fun CreateRecipeScreen(
                 )
                 Row {
                     OutlinedTextField(
-                        value = prepTime,
+                        value = uiState!!.recipeModel.prepTime.toString(),
                         onValueChange = {
-                            prepTime = it
+                            vm.onPrepTimeChange(it)
                             prepTimeError =
                                 if (it.isBlank()) "Description cannot be empty" else null
                         },
@@ -230,9 +185,9 @@ fun CreateRecipeScreen(
                     )
                     Spacer(Modifier.width(5.dp))
                     OutlinedTextField(
-                        value = cookTimeMin,
+                        value = uiState!!.recipeModel.cookTime.toString(),
                         onValueChange = {
-                            cookTimeMin = it
+                            vm.onCookTimeChange(it)
                             cookTimeMinError =
                                 if (it.isBlank()) "Description cannot be empty" else null
                         },
@@ -246,9 +201,9 @@ fun CreateRecipeScreen(
                     )
                 }
                 OutlinedTextField(
-                    value = servings,
+                    value = uiState!!.recipeModel.servings.toString(),
                     onValueChange = {
-                        servings = it
+                        vm.onServingsChange(it)
                         servingsError = if (it.isBlank()) "Recipe Title cannot be empty" else null
                     },
                     label = { Text("Servings") },
@@ -270,7 +225,7 @@ fun CreateRecipeScreen(
                     uiState?.categoriesList?.forEach { item ->
                         Card(
                             colors = CardDefaults.cardColors(
-                                containerColor = if (item == selectedCategory) {
+                                containerColor = if (item.label == uiState!!.recipeModel.category) {
                                     Orange40
                                 } else {
                                     Color.Unspecified
@@ -280,7 +235,7 @@ fun CreateRecipeScreen(
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() },
                                 onClick = {
-                                    selectedCategory = item
+                                    vm.onCategoryChange(item.label)
                                 }
                             )
                         ) {
@@ -301,7 +256,7 @@ fun CreateRecipeScreen(
                     uiState?.cuisinesList?.forEach { item ->
                         Card(
                             colors = CardDefaults.cardColors(
-                                containerColor = if (item == selectedCuisines) {
+                                containerColor = if (item.label == uiState!!.recipeModel.cuisine) {
                                     Orange40
                                 } else {
                                     Color.Unspecified
@@ -311,7 +266,8 @@ fun CreateRecipeScreen(
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() },
                                 onClick = {
-                                    selectedCuisines = item
+                                    vm.onCuisineChange(item.label)
+
                                 }
                             )
                         ) {
@@ -331,7 +287,7 @@ fun CreateRecipeScreen(
                     uiState?.difficultiesList?.forEach { item ->
                         Card(
                             colors = CardDefaults.cardColors(
-                                containerColor = if (item == selectedDiffLvl) {
+                                containerColor = if (item.label.name == uiState!!.recipeModel.difficulty.name) {
                                     Orange40
                                 } else {
                                     Color.Unspecified
@@ -341,7 +297,7 @@ fun CreateRecipeScreen(
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() },
                                 onClick = {
-                                    selectedDiffLvl = item
+                                    vm.onDifficultyChange(item.label)
                                 }
                             )
                         ) {
@@ -353,9 +309,9 @@ fun CreateRecipeScreen(
                 Text("Nutrition")
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(
-                        value = nutritionCalories,
+                        value = uiState!!.recipeModel.nutrition.calories.toString(),
                         onValueChange = {
-                            nutritionCalories = it
+                            vm.onCaloriesChange(it)
                             nutritionCaloriesError =
                                 if (it.isBlank()) "Please enter the calories" else null
                         },
@@ -369,9 +325,9 @@ fun CreateRecipeScreen(
                             .padding(5.dp)
                     )
                     OutlinedTextField(
-                        value = nutritionProtein,
+                        value = uiState!!.recipeModel.nutrition.protein.toString(),
                         onValueChange = {
-                            nutritionProtein = it
+                            vm.onProteinChange(it)
                             nutritionProteinError =
                                 if (it.isBlank()) "Please enter the protein" else null
                         },
@@ -387,9 +343,9 @@ fun CreateRecipeScreen(
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(
-                        value = nutritionCarbs,
+                        value = uiState!!.recipeModel.nutrition.carbs.toString(),
                         onValueChange = {
-                            nutritionCarbs = it
+                            vm.onCarbsChange(it)
                             nutritionCarbsError =
                                 if (it.isBlank()) "Please enter the carbs" else null
                         },
@@ -403,9 +359,9 @@ fun CreateRecipeScreen(
                             .padding(5.dp)
                     )
                     OutlinedTextField(
-                        value = nutritionFats,
+                        value = uiState!!.recipeModel.nutrition.fat.toString(),
                         onValueChange = {
-                            nutritionFats = it
+                            vm.onFatChange(it)
                             nutritionFatsError =
                                 if (it.isBlank()) "Please enter the fats" else null
                         },
