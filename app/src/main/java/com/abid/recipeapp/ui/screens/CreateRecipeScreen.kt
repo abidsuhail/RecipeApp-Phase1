@@ -39,11 +39,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.abid.recipeapp.data.model.IngredientModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.create_recipe.CreateRecipeTopBar
@@ -53,7 +51,6 @@ import com.abid.recipeapp.ui.components.create_recipe.InstructionRow
 import com.abid.recipeapp.ui.state.RecipeSaveState
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,30 +76,13 @@ fun CreateRecipeScreen(
     var nutritionFatsError by remember { mutableStateOf<String?>(null) }
     var uploadedImageUri by remember { mutableStateOf<Uri?>(null) }
 
-    var ingredientRowList by remember {
-        mutableStateOf(
-            mutableListOf(
-                IngredientModel("", "")
-            )
-        )
-    }
-    var instructionsRowList by remember {
-        mutableStateOf(
-            mutableListOf(
-                ""
-            )
-        )
-    }
-
     val uiState by vm.uiState.observeAsState()
-    val context = LocalContext.current
-
     LaunchedEffect(Unit) {
         vm.loadRecipeCategories()
         vm.loadCuisines()
         vm.loadRecipeDifficulties()
     }
-    LaunchedEffect(ingredientRowList.size + instructionsRowList.size) {
+    LaunchedEffect(uiState!!.recipeModel.instructions.size + uiState!!.recipeModel.ingredients.size) {
         if (isFirstRender) {
             isFirstRender = false
             return@LaunchedEffect
@@ -391,35 +371,23 @@ fun CreateRecipeScreen(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = LocalIndication.current,
                                 onClick = {
-                                    coroutineScope.launch {
-                                        ingredientRowList =
-                                            (ingredientRowList + IngredientModel(
-                                                "",
-                                                ""
-                                            )).toMutableList()
-                                    }
+                                    vm.onIngredientAdd()
                                 }
                             )
                     )
                 }
-                ingredientRowList.forEachIndexed { index, ingredient ->
+                uiState!!.recipeModel.ingredients.forEachIndexed { index, ingredient ->
                     IngredientRow(
                         ingredientModel = ingredient,
                         onIngredientNameChange = { newIngredientName ->
-                            ingredientRowList = ingredientRowList.toMutableList().also {
-                                it[index] = it[index].copy(item = newIngredientName)
-                            }
+                            vm.onIngredientItemChange(index, newIngredientName)
 
                         },
                         onIngredientAmountChange = { newIngredientAmount ->
-                            ingredientRowList = ingredientRowList.toMutableList().also {
-                                it[index] = it[index].copy(amount = newIngredientAmount)
-                            }
+                            vm.onIngredientAmountChange(index, newIngredientAmount)
                         },
                         onIngredientRemove = {
-                            ingredientRowList =
-                                ingredientRowList.filterIndexed { i, _ -> i != index }
-                                    .toMutableList()
+                            vm.onIngredientRemove(index)
                         })
                 }
                 Spacer(Modifier.height(15.dp))
@@ -437,26 +405,19 @@ fun CreateRecipeScreen(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = LocalIndication.current,
                                 onClick = {
-                                    coroutineScope.launch {
-                                        instructionsRowList =
-                                            (instructionsRowList + "").toMutableList()
-                                    }
+                                    vm.onInstructionAdd()
                                 }
                             )
                     )
                 }
-                instructionsRowList.forEachIndexed { index, instruction ->
+                uiState!!.recipeModel.instructions.forEachIndexed { index, instruction ->
                     InstructionRow(
                         instruction = instruction,
                         onInstructionChange = { newInstruction ->
-                            instructionsRowList = instructionsRowList.toMutableList().also {
-                                it[index] = newInstruction
-                            }
+                            vm.onInstructionChange(index, newInstruction)
                         },
                         onInstructionRemove = {
-                            instructionsRowList =
-                                instructionsRowList.filterIndexed { i, _ -> i != index }
-                                    .toMutableList()
+                            vm.onInstructionRemove(index)
                         })
                 }
 

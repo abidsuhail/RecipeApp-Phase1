@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.abid.recipeapp.data.model.IngredientModel
 import com.abid.recipeapp.data.model.NutritionModel
 import com.abid.recipeapp.data.model.RecipeDiffLvl
 import com.abid.recipeapp.data.model.RecipeModel
@@ -53,7 +54,37 @@ class CreateRecipeViewModel @Inject constructor(
 
     fun onCarbsChange(value: String) = updateNutrition { copy(carbs = value.toIntOrNull() ?: 0) }
     fun onFatChange(value: String) = updateNutrition { copy(fat = value.toIntOrNull() ?: 0) }
+    fun onInstructionAdd() = updateRecipe {
+        copy(instructions = instructions + "")
+    }
 
+    fun onInstructionRemove(index: Int) = updateRecipe {
+        copy(instructions = instructions.toMutableList().also { it.removeAt(index) })
+    }
+
+    fun onInstructionChange(index: Int, value: String) = updateRecipe {
+        copy(instructions = instructions.toMutableList().also { it[index] = value })
+    }
+
+    fun onIngredientAdd() = updateRecipe {
+        copy(ingredients = ingredients + IngredientModel())
+    }
+
+    fun onIngredientRemove(index: Int) = updateRecipe {
+        copy(ingredients = ingredients.toMutableList().also { it.removeAt(index) })
+    }
+
+    fun onIngredientItemChange(index: Int, value: String) = updateRecipe {
+        copy(ingredients = ingredients.toMutableList().also {
+            it[index] = it[index].copy(item = value)
+        })
+    }
+
+    fun onIngredientAmountChange(index: Int, value: String) = updateRecipe {
+        copy(ingredients = ingredients.toMutableList().also {
+            it[index] = it[index].copy(amount = value)
+        })
+    }
 
     fun loadRecipeCategories() {
         viewModelScope.launch {
