@@ -15,17 +15,20 @@ class RecipeListViewModel @Inject constructor(
     private val repository: RecipeRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableLiveData<RecipeListUiState>(RecipeListUiState.Loading)
-    val uiState: LiveData<RecipeListUiState> = _uiState
+    private val _recipeListState = MutableLiveData<RecipeListUiState>(RecipeListUiState.Loading)
+    val recipeListState: LiveData<RecipeListUiState> = _recipeListState
+
+    private val _categoriesState = MutableLiveData<RecipeListUiState>(RecipeListUiState.Loading)
+    val categoriesState: LiveData<RecipeListUiState> = _categoriesState
 
     fun loadAllRecipes() {
         viewModelScope.launch {
             try {
-                _uiState.value = RecipeListUiState.Loading
+                _recipeListState.value = RecipeListUiState.Loading
                 val data = repository.getAllRecipes()
-                _uiState.value = RecipeListUiState.RecipeListSuccess(data)
+                _recipeListState.value = RecipeListUiState.RecipeListSuccess(data)
             } catch (e: Exception) {
-                _uiState.value =
+                _recipeListState.value =
                     RecipeListUiState.Error(e.message ?: "There are no recipes available!")
             }
         }
@@ -34,11 +37,11 @@ class RecipeListViewModel @Inject constructor(
     fun loadRecipeCategories() {
         viewModelScope.launch {
             try {
-                _uiState.value = RecipeListUiState.Loading
+                _categoriesState.value = RecipeListUiState.Loading
                 val data = repository.getRecipeCategories()
-                _uiState.value = RecipeListUiState.RecipeCategoriesSuccess(data)
+                _categoriesState.value = RecipeListUiState.RecipeCategoriesSuccess(data)
             } catch (e: Exception) {
-                _uiState.value =
+                _categoriesState.value =
                     RecipeListUiState.Error(e.message ?: "There are no recipes available!")
             }
         }

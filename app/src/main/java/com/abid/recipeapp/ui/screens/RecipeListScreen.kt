@@ -47,7 +47,9 @@ fun RecipeListScreen(
     onClickRecipeItem: (RecipeModel) -> Unit,
     onClickAddRecipe: () -> Unit
 ) {
-    val state by recipeListViewModel.uiState.observeAsState()
+    val recipeListState by recipeListViewModel.recipeListState.observeAsState()
+    val categoriesListState by recipeListViewModel.categoriesState.observeAsState()
+
     LaunchedEffect(Unit) {
         recipeListViewModel.loadAllRecipes()
         recipeListViewModel.loadRecipeCategories()
@@ -55,10 +57,10 @@ fun RecipeListScreen(
     Box() {
         Column(modifier = Modifier.padding(top = 10.dp)) {
             RecipeListHeader(onClickAddRecipe)
-            RecipeCategoriesList(state) { recipeCat ->
+            RecipeCategoriesList(categoriesListState) { recipeCat ->
 
             }
-            RecipeList(state, onClickRecipeItem)
+            RecipeList(recipeListState, onClickRecipeItem)
         }
     }
 }
@@ -158,9 +160,7 @@ private fun RecipeList(
             }
         }
 
-        else -> {
-            ErrorStateBox("Something went wrong!")
-
-        }
+        is RecipeListUiState.RecipeCategoriesSuccess -> TODO()
+        null -> TODO()
     }
 }
