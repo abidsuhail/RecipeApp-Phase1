@@ -47,8 +47,7 @@ fun RecipeListScreen(
     onClickRecipeItem: (RecipeModel) -> Unit,
     onClickAddRecipe: () -> Unit
 ) {
-    val recipeListState by recipeListViewModel.recipeListState.observeAsState()
-    val categoriesListState by recipeListViewModel.categoriesState.observeAsState()
+    val recipeListState by recipeListViewModel.state.observeAsState()
 
     LaunchedEffect(Unit) {
         recipeListViewModel.loadAllRecipes()
@@ -57,7 +56,7 @@ fun RecipeListScreen(
     Box() {
         Column(modifier = Modifier.padding(top = 10.dp)) {
             RecipeListHeader(onClickAddRecipe)
-            RecipeCategoriesList(categoriesListState) { recipeCat ->
+            RecipeCategoriesList(recipeListState) { recipeCat ->
 
             }
             RecipeList(recipeListState, onClickRecipeItem)
@@ -70,7 +69,7 @@ private fun RecipeCategoriesList(
     state: RecipeListUiState?,
     onClickRecipeCat: (RecipeCategoriesDataModel) -> Unit
 ) {
-    if (state is RecipeListUiState.RecipeCategoriesSuccess) {
+    if (state?.recipesCategories?.isNotEmpty() == true) {
         val recipeCategories = state.recipesCategories
         LazyRow {
             items(items = recipeCategories, key = { recipeCat -> recipeCat.id }) { recipeCat ->
@@ -132,35 +131,26 @@ private fun RecipeList(
     onClickRecipeItem: (RecipeModel) -> Unit,
 ) {
 
-    when (state) {
-        is RecipeListUiState.Loading -> {
-            LoadingStateBox()
-        }
-
-        is RecipeListUiState.Error -> {
-            ErrorStateBox(state.message)
-        }
-
-        is RecipeListUiState.RecipeListSuccess -> {
-            val recipes = state.recipes
-            LazyColumn {
-                items(items = recipes, key = { recipe -> recipe.id }) { recipe ->
-                    Box(
-                        modifier = Modifier.clickable(
-                            onClick = {
-                                onClickRecipeItem(recipe)
-                            },
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = LocalIndication.current,
-                        )
-                    ) {
-                        RecipeCard(recipe)
-                    }
+    if (state?.isLoading == true) {
+        LoadingStateBox()
+    } else if (!state?.errorMsg.isNullOrBlank()) {
+        ErrorStateBox(state!!.errorMsg!!)
+    } else if (state?.recipeList?.isNotEmpty() == true) {
+        LazyColumn {
+            items(items = state.recipeList, key = { recipe -> recipe.id }) { recipe ->
+                Box(
+                    modifier = Modifier.clickable(
+                        onClick = {
+                            onClickRecipeItem(recipe)
+                        },
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = LocalIndication.current,
+                    )
+                ) {
+                    RecipeCard(recipe)
                 }
             }
         }
-
-        is RecipeListUiState.RecipeCategoriesSuccess -> TODO()
-        null -> TODO()
     }
+
 }

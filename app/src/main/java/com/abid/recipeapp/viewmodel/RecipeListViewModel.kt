@@ -15,21 +15,17 @@ class RecipeListViewModel @Inject constructor(
     private val repository: RecipeRepository
 ) : ViewModel() {
 
-    private val _recipeListState = MutableLiveData<RecipeListUiState>(RecipeListUiState.Loading)
-    val recipeListState: LiveData<RecipeListUiState> = _recipeListState
-
-    private val _categoriesState = MutableLiveData<RecipeListUiState>(RecipeListUiState.Loading)
-    val categoriesState: LiveData<RecipeListUiState> = _categoriesState
+    private val _state = MutableLiveData(RecipeListUiState(isLoading = true))
+    val state: LiveData<RecipeListUiState> = _state
 
     fun loadAllRecipes() {
         viewModelScope.launch {
             try {
-                _recipeListState.value = RecipeListUiState.Loading
+                _state.value = _state.value?.copy(isLoading = true)
                 val data = repository.getAllRecipes()
-                _recipeListState.value = RecipeListUiState.RecipeListSuccess(data)
+                _state.value = _state.value?.copy(recipeList = data, isLoading = false)
             } catch (e: Exception) {
-                _recipeListState.value =
-                    RecipeListUiState.Error(e.message ?: "There are no recipes available!")
+                _state.value = _state.value?.copy(errorMsg = e.message)
             }
         }
     }
@@ -37,12 +33,11 @@ class RecipeListViewModel @Inject constructor(
     fun loadRecipeCategories() {
         viewModelScope.launch {
             try {
-                _categoriesState.value = RecipeListUiState.Loading
+                _state.value = _state.value?.copy(isLoading = true)
                 val data = repository.getRecipeCategories()
-                _categoriesState.value = RecipeListUiState.RecipeCategoriesSuccess(data)
+                _state.value = _state.value?.copy(recipesCategories = data, isLoading = false)
             } catch (e: Exception) {
-                _categoriesState.value =
-                    RecipeListUiState.Error(e.message ?: "There are no recipes available!")
+                _state.value = _state.value?.copy(errorMsg = e.message)
             }
         }
     }
