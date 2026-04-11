@@ -141,6 +141,8 @@ private fun RecipeList(
                 }
             }
         }
+    } else if (state?.recipeList?.isEmpty() == true) {
+        ErrorStateBox("Recipe not found")
     }
 
 }
