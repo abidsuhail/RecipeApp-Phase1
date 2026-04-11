@@ -5,10 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.abid.recipeapp.data.model.IngredientModel
-import com.abid.recipeapp.data.model.NutritionModel
+import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
+import com.abid.recipeapp.data.model.IngredientFormStateModel
+import com.abid.recipeapp.data.model.NutritionFormStateModel
 import com.abid.recipeapp.data.model.RecipeDiffLvl
-import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.ui.state.CreateRecipeUiState
 import com.abid.recipeapp.ui.state.RecipeSaveState
@@ -24,15 +24,16 @@ class CreateRecipeViewModel @Inject constructor(
     private val _uiState = MutableLiveData(CreateRecipeUiState(isLoading = true))
     val uiState: LiveData<CreateRecipeUiState> = _uiState
 
-    private fun updateRecipe(update: RecipeModel.() -> RecipeModel) {
+    private fun updateRecipe(update: CreateRecipeFormStateModel.() -> CreateRecipeFormStateModel) {
         _uiState.value = _uiState.value?.let { state ->
             state.copy(recipeModel = state.recipeModel.update())
         }
     }
 
-    private fun updateNutrition(update: NutritionModel.() -> NutritionModel) = updateRecipe {
-        copy(nutrition = nutrition.update())
-    }
+    private fun updateNutrition(update: NutritionFormStateModel.() -> NutritionFormStateModel) =
+        updateRecipe {
+            copy(nutrition = nutrition.update())
+        }
 
     fun onTitleChange(value: String) = updateRecipe { copy(title = value) }
     fun onDescriptionChange(value: String) = updateRecipe { copy(description = value) }
@@ -67,7 +68,7 @@ class CreateRecipeViewModel @Inject constructor(
     }
 
     fun onIngredientAdd() = updateRecipe {
-        copy(ingredients = ingredients + IngredientModel())
+        copy(ingredients = ingredients + IngredientFormStateModel())
     }
 
     fun onIngredientRemove(index: Int) = updateRecipe {
@@ -144,7 +145,7 @@ class CreateRecipeViewModel @Inject constructor(
         }
     }
 
-    fun saveRecipe(recipeModel: RecipeModel, imageUri: Uri?) {
+    fun saveRecipe(recipeModel: CreateRecipeFormStateModel, imageUri: Uri?) {
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value?.copy(isLoading = true)
@@ -157,21 +158,19 @@ class CreateRecipeViewModel @Inject constructor(
                     return@launch
                 }
                 val uploadedImageUrl = repository.uploadImage(imageUri)
-                if (uploadedImageUrl.isNotBlank()) {
-                    recipeModel.image = uploadedImageUrl
-                } else {
-                    recipeModel.image = ""
-                }
+                val updatedRecipeModel = recipeModel.copy(
+                    image = uploadedImageUrl.ifBlank { "" }
+                )
                 _uiState.value =
                     _uiState.value?.copy(
                         uploadedImageUrl = uploadedImageUrl.ifBlank { null }
                     )
-                val listener = repository.saveRecipe(recipeModel)
+                val listener = repository.saveRecipe(updatedRecipeModel)
                 listener.addOnSuccessListener {
                     _uiState.value =
                         _uiState.value?.copy(
                             isLoading = false,
-                            recipeSaveState = RecipeSaveState.Success(recipeModel),
+                            recipeSaveState = RecipeSaveState.Success(updatedRecipeModel),
                         )
                 }.addOnFailureListener {
                     _uiState.value =

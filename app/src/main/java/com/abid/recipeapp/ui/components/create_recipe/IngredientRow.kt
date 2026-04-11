@@ -17,11 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.abid.recipeapp.data.model.IngredientModel
+import com.abid.recipeapp.data.model.IngredientFormStateModel
 
 @Composable
 fun IngredientRow(
-    ingredientModel: IngredientModel,
+    ingredientModel: IngredientFormStateModel,
     onIngredientNameChange: (String) -> Unit,
     onIngredientAmountChange: (String) -> Unit,
     onIngredientRemove: () -> Unit
