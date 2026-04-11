@@ -30,9 +30,17 @@ class RecipeRepository @Inject constructor(
     private val db: FirebaseFirestore
 ) {
 
-    suspend fun getAllRecipes(): List<RecipeModel> {
+    suspend fun getAllRecipes(categoryName: String?): List<RecipeModel> {
         return withContext(Dispatchers.IO) {
-            val recipes = db.collection(RECIPES).get().await()
+            val query = if (categoryName == null) {
+                db.collection(RECIPES)
+            } else {
+                db.collection(RECIPES)
+                    .whereEqualTo("category", categoryName)
+            }
+            val recipes = query
+                .get()
+                .await()
             recipes.toObjects(RecipeModel::class.java)
         }
     }

@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
@@ -54,8 +53,8 @@ fun RecipeListScreen(
     Box() {
         Column(modifier = Modifier.padding(top = 10.dp)) {
             RecipeListHeader(onClickAddRecipe)
-            RecipeCategoriesList(recipeListState) { recipeCat ->
-
+            RecipeCategoriesList(recipeListState) { category ->
+                recipeListViewModel.loadAllRecipes(category)
             }
             RecipeList(recipeListState, onClickRecipeItem)
         }
@@ -65,21 +64,24 @@ fun RecipeListScreen(
 @Composable
 private fun RecipeCategoriesList(
     state: RecipeListUiState?,
-    onClickRecipeCat: (RecipeCategoriesDataModel) -> Unit
+    onClickRecipeCat: (String?) -> Unit
 ) {
     if (state?.recipesCategories?.isNotEmpty() == true) {
         val recipeCategories = state.recipesCategories
-        var selectedCategoryId by remember { mutableStateOf<String>("1") }
+        var selectedCategory by remember { mutableStateOf<String?>(null) }
         LazyRow {
             items(items = recipeCategories, key = { recipeCat -> recipeCat.id }) { recipeCat ->
-
                 RecipeCatChipItem(
                     recipeCat = recipeCat,
-                    isSelected = selectedCategoryId == recipeCat.id
+                    isSelected = if (selectedCategory == null) {
+                        recipeCat.id == "-1"
+                    } else {
+                        recipeCat.label == selectedCategory
+                    }
                 )
                 { clickedRecipe ->
-                    selectedCategoryId = recipeCat.id
-                    onClickRecipeCat(clickedRecipe)
+                    selectedCategory = if (clickedRecipe.id == "-1") null else recipeCat.label
+                    onClickRecipeCat(selectedCategory)
                 }
             }
         }
