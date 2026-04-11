@@ -22,7 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -67,9 +69,18 @@ private fun RecipeCategoriesList(
 ) {
     if (state?.recipesCategories?.isNotEmpty() == true) {
         val recipeCategories = state.recipesCategories
+        var selectedCategoryId by remember { mutableStateOf<String>("1") }
         LazyRow {
             items(items = recipeCategories, key = { recipeCat -> recipeCat.id }) { recipeCat ->
-                RecipeCatChipItem(recipeCat, onClickRecipeCat)
+
+                RecipeCatChipItem(
+                    recipeCat = recipeCat,
+                    isSelected = selectedCategoryId == recipeCat.id
+                )
+                { clickedRecipe ->
+                    selectedCategoryId = recipeCat.id
+                    onClickRecipeCat(clickedRecipe)
+                }
             }
         }
     }
