@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
@@ -21,7 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -31,21 +34,62 @@ import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.RecipeCard
+import com.abid.recipeapp.ui.components.RecipeCatChipItem
 import com.abid.recipeapp.ui.state.RecipeListUiState
-import com.abid.recipeapp.viewmodel.RecipeViewModel
+import com.abid.recipeapp.viewmodel.RecipeListViewModel
 
 @Composable
-fun RecipeListScreen(onClickRecipeItem: (RecipeModel) -> Unit) {
+fun RecipeListScreen(
+    recipeListViewModel: RecipeListViewModel = hiltViewModel(),
+    onClickRecipeItem: (RecipeModel) -> Unit,
+    onClickAddRecipe: () -> Unit
+) {
+    val recipeListState by recipeListViewModel.state.observeAsState()
+
+    LaunchedEffect(Unit) {
+        recipeListViewModel.loadAllRecipes()
+        recipeListViewModel.loadRecipeCategories()
+    }
     Box() {
         Column(modifier = Modifier.padding(top = 10.dp)) {
-            RecipeListHeader()
-            RecipeList(onClickRecipeItem)
+            RecipeListHeader(onClickAddRecipe)
+            RecipeCategoriesList(recipeListState) { category ->
+                recipeListViewModel.loadAllRecipes(category)
+            }
+            RecipeList(recipeListState, onClickRecipeItem)
         }
     }
 }
 
 @Composable
-private fun RecipeListHeader() {
+private fun RecipeCategoriesList(
+    state: RecipeListUiState?,
+    onClickRecipeCat: (String?) -> Unit
+) {
+    if (state?.recipesCategories?.isNotEmpty() == true) {
+        val recipeCategories = state.recipesCategories
+        var selectedCategory by remember { mutableStateOf<String?>(null) }
+        LazyRow {
+            items(items = recipeCategories, key = { recipeCat -> recipeCat.id }) { recipeCat ->
+                RecipeCatChipItem(
+                    recipeCat = recipeCat,
+                    isSelected = if (selectedCategory == null) {
+                        recipeCat.id == "-1"
+                    } else {
+                        recipeCat.label == selectedCategory
+                    }
+                )
+                { clickedRecipe ->
+                    selectedCategory = if (clickedRecipe.id == "-1") null else recipeCat.label
+                    onClickRecipeCat(selectedCategory)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecipeListHeader(onClickAddRecipe: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -57,53 +101,48 @@ private fun RecipeListHeader() {
         Icon(
             imageVector = Icons.Filled.AddCircle,
             contentDescription = "Add button",
-            modifier = Modifier.size(50.dp),
-            tint = MaterialTheme.colorScheme.primary
+            modifier = Modifier
+                .size(50.dp)
+                .clickable(
+                    onClick = {
+                        onClickAddRecipe()
+                    },
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = LocalIndication.current,
+                ),
+            tint = MaterialTheme.colorScheme.primary,
         )
     }
 }
 
 @Composable
 private fun RecipeList(
+    state: RecipeListUiState?,
     onClickRecipeItem: (RecipeModel) -> Unit,
-    recipeViewModel: RecipeViewModel = hiltViewModel()
 ) {
-    val allRecipes by recipeViewModel.allRecipes.observeAsState()
-    LaunchedEffect(Unit) {
-        recipeViewModel.loadAllRecipes()
-    }
-    when (allRecipes) {
-        is RecipeListUiState.Loading -> {
-            LoadingStateBox()
-        }
 
-        is RecipeListUiState.Error -> {
-            ErrorStateBox("No recipes found!")
-        }
-
-        is RecipeListUiState.Success -> {
-            val state = (allRecipes as RecipeListUiState.Success)
-            val recipes = state.recipes
-            LazyColumn {
-                items(items = recipes, key = { recipe -> recipe.id }) { recipe ->
-                    Box(
-                        modifier = Modifier.clickable(
-                            onClick = {
-                                onClickRecipeItem(recipe)
-                            },
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = LocalIndication.current,
-                        )
-                    ) {
-                        RecipeCard(recipe)
-                    }
+    if (state?.isLoading == true) {
+        LoadingStateBox()
+    } else if (!state?.errorMsg.isNullOrBlank()) {
+        ErrorStateBox(state!!.errorMsg!!)
+    } else if (state?.recipeList?.isNotEmpty() == true) {
+        LazyColumn {
+            items(items = state.recipeList, key = { recipe -> recipe.id }) { recipe ->
+                Box(
+                    modifier = Modifier.clickable(
+                        onClick = {
+                            onClickRecipeItem(recipe)
+                        },
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = LocalIndication.current,
+                    )
+                ) {
+                    RecipeCard(recipe)
                 }
             }
         }
-
-        else -> {
-            ErrorStateBox("Something went wrong!")
-
-        }
+    } else if (state?.recipeList?.isEmpty() == true) {
+        ErrorStateBox("Recipe not found")
     }
+
 }

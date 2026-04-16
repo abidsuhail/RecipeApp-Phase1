@@ -16,7 +16,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.abid.recipeapp.ui.navigation.NavHelper.getScreenByRoute
+import com.abid.recipeapp.ui.navigation.NavHelper.goToCreateHomeScreen
+import com.abid.recipeapp.ui.navigation.NavHelper.goToCreateRecipeScreen
 import com.abid.recipeapp.ui.navigation.NavHelper.goToRecipeDetailsScreen
+import com.abid.recipeapp.ui.screens.CreateRecipeScreen
 import com.abid.recipeapp.ui.screens.FavRecipeScreen
 import com.abid.recipeapp.ui.screens.RecipeDetailsScreen
 import com.abid.recipeapp.ui.screens.RecipeListScreen
@@ -57,9 +60,13 @@ private fun AppNavGraph(
         modifier = Modifier.padding(paddingValues)
     ) {
         composable(route = NavHelper.Screen.HomeRecipeListScreen.route) {
-            RecipeListScreen { recipe ->
-                navController.goToRecipeDetailsScreen(recipe.id)
-            }
+            RecipeListScreen(
+                onClickRecipeItem = { recipe ->
+                    navController.goToRecipeDetailsScreen(recipe.id)
+                }, onClickAddRecipe = {
+                    navController.goToCreateRecipeScreen()
+                }
+            )
         }
 
         composable(
@@ -89,6 +96,15 @@ private fun AppNavGraph(
             route = NavHelper.Screen.Settings.route,
         ) { backStackEntry ->
             SettingsScreen()
+        }
+        composable(
+            route = NavHelper.Screen.CreateRecipeScreen.route,
+        ) { backStackEntry ->
+            CreateRecipeScreen(
+                onClickBackBtn = { navController.popBackStack() },
+                handleGotoHomeScreen = {
+                    navController.goToCreateHomeScreen()
+                })
         }
     }
 }

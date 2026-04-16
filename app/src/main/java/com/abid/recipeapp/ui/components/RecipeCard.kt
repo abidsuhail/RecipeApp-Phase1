@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.theme.getDifficultyLvlBgColor
-import com.abid.recipeapp.util.getTotalCookTimeInMin
+import com.abid.recipeapp.util.Constants.getTotalCookTimeInMin
 
 @Composable
 fun RecipeCard(recipe: RecipeModel) {

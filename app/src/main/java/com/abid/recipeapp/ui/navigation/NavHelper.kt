@@ -16,19 +16,14 @@ object NavHelper {
         data object RecipeDetails : Screen("recipe_details/{${NAV_ARGS_RECIPE_ID_KEY}}", false) {
             fun createRoute(recipeId: String) = "recipe_details/${recipeId}"
         }
-    }
 
-    fun NavController.goToRecipeDetailsScreen(recipeId: String) {
-        navigate(Screen.RecipeDetails.createRoute(recipeId))
-    }
+        data object CreateRecipeScreen : Screen("create_recipe", false)
 
-    fun NavController.goToSearchScreen() {
-        navigate(Screen.Search.createRoute())
     }
 
     fun getScreenByRoute(route: String?): Screen {
         return when (route) {
-            null, Screen.HomeRecipeListScreen.route -> {
+            Screen.HomeRecipeListScreen.route, null -> {
                 Screen.HomeRecipeListScreen
             }
 
@@ -48,9 +43,29 @@ object NavHelper {
                 Screen.Settings
             }
 
+            Screen.CreateRecipeScreen.route -> {
+                Screen.CreateRecipeScreen
+            }
+
             else -> {
                 throw Exception("Invalid screen route")
             }
         }
+    }
+
+    fun NavController.goToRecipeDetailsScreen(recipeId: String) {
+        navigate(Screen.RecipeDetails.createRoute(recipeId))
+    }
+
+    fun NavController.goToSearchScreen() {
+        navigate(Screen.Search.createRoute())
+    }
+
+    fun NavController.goToCreateRecipeScreen() {
+        navigate(Screen.CreateRecipeScreen.route)
+    }
+
+    fun NavController.goToCreateHomeScreen() {
+        navigate(Screen.HomeRecipeListScreen.route)
     }
 }
