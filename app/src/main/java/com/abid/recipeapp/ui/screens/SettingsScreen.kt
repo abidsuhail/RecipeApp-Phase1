@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -33,20 +34,22 @@ enum class AppThemeMode {
 
 @Composable
 fun SettingsScreen() {
-    Column {
-        Text("Settings", fontSize = 35.sp)
-        Card(
-            modifier = Modifier.padding(10.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFE0E0E0))
-        ) {
-            Box(modifier = Modifier.padding(8.dp)) {
-                Column {
-                    Text("Theme")
-                    Text("Choose your preferred theme")
-                    Row {
-                        ThemeModeGridItem(AppThemeMode.LIGHT)
-                        ThemeModeGridItem(AppThemeMode.DARK)
-                        ThemeModeGridItem(AppThemeMode.SYSTEM)
+    Box(Modifier.padding(10.dp)) {
+        Column {
+            Text("Settings", fontSize = 35.sp)
+            Card(
+                modifier = Modifier.padding(vertical = 12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE0E0E0))
+            ) {
+                Box(modifier = Modifier.padding(10.dp)) {
+                    Column {
+                        Text("Theme", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+                        Text("Choose your preferred theme", fontSize = 12.sp)
+                        Row {
+                            ThemeModeGridItem(AppThemeMode.LIGHT)
+                            ThemeModeGridItem(AppThemeMode.DARK)
+                            ThemeModeGridItem(AppThemeMode.SYSTEM)
+                        }
                     }
                 }
             }
