@@ -80,5 +80,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.cloudinary.android)
+    implementation(libs.androidx.material.icons.extended)
+
 
 }

@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.SystemSecurityUpdateGood
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -56,15 +58,15 @@ fun SettingsScreen() {
 private fun RowScope.ThemeModeGridItem(themeMode: AppThemeMode) {
     val icon = when (themeMode) {
         AppThemeMode.LIGHT -> {
-            Icons.Filled.AddCircle
+            Icons.Filled.WbSunny
         }
 
         AppThemeMode.DARK -> {
-            Icons.Filled.AddCircle
+            Icons.Filled.DarkMode
         }
 
         else -> {
-            Icons.Filled.AddCircle
+            Icons.Filled.SystemSecurityUpdateGood
         }
     }
     Card(
