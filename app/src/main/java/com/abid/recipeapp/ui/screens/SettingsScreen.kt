@@ -20,20 +20,22 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.abid.recipeapp.ui.theme.AppThemeMode
+import com.abid.recipeapp.ui.theme.LocalAppThemeMode
 
-enum class AppThemeMode {
-    LIGHT, DARK, SYSTEM
-}
 
 @Composable
 fun SettingsScreen() {
+
     Box(Modifier.padding(10.dp)) {
         Column {
             Text("Settings", fontSize = 35.sp)
@@ -59,6 +61,8 @@ fun SettingsScreen() {
 
 @Composable
 private fun RowScope.ThemeModeGridItem(themeMode: AppThemeMode) {
+    val appThemeModeState = LocalAppThemeMode.current
+    var appThemeMode by appThemeModeState
     val icon = when (themeMode) {
         AppThemeMode.LIGHT -> {
             Icons.Filled.WbSunny
@@ -81,6 +85,21 @@ private fun RowScope.ThemeModeGridItem(themeMode: AppThemeMode) {
                 indication = LocalIndication.current,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
+
+                appThemeMode = when (themeMode) {
+                    AppThemeMode.DARK -> {
+                        AppThemeMode.DARK
+                    }
+
+                    AppThemeMode.LIGHT -> {
+                        AppThemeMode.LIGHT
+                    }
+
+                    else -> {
+                        AppThemeMode.SYSTEM
+                    }
+                }
+
 
             },
         colors = CardDefaults.cardColors(containerColor = Color.LightGray),

@@ -8,6 +8,10 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -32,6 +36,12 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+val LocalAppThemeMode = compositionLocalOf { mutableStateOf(AppThemeMode.SYSTEM) }
+
+enum class AppThemeMode {
+    LIGHT, DARK, SYSTEM
+}
+
 @Composable
 fun RecipeAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -39,19 +49,30 @@ fun RecipeAppTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    val systemDefaultTheme = if (darkTheme) {
+        AppThemeMode.DARK
+    } else {
+        AppThemeMode.SYSTEM
+    }
+    val appThemeMode = remember { mutableStateOf(systemDefaultTheme) }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (appThemeMode.value == AppThemeMode.DARK) dynamicDarkColorScheme(context) else dynamicLightColorScheme(
+                context
+            )
         }
 
-        darkTheme -> DarkColorScheme
+        AppThemeMode.DARK == appThemeMode.value -> DarkColorScheme
         else -> LightColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(LocalAppThemeMode provides appThemeMode) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }
