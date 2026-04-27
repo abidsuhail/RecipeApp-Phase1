@@ -25,7 +25,7 @@ class ThemeViewModel @Inject constructor(private val dataStore: DataStore<Prefer
     val state: LiveData<AppThemeMode> = _state
 
     init {
-        
+        initCurrentTheme()
     }
 
     fun setTheme(appThemeMode: AppThemeMode) {
@@ -37,9 +37,10 @@ class ThemeViewModel @Inject constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    fun getTheme() {
+    private fun initCurrentTheme() {
         viewModelScope.launch {
             val currentTheme = dataStore.data.first()[THEME_KEY].toAppTheme()
+            _state.value = currentTheme
         }
     }
 }
