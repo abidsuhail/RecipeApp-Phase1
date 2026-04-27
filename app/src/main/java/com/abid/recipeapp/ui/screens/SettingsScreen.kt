@@ -20,21 +20,20 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.ui.theme.AppThemeMode
-import com.abid.recipeapp.ui.theme.LocalAppThemeMode
+import com.abid.recipeapp.viewmodel.ThemeViewModel
 
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(themeViewModel: ThemeViewModel = hiltViewModel()) {
 
     Box(Modifier.padding(10.dp)) {
         Column {
@@ -48,9 +47,15 @@ fun SettingsScreen() {
                         Text("Theme", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
                         Text("Choose your preferred theme", fontSize = 12.sp)
                         Row {
-                            ThemeModeGridItem(AppThemeMode.LIGHT)
-                            ThemeModeGridItem(AppThemeMode.DARK)
-                            ThemeModeGridItem(AppThemeMode.SYSTEM)
+                            ThemeModeGridItem(AppThemeMode.LIGHT) {
+                                themeViewModel.setTheme(it)
+                            }
+                            ThemeModeGridItem(AppThemeMode.DARK) {
+                                themeViewModel.setTheme(it)
+                            }
+                            ThemeModeGridItem(AppThemeMode.SYSTEM) {
+                                themeViewModel.setTheme(it)
+                            }
                         }
                     }
                 }
@@ -60,9 +65,10 @@ fun SettingsScreen() {
 }
 
 @Composable
-private fun RowScope.ThemeModeGridItem(themeMode: AppThemeMode) {
-    val appThemeModeState = LocalAppThemeMode.current
-    var appThemeMode by appThemeModeState
+private fun RowScope.ThemeModeGridItem(
+    themeMode: AppThemeMode,
+    onThemeSelected: (AppThemeMode) -> Unit
+) {
     val icon = when (themeMode) {
         AppThemeMode.LIGHT -> {
             Icons.Filled.WbSunny
@@ -85,22 +91,7 @@ private fun RowScope.ThemeModeGridItem(themeMode: AppThemeMode) {
                 indication = LocalIndication.current,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
-
-                appThemeMode = when (themeMode) {
-                    AppThemeMode.DARK -> {
-                        AppThemeMode.DARK
-                    }
-
-                    AppThemeMode.LIGHT -> {
-                        AppThemeMode.LIGHT
-                    }
-
-                    else -> {
-                        AppThemeMode.SYSTEM
-                    }
-                }
-
-
+                onThemeSelected(themeMode)
             },
         colors = CardDefaults.cardColors(containerColor = Color.LightGray),
     ) {
