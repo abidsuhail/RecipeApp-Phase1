@@ -25,9 +25,10 @@ import com.abid.recipeapp.ui.screens.RecipeDetailsScreen
 import com.abid.recipeapp.ui.screens.RecipeListScreen
 import com.abid.recipeapp.ui.screens.SearchRecipeScreen
 import com.abid.recipeapp.ui.screens.SettingsScreen
+import com.abid.recipeapp.viewmodel.ThemeViewModel
 
 @Composable
-fun AppNavHost() {
+fun AppNavHost(themeViewModel: ThemeViewModel) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -41,10 +42,10 @@ fun AppNavHost() {
                     navController.navigate(route!!)
                 }
             }) { innerPadding ->
-            AppNavGraph(navController, innerPadding)
+            AppNavGraph(navController, innerPadding, themeViewModel)
         }
     } else {
-        AppNavGraph(navController)
+        AppNavGraph(navController, themeViewModel = themeViewModel)
     }
 
 }
@@ -52,7 +53,8 @@ fun AppNavHost() {
 @Composable
 private fun AppNavGraph(
     navController: NavHostController,
-    paddingValues: PaddingValues = PaddingValues(0.dp)
+    paddingValues: PaddingValues = PaddingValues(0.dp),
+    themeViewModel: ThemeViewModel
 ) {
     NavHost(
         navController = navController,
@@ -95,7 +97,9 @@ private fun AppNavGraph(
         composable(
             route = NavHelper.Screen.Settings.route,
         ) { backStackEntry ->
-            SettingsScreen()
+            SettingsScreen() {
+                themeViewModel.setTheme(it)
+            }
         }
         composable(
             route = NavHelper.Screen.CreateRecipeScreen.route,

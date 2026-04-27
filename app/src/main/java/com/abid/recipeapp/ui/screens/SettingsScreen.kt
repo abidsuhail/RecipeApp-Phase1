@@ -27,14 +27,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.ui.theme.AppThemeMode
-import com.abid.recipeapp.viewmodel.ThemeViewModel
 
 
 @Composable
-fun SettingsScreen(themeViewModel: ThemeViewModel = hiltViewModel()) {
-
+fun SettingsScreen(onThemeSelected: (AppThemeMode) -> Unit) {
     Box(Modifier.padding(10.dp)) {
         Column {
             Text("Settings", fontSize = 35.sp)
@@ -48,13 +45,13 @@ fun SettingsScreen(themeViewModel: ThemeViewModel = hiltViewModel()) {
                         Text("Choose your preferred theme", fontSize = 12.sp)
                         Row {
                             ThemeModeGridItem(AppThemeMode.LIGHT) {
-                                themeViewModel.setTheme(it)
+                                onThemeSelected(it)
                             }
                             ThemeModeGridItem(AppThemeMode.DARK) {
-                                themeViewModel.setTheme(it)
+                                onThemeSelected(it)
                             }
                             ThemeModeGridItem(AppThemeMode.SYSTEM) {
-                                themeViewModel.setTheme(it)
+                                onThemeSelected(it)
                             }
                         }
                     }
