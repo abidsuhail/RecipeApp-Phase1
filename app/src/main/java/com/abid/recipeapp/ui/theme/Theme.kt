@@ -31,6 +31,26 @@ enum class AppThemeMode {
     LIGHT, DARK, SYSTEM
 }
 
+fun String?.toAppTheme(): AppThemeMode {
+    return when (this) {
+        AppThemeMode.DARK.name -> {
+            AppThemeMode.DARK
+        }
+
+        AppThemeMode.LIGHT.name -> {
+            AppThemeMode.LIGHT
+        }
+
+        AppThemeMode.SYSTEM.name -> {
+            AppThemeMode.SYSTEM
+        }
+
+        else -> {
+            AppThemeMode.SYSTEM
+        }
+    }
+}
+
 @Composable
 fun RecipeAppTheme(
     appThemeMode: AppThemeMode,
