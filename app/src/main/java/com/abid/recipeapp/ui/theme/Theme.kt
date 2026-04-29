@@ -4,6 +4,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.abid.recipeapp.ui.navigation.AppNavHost
+import com.abid.recipeapp.viewmodel.ThemeViewModel
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -52,16 +57,10 @@ fun String?.toAppTheme(): AppThemeMode {
 }
 
 @Composable
-fun RecipeAppTheme(
-    appThemeMode: AppThemeMode,
-    content: @Composable () -> Unit
+fun RecipeMainApp(
+    themeViewModel: ThemeViewModel = hiltViewModel(),
 ) {
-
-    val systemDefaultTheme = if (appThemeMode == AppThemeMode.DARK) {
-        AppThemeMode.DARK
-    } else {
-        AppThemeMode.SYSTEM
-    }
+    val appThemeMode by themeViewModel.state.observeAsState(initial = AppThemeMode.SYSTEM)
 
     val colorScheme = if (appThemeMode == AppThemeMode.DARK) {
         DarkColorScheme
@@ -72,6 +71,10 @@ fun RecipeAppTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = {
+            AppNavHost {
+                themeViewModel.setTheme(it)
+            }
+        }
     )
 }
