@@ -22,7 +22,9 @@ class MainActivity : ComponentActivity() {
             val themeViewModel: ThemeViewModel = hiltViewModel()
             val appThemeMode by themeViewModel.state.observeAsState(initial = AppThemeMode.SYSTEM)
             RecipeAppTheme(appThemeMode) {
-                AppNavHost(themeViewModel)
+                AppNavHost() {
+                    themeViewModel.setTheme(it)
+                }
             }
         }
     }
