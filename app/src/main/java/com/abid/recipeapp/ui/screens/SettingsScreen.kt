@@ -1,5 +1,6 @@
 package com.abid.recipeapp.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -45,6 +47,9 @@ fun SettingsScreen(
     onThemeSelected: (AppThemeMode) -> Unit
 ) {
     val appThemeMode by vm.state.observeAsState(initial = AppThemeMode.SYSTEM)
+    LaunchedEffect(appThemeMode) {
+        Log.e("SettingsScreen", "SettingsScreen: ${appThemeMode}")
+    }
     Box(Modifier.padding(10.dp)) {
         Column {
             Text("Settings", fontSize = 35.sp)
