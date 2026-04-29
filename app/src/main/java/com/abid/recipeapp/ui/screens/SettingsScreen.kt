@@ -60,15 +60,9 @@ private fun ThemeOptionsCardItem(onThemeSelected: (AppThemeMode) -> Unit) {
             Text("Theme", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Text("Choose your preferred theme", fontSize = 12.sp)
             Row {
-                ThemeModeGridItem(AppThemeMode.LIGHT) {
-                    onThemeSelected(it)
-                }
-                ThemeModeGridItem(AppThemeMode.DARK) {
-                    onThemeSelected(it)
-                }
-                ThemeModeGridItem(AppThemeMode.SYSTEM) {
-                    onThemeSelected(it)
-                }
+                ThemeModeGridItem(AppThemeMode.LIGHT, onThemeSelected)
+                ThemeModeGridItem(AppThemeMode.DARK, onThemeSelected)
+                ThemeModeGridItem(AppThemeMode.SYSTEM, onThemeSelected)
             }
         }
     }
