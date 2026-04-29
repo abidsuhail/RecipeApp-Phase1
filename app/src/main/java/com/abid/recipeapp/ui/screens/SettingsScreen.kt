@@ -1,5 +1,6 @@
 package com.abid.recipeapp.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,6 +23,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,18 +32,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.BuildConfig
 import com.abid.recipeapp.ui.theme.AppThemeMode
+import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.viewmodel.SettingsViewModel
 
 
 @Composable
-fun SettingsScreen(onThemeSelected: (AppThemeMode) -> Unit) {
+fun SettingsScreen(
+    vm: SettingsViewModel = hiltViewModel(),
+    onThemeSelected: (AppThemeMode) -> Unit
+) {
+    val appThemeMode by vm.state.observeAsState(initial = AppThemeMode.SYSTEM)
     Box(Modifier.padding(10.dp)) {
         Column {
             Text("Settings", fontSize = 35.sp)
             GrayCard {
-                ThemeOptionsCardItem {
+                ThemeOptionsCardItem(appThemeMode) {
                     onThemeSelected(it)
+                    vm.getCurrentTheme()
                 }
             }
             GrayCard {
@@ -54,15 +65,30 @@ fun SettingsScreen(onThemeSelected: (AppThemeMode) -> Unit) {
 }
 
 @Composable
-private fun ThemeOptionsCardItem(onThemeSelected: (AppThemeMode) -> Unit) {
+private fun ThemeOptionsCardItem(
+    currentThemeMode: AppThemeMode,
+    onThemeSelected: (AppThemeMode) -> Unit
+) {
     Box(modifier = Modifier.padding(10.dp)) {
         Column {
             Text("Theme", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Text("Choose your preferred theme", fontSize = 12.sp)
             Row {
-                ThemeModeGridItem(AppThemeMode.LIGHT, onThemeSelected)
-                ThemeModeGridItem(AppThemeMode.DARK, onThemeSelected)
-                ThemeModeGridItem(AppThemeMode.SYSTEM, onThemeSelected)
+                ThemeModeGridItem(
+                    AppThemeMode.LIGHT,
+                    currentThemeMode == AppThemeMode.LIGHT,
+                    onThemeSelected
+                )
+                ThemeModeGridItem(
+                    AppThemeMode.DARK,
+                    currentThemeMode == AppThemeMode.DARK,
+                    onThemeSelected
+                )
+                ThemeModeGridItem(
+                    AppThemeMode.SYSTEM,
+                    currentThemeMode == AppThemeMode.SYSTEM,
+                    onThemeSelected
+                )
             }
         }
     }
@@ -127,6 +153,7 @@ private fun GrayCard(content: @Composable () -> Unit) {
 @Composable
 private fun RowScope.ThemeModeGridItem(
     themeMode: AppThemeMode,
+    isSelected: Boolean,
     onThemeSelected: (AppThemeMode) -> Unit
 ) {
     val icon = when (themeMode) {
@@ -142,6 +169,11 @@ private fun RowScope.ThemeModeGridItem(
             Icons.Filled.SystemSecurityUpdateGood
         }
     }
+    val borderColor = if (isSelected) {
+        Orange40
+    } else {
+        Color.Unspecified
+    }
     Card(
         Modifier
             .height(100.dp)
@@ -153,6 +185,7 @@ private fun RowScope.ThemeModeGridItem(
             ) {
                 onThemeSelected(themeMode)
             },
+        border = BorderStroke(2.dp, borderColor),
         colors = CardDefaults.cardColors(containerColor = Color.LightGray),
     ) {
         Column(
