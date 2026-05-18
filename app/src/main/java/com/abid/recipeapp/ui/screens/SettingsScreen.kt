@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.BuildConfig
+import com.abid.recipeapp.ui.state.SettingsUiState
 import com.abid.recipeapp.ui.theme.AppThemeMode
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.viewmodel.SettingsViewModel
@@ -46,17 +47,18 @@ fun SettingsScreen(
     vm: SettingsViewModel = hiltViewModel(),
     onThemeSelected: (AppThemeMode) -> Unit
 ) {
-    val appThemeMode by vm.state.observeAsState(initial = AppThemeMode.SYSTEM)
-    LaunchedEffect(appThemeMode) {
-        Log.e("SettingsScreen", "SettingsScreen: ${appThemeMode}")
+    val state by vm.state.observeAsState(initial = SettingsUiState(AppThemeMode.SYSTEM))
+
+    LaunchedEffect(state.currentTheme) {
+        Log.e("SettingsScreen", "SettingsScreen: ${state.currentTheme}")
     }
     Box(Modifier.padding(10.dp)) {
         Column {
             Text("Settings", fontSize = 35.sp)
             GrayCard {
-                ThemeOptionsCardItem(appThemeMode) {
+                ThemeOptionsCardItem(state.currentTheme) {
                     onThemeSelected(it)
-                    vm.updateTheme()
+                    vm.setCurrentThemeOption(it)
                 }
             }
             GrayCard {
