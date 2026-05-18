@@ -56,7 +56,7 @@ fun SettingsScreen(
             GrayCard {
                 ThemeOptionsCardItem(appThemeMode) {
                     onThemeSelected(it)
-                    vm.getCurrentTheme()
+                    vm.updateTheme()
                 }
             }
             GrayCard {

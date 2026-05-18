@@ -23,7 +23,7 @@ class SettingsViewModel @Inject constructor(private val dataStore: DataStore<Pre
     private val _state = MutableLiveData(AppThemeMode.SYSTEM)
     val state: LiveData<AppThemeMode> = _state
 
-    fun getCurrentTheme() {
+    fun updateTheme() {
         viewModelScope.launch {
             val currentTheme = dataStore.data.first()[THEME_KEY].toAppTheme()
             _state.value = currentTheme
