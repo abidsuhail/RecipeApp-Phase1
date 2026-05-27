@@ -39,6 +39,7 @@ import com.abid.recipeapp.BuildConfig
 import com.abid.recipeapp.ui.state.SettingsUiState
 import com.abid.recipeapp.ui.theme.AppThemeMode
 import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.ui.theme.SettingsTheme
 import com.abid.recipeapp.viewmodel.SettingsViewModel
 
 
@@ -151,7 +152,7 @@ private fun AppInfoCardItem() {
 private fun GrayCard(content: @Composable () -> Unit) {
     Card(
         modifier = Modifier.padding(vertical = 12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE0E0E0))
+        colors = CardDefaults.cardColors(containerColor = SettingsTheme.cardColor)
     ) {
         content()
     }
@@ -193,7 +194,7 @@ private fun RowScope.ThemeModeGridItem(
                 onThemeSelected(themeMode)
             },
         border = BorderStroke(2.dp, borderColor),
-        colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+        colors = CardDefaults.cardColors(containerColor = SettingsTheme.themeModeGrid),
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),

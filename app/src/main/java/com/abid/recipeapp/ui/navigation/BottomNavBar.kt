@@ -5,7 +5,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
+import com.abid.recipeapp.ui.theme.HomeTheme
 
 @Composable
 fun BottomNavBar(currentRoute: String?, onClickNavItem: (String?) -> Unit) {
@@ -16,7 +16,7 @@ fun BottomNavBar(currentRoute: String?, onClickNavItem: (String?) -> Unit) {
         BottomNavOptions.Profile
     )
 
-    NavigationBar(containerColor = Color.White) {
+    NavigationBar(containerColor = HomeTheme.bottomNavColor) {
 
         items.forEach { screen ->
             NavigationBarItem(

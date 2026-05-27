@@ -4,11 +4,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.ui.navigation.AppNavHost
 import com.abid.recipeapp.viewmodel.ThemeViewModel
+
+val LocalIsDarkTheme = compositionLocalOf { false }
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -56,6 +60,7 @@ fun String?.toAppTheme(): AppThemeMode {
     }
 }
 
+
 @Composable
 fun RecipeMainApp(
     themeViewModel: ThemeViewModel = hiltViewModel(),
@@ -67,14 +72,15 @@ fun RecipeMainApp(
     } else {
         LightColorScheme
     }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = {
-            AppNavHost {
-                themeViewModel.setTheme(it)
+    CompositionLocalProvider(LocalIsDarkTheme provides (appThemeMode == AppThemeMode.DARK)) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = {
+                AppNavHost {
+                    themeViewModel.setTheme(it)
+                }
             }
-        }
-    )
+        )
+    }
 }
