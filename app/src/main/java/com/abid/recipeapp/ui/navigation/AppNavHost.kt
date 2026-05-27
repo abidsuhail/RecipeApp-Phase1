@@ -94,7 +94,9 @@ private fun AppNavGraph(
         composable(
             route = NavHelper.Screen.Favourite.route,
         ) { backStackEntry ->
-            FavRecipeScreen()
+            FavRecipeScreen(onClickRecipeItem = { recipe ->
+                navController.goToRecipeDetailsScreen(recipe.id)
+            })
         }
         composable(
             route = NavHelper.Screen.Settings.route,

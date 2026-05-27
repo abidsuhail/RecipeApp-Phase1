@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -31,10 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.RecipeModel
-import com.abid.recipeapp.ui.components.ErrorStateBox
-import com.abid.recipeapp.ui.components.LoadingStateBox
-import com.abid.recipeapp.ui.components.RecipeCard
 import com.abid.recipeapp.ui.components.RecipeCatChipItem
+import com.abid.recipeapp.ui.components.RecipeList
 import com.abid.recipeapp.ui.state.RecipeListUiState
 import com.abid.recipeapp.viewmodel.RecipeListViewModel
 
@@ -56,7 +53,12 @@ fun RecipeListScreen(
             RecipeCategoriesList(recipeListState) { category ->
                 recipeListViewModel.loadAllRecipes(category)
             }
-            RecipeList(recipeListState, onClickRecipeItem)
+            RecipeList(
+                isLoading = recipeListState?.isLoading,
+                errorMsg = recipeListState?.errorMsg,
+                recipeList = recipeListState?.recipeList,
+                onClickRecipeItem = onClickRecipeItem
+            )
         }
     }
 }
@@ -115,34 +117,3 @@ private fun RecipeListHeader(onClickAddRecipe: () -> Unit) {
     }
 }
 
-@Composable
-private fun RecipeList(
-    state: RecipeListUiState?,
-    onClickRecipeItem: (RecipeModel) -> Unit,
-) {
-
-    if (state?.isLoading == true) {
-        LoadingStateBox()
-    } else if (!state?.errorMsg.isNullOrBlank()) {
-        ErrorStateBox(state!!.errorMsg!!)
-    } else if (state?.recipeList?.isNotEmpty() == true) {
-        LazyColumn {
-            items(items = state.recipeList, key = { recipe -> recipe.id }) { recipe ->
-                Box(
-                    modifier = Modifier.clickable(
-                        onClick = {
-                            onClickRecipeItem(recipe)
-                        },
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = LocalIndication.current,
-                    )
-                ) {
-                    RecipeCard(recipe)
-                }
-            }
-        }
-    } else if (state?.recipeList?.isEmpty() == true) {
-        ErrorStateBox("Recipe not found")
-    }
-
-}

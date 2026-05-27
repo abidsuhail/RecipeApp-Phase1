@@ -26,6 +26,12 @@ object HomeTheme {
 
 }
 
+object RecipeDetailsTheme {
+    val clippedCardBg: Color
+        @Composable get() = if (LocalIsDarkTheme.current) Color.Black else Color.White
+
+}
+
 fun getDifficultyLvlBgColor(difficultyLvl: RecipeDiffLvl): Color {
     return when (difficultyLvl) {
         RecipeDiffLvl.EASY -> {

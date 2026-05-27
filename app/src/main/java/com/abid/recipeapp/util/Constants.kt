@@ -17,6 +17,7 @@ object Constants {
 
     object FirebaseCollections {
         const val RECIPES = "recipes"
+        const val FAV = "fav"
         const val RECIPE_CATEGORIES = "recipe_categories"
         const val RECIPE_INGREDIENTS_INST_TAB = "ingredients_instructions_tabs"
         const val RECIPE_CUISINES = "recipe_cuisines"

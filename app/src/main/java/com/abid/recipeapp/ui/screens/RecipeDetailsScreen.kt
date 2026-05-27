@@ -46,6 +46,7 @@ import com.abid.recipeapp.ui.components.BackButton
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.ui.theme.RecipeDetailsTheme
 import com.abid.recipeapp.util.Constants.getServingsAndUrList
 import com.abid.recipeapp.viewmodel.RecipeDetailsViewModel
 import kotlinx.coroutines.delay
@@ -60,6 +61,7 @@ fun RecipeDetailsScreen(
     LaunchedEffect(recipeId) {
         vm.loadRecipeById(recipeId)
         vm.loadIngredientsTabs()
+        vm.fetchIsInFav(recipeId)
     }
     LaunchedEffect(uiState?.errorMsg) {
         if (uiState?.errorMsg != null) {
@@ -81,10 +83,11 @@ fun RecipeDetailsScreen(
                     containerColor = Orange40,
                     onClick = {
                         isFavorite = !isFavorite
+                        vm.toggleFav(recipeId!!)
                     }
                 ) {
                     Icon(
-                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        imageVector = if (uiState?.isFav == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Favorite",
                     )
                 }
@@ -128,7 +131,7 @@ private fun RecipeDetailsCard(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 270.dp),
-        colors = CardDefaults.cardColors(Color.White),
+        colors = CardDefaults.cardColors(RecipeDetailsTheme.clippedCardBg),
         shape = RoundedCornerShape(30.dp)
     ) {
         Column(Modifier.padding(20.dp)) {

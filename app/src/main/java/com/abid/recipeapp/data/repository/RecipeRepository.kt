@@ -2,11 +2,13 @@ package com.abid.recipeapp.data.repository
 
 import android.net.Uri
 import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
+import com.abid.recipeapp.data.model.FavRecipeModel
 import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
+import com.abid.recipeapp.util.Constants.FirebaseCollections.FAV
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CATEGORIES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CUISINES
@@ -87,6 +89,48 @@ class RecipeRepository @Inject constructor(
             val docRef = db.collection(RECIPES).document()
             val recipe = recipeModel.copy(id = docRef.id)
             docRef.set(recipe)
+        }
+    }
+
+    suspend fun toggleFav(favRecipeModel: FavRecipeModel) {
+        withContext(Dispatchers.IO) {
+            // use recipeId as document ID directly
+            val docRef = db.collection(FAV).document(favRecipeModel.recipeId)
+            val existingDoc = docRef.get().await()
+
+            if (existingDoc.exists()) {
+                // already fav → remove
+                docRef.delete().await()
+            } else {
+                // not fav → add
+                docRef.set(favRecipeModel).await()
+            }
+        }
+    }
+
+    suspend fun getAllFavRecipesList(): List<RecipeModel> {
+        return withContext(Dispatchers.IO) {
+            val recipes = db.collection(FAV)
+                .get()
+                .await()
+            val favList = recipes.toObjects(FavRecipeModel::class.java)
+            val recipeList = mutableListOf<RecipeModel>()
+            favList.forEach {
+                val found = db.collection(RECIPES)
+                    .whereEqualTo("id", it.recipeId).get().await().firstOrNull()
+                if (found != null) {
+                    val foundRecipe = found.toObject(RecipeModel::class.java)
+                    recipeList.add(foundRecipe)
+                }
+            }
+            recipeList
+        }
+    }
+
+    suspend fun isFav(recipeId: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            val docRef = db.collection(FAV).document(recipeId)
+            docRef.get().await().exists()
         }
     }
 
