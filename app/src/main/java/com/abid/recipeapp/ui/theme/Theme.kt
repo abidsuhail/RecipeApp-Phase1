@@ -1,5 +1,6 @@
 package com.abid.recipeapp.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -67,11 +68,13 @@ fun RecipeMainApp(
 ) {
     val appThemeMode by themeViewModel.state.observeAsState(initial = AppThemeMode.SYSTEM)
 
-    val colorScheme = if (appThemeMode == AppThemeMode.DARK) {
-        DarkColorScheme
-    } else {
-        LightColorScheme
+    val isDark = when (appThemeMode) {
+        AppThemeMode.DARK -> true
+        AppThemeMode.LIGHT -> false
+        AppThemeMode.SYSTEM -> isSystemInDarkTheme()
     }
+
+    val colorScheme = if (isDark) DarkColorScheme else LightColorScheme
     CompositionLocalProvider(LocalIsDarkTheme provides (appThemeMode == AppThemeMode.DARK)) {
         MaterialTheme(
             colorScheme = colorScheme,
