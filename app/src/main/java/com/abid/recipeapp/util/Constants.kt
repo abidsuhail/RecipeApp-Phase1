@@ -23,6 +23,10 @@ object Constants {
         const val RECIPE_CUISINES = "recipe_cuisines"
         const val RECIPE_DIFFICULTY_LEVELS = "difficulty_levels"
     }
+
+    const val RECIPE_NOT_FOUND_ERROR_MSG = "Recipe not found"
+    const val RECIPE_APP_INFO =
+        "Recipe app is your personal cooking companion. Discover,save, and create delicious recipes from around the world"
 }
 
 

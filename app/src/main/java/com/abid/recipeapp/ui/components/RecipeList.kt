@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.abid.recipeapp.data.model.RecipeModel
+import com.abid.recipeapp.util.Constants
 
 @Composable
 fun RecipeList(
@@ -40,7 +41,7 @@ fun RecipeList(
             }
         }
     } else if (recipeList?.isEmpty() == true) {
-        ErrorStateBox("Recipe not found")
+        ErrorStateBox(Constants.RECIPE_NOT_FOUND_ERROR_MSG)
     }
 
 }

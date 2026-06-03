@@ -1,6 +1,5 @@
 package com.abid.recipeapp.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -24,7 +23,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -40,6 +38,7 @@ import com.abid.recipeapp.ui.state.SettingsUiState
 import com.abid.recipeapp.ui.theme.AppThemeMode
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.ui.theme.SettingsTheme
+import com.abid.recipeapp.util.Constants
 import com.abid.recipeapp.viewmodel.SettingsViewModel
 
 
@@ -50,9 +49,6 @@ fun SettingsScreen(
 ) {
     val state by vm.state.observeAsState(initial = SettingsUiState(AppThemeMode.SYSTEM))
 
-    LaunchedEffect(state.currentTheme) {
-        Log.e("SettingsScreen", "SettingsScreen: ${state.currentTheme}")
-    }
     Box(Modifier.padding(10.dp)) {
         Column {
             Text("Settings", fontSize = 35.sp)
@@ -140,7 +136,7 @@ private fun AppInfoCardItem() {
         Column {
             Text("App Info", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Text(
-                "Recipe app is your personal cooking companion. Discover,save, and create delicious recipes from around the world",
+                Constants.RECIPE_APP_INFO,
                 fontSize = 12.sp,
                 modifier = Modifier.padding(5.dp)
             )
