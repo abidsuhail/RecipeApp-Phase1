@@ -72,7 +72,12 @@ object Constants {
     const val INGREDIENTS = "Ingredients"
     const val ADD_ICON = "Add Icon"
     const val INSTRUCTIONS = "Instructions"
-
+    const val NUTRITION_PER_SERVING_ = "Nutrition (per serving)"
+    const val FAT = "Fat"
+    const val ADD_BUTTON = "Add button"
+    const val HOME = "Home"
+    const val SEARCH = "Search"
+    const val FAVOURITE = "Favourite"
 }
 
 

@@ -45,12 +45,19 @@ import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.ui.theme.RecipeDetailsTheme
+import com.abid.recipeapp.util.Constants.CALORIES
+import com.abid.recipeapp.util.Constants.CARBS
+import com.abid.recipeapp.util.Constants.FAT
 import com.abid.recipeapp.util.Constants.FAVORITE_CONTENT_DESC
+import com.abid.recipeapp.util.Constants.NUTRITION_PER_SERVING_
+import com.abid.recipeapp.util.Constants.PROTEIN
 import com.abid.recipeapp.util.Constants.getServingsAndUrList
 import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.RecipeDetailsViewModel
 import kotlinx.coroutines.delay
 
+
+private const val RECIPE_IMAGE = "Recipe image"
 
 @Composable
 fun RecipeDetailsScreen(
@@ -106,7 +113,7 @@ fun RecipeDetailsScreen(
                 ) {
                     AsyncImage(
                         model = uiState?.recipe!!.image,
-                        contentDescription = "Recipe image",
+                        contentDescription = RECIPE_IMAGE,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(Dims.Dp300),
@@ -147,6 +154,7 @@ private fun RecipeDetailsCard(
     }
 }
 
+
 @Composable
 private fun MacroCard(recipe: RecipeModel) {
     Card(
@@ -155,17 +163,17 @@ private fun MacroCard(recipe: RecipeModel) {
     ) {
         Box(Modifier.padding(Dims.Dp10)) {
             Column {
-                Text("Nutrition (per serving)")
+                Text(NUTRITION_PER_SERVING_)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(Dims.Dp15),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    MacroItemColumn("Calories", recipe.nutrition.calories, Orange40)
-                    MacroItemColumn("Protein", recipe.nutrition.protein, Color.Green)
-                    MacroItemColumn("Carbs", recipe.nutrition.carbs, Color.Yellow)
-                    MacroItemColumn("Fat", recipe.nutrition.fat, Color.Red)
+                    MacroItemColumn(CALORIES, recipe.nutrition.calories, Orange40)
+                    MacroItemColumn(PROTEIN, recipe.nutrition.protein, Color.Green)
+                    MacroItemColumn(CARBS, recipe.nutrition.carbs, Color.Yellow)
+                    MacroItemColumn(FAT, recipe.nutrition.fat, Color.Red)
                 }
             }
         }

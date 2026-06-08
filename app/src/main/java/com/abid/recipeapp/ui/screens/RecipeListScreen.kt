@@ -31,6 +31,7 @@ import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.RecipeCatChipItem
 import com.abid.recipeapp.ui.components.RecipeList
 import com.abid.recipeapp.ui.state.RecipeListUiState
+import com.abid.recipeapp.util.Constants.ADD_BUTTON
 import com.abid.recipeapp.util.Constants.DISCOVER_RECIPES
 import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.RecipeListViewModel
@@ -103,7 +104,7 @@ private fun RecipeListHeader(onClickAddRecipe: () -> Unit) {
         Text(DISCOVER_RECIPES, fontSize = Dims.Sp30)
         Icon(
             imageVector = Icons.Filled.AddCircle,
-            contentDescription = "Add button",
+            contentDescription = ADD_BUTTON,
             modifier = Modifier
                 .size(Dims.Dp50)
                 .clickable(
