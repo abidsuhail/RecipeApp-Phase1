@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.RecipeCatChipItem
@@ -101,7 +100,7 @@ private fun RecipeListHeader(onClickAddRecipe: () -> Unit) {
             .fillMaxWidth()
             .padding(horizontal = Dims.Dp5)
     ) {
-        Text(DISCOVER_RECIPES, fontSize = 30.sp)
+        Text(DISCOVER_RECIPES, fontSize = Dims.Sp30)
         Icon(
             imageVector = Icons.Filled.AddCircle,
             contentDescription = "Add button",

@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.theme.getDifficultyLvlBgColor
@@ -49,8 +48,8 @@ fun RecipeCard(recipe: RecipeModel) {
             )
             Box(modifier = Modifier.padding(Dims.Dp10)) {
                 Column {
-                    Text(recipe.title, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
-                    Text(recipe.description, fontSize = 13.sp)
+                    Text(recipe.title, fontWeight = FontWeight.SemiBold, fontSize = Dims.Sp20)
+                    Text(recipe.description, fontSize = Dims.Sp13)
                     RecipeCardBottomRow(recipe)
                 }
             }
@@ -72,13 +71,13 @@ private fun RecipeCardBottomRow(recipe: RecipeModel) {
             Text(
                 getTotalCookTimeInMin(recipe),
                 modifier = Modifier.padding(horizontal = Dims.Dp4),
-                fontSize = 14.sp
+                fontSize = Dims.Sp14
             )
             Icon(imageVector = Icons.Filled.Face, contentDescription = FACE_ICON)
             Text(
                 recipe.servings.toString(),
                 modifier = Modifier.padding(horizontal = Dims.Dp4),
-                fontSize = 14.sp
+                fontSize = Dims.Sp14
             )
         }
         Card(
@@ -87,7 +86,7 @@ private fun RecipeCardBottomRow(recipe: RecipeModel) {
         ) {
             Text(
                 recipe.difficulty.toString(),
-                fontSize = 10.sp,
+                fontSize = Dims.Sp10,
                 modifier = Modifier.padding(horizontal = Dims.Dp5)
             )
         }

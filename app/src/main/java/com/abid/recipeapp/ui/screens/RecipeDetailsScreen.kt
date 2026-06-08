@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.IngredientsTabModel
@@ -137,8 +136,8 @@ private fun RecipeDetailsCard(
         shape = RoundedCornerShape(Dims.Dp30)
     ) {
         Column(Modifier.padding(Dims.Dp20)) {
-            Text(recipe.title, fontSize = 25.sp)
-            Text("by ${recipe.author}", fontSize = 12.sp)
+            Text(recipe.title, fontSize = Dims.Sp25)
+            Text("by ${recipe.author}", fontSize = Dims.Sp12)
             ServingsAndDurationRow(recipe)
             Text(recipe.description, modifier = Modifier.padding(vertical = Dims.Dp10))
             MacroCard(recipe)
@@ -179,7 +178,7 @@ private fun MacroItemColumn(label: String, value: Int, valueColor: Color = Color
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(value.toString(), fontSize = 25.sp, color = valueColor)
+        Text(value.toString(), fontSize = Dims.Sp25, color = valueColor)
         Text(label)
     }
 }
@@ -207,7 +206,7 @@ private fun ServingsAndDurationRow(recipe: RecipeModel) {
                     Icon(imageVector = Icons.Filled.Info, contentDescription = "")
                     Text(
                         it.toString(),
-                        fontSize = 12.sp,
+                        fontSize = Dims.Sp12,
                     )
                 }
             }

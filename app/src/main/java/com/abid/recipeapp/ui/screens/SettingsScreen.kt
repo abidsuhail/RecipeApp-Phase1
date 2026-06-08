@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.BuildConfig
 import com.abid.recipeapp.ui.state.SettingsUiState
@@ -62,7 +61,7 @@ fun SettingsScreen(
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            Text(SETTINGS, fontSize = 35.sp)
+            Text(SETTINGS, fontSize = Dims.Sp35)
             GrayCard {
                 ThemeOptionsCardItem(state.currentTheme) {
                     onThemeSelected(it)
@@ -87,8 +86,8 @@ private fun ThemeOptionsCardItem(
 ) {
     Box(modifier = Modifier.padding(Dims.Dp10)) {
         Column {
-            Text(THEME, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-            Text(CHOOSE_YOUR_PREFERRED_THEME, fontSize = 12.sp)
+            Text(THEME, fontSize = Dims.Sp20, fontWeight = FontWeight.SemiBold)
+            Text(CHOOSE_YOUR_PREFERRED_THEME, fontSize = Dims.Sp12)
             Row {
                 ThemeModeGridItem(
                     AppThemeMode.LIGHT,
@@ -118,7 +117,7 @@ private fun AboutCardColumn() {
             .padding(Dims.Dp10)
             .fillMaxWidth()
     ) {
-        Text(ABOUT, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+        Text(ABOUT, fontSize = Dims.Sp20, fontWeight = FontWeight.SemiBold)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -148,10 +147,10 @@ private fun AboutCardColumn() {
 private fun AppInfoCardItem() {
     Box(modifier = Modifier.padding(Dims.Dp10)) {
         Column {
-            Text(APP_INFO, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            Text(APP_INFO, fontSize = Dims.Sp20, fontWeight = FontWeight.SemiBold)
             Text(
                 Constants.RECIPE_APP_INFO,
-                fontSize = 12.sp,
+                fontSize = Dims.Sp12,
                 modifier = Modifier.padding(Dims.Dp5)
             )
         }
