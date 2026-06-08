@@ -44,6 +44,7 @@ import com.abid.recipeapp.util.Constants
 import com.abid.recipeapp.util.Constants.ABOUT
 import com.abid.recipeapp.util.Constants.APP_INFO
 import com.abid.recipeapp.util.Constants.CHOOSE_YOUR_PREFERRED_THEME
+import com.abid.recipeapp.util.Constants.SETTINGS
 import com.abid.recipeapp.util.Constants.THEME
 import com.abid.recipeapp.util.Constants.TOTAL_RECIPES
 import com.abid.recipeapp.util.Constants.VERSION
@@ -61,7 +62,7 @@ fun SettingsScreen(
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            Text("Settings", fontSize = 35.sp)
+            Text(SETTINGS, fontSize = 35.sp)
             GrayCard {
                 ThemeOptionsCardItem(state.currentTheme) {
                     onThemeSelected(it)
