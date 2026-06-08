@@ -49,8 +49,27 @@ object Constants {
     const val INGREDIENT_NAME = "Ingredient name"
     const val AMOUNT = "Amount"
     const val CLOSE_ICON = "Close icon"
-
     const val SETTINGS_DATASTORE_NAME = "settings"
+    const val RECIPE_TITLE = "Recipe Title"
+    const val DESCRIPTION = "Description"
+    const val PREP_TIME_MIN = "Prep Time(min)"
+    const val COOK_TIME_MIN = "Cook Time(min)"
+    const val SERVINGS = "Servings"
+    const val CATEGORY = "Category"
+    const val CUISINE = "Cuisine"
+    const val DIFFICULTY = "Difficulty"
+    const val NUTRITION = "Nutrition"
+    const val PLEASE_ENTER_CALORIES = "Please enter the calories"
+    const val CALORIES = "Calories"
+    const val PLEASE_ENTER_PROTEIN = "Please enter the protein"
+    const val PROTEIN = "Protein"
+    const val PLEASE_ENTER_CARBS = "Please enter the carbs"
+    const val CARBS = "Carbs"
+    const val PLEASE_ENTER_FATS = "Please enter the fats"
+    const val FATS = "Fats"
+    const val INGREDIENTS = "Ingredients"
+    const val ADD_ICON = "Add Icon"
+    const val INSTRUCTIONS = "Instructions"
 
 }
 
