@@ -181,7 +181,7 @@ fun CreateRecipeScreen(
                         label = { Text(PREP_TIME_MIN) },
                         isError = prepTimeError != null,
                         modifier = Modifier
-                            .weight(1f),
+                            .weight(Dims.W1),
                     )
                     Spacer(Modifier.width(Dims.Dp5))
                     OutlinedTextField(
@@ -197,7 +197,7 @@ fun CreateRecipeScreen(
                         label = { Text(COOK_TIME_MIN) },
                         isError = cookTimeMinError != null,
                         modifier = Modifier
-                            .weight(1f),
+                            .weight(Dims.W1),
                     )
                 }
                 OutlinedTextField(
@@ -321,7 +321,7 @@ fun CreateRecipeScreen(
                             keyboardType = KeyboardType.Number
                         ),
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(Dims.W1)
                             .padding(Dims.Dp5)
                     )
                     OutlinedTextField(
@@ -337,7 +337,7 @@ fun CreateRecipeScreen(
                         label = { Text(PROTEIN) },
                         isError = nutritionProteinError != null,
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(Dims.W1)
                             .padding(Dims.Dp5)
                     )
                 }
@@ -355,7 +355,7 @@ fun CreateRecipeScreen(
                             keyboardType = KeyboardType.Number
                         ),
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(Dims.W1)
                             .padding(Dims.Dp5)
                     )
                     OutlinedTextField(
@@ -372,7 +372,7 @@ fun CreateRecipeScreen(
                             keyboardType = KeyboardType.Number
                         ),
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(Dims.W1)
                             .padding(Dims.Dp5)
                     )
                 }

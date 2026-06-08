@@ -37,7 +37,7 @@ fun IngredientRow(
             label = { Text(INGREDIENT_NAME) },
             isError = ingredientModel.item.isBlank(),
             modifier = Modifier
-                .weight(1f)
+                .weight(Dims.W1)
                 .padding(Dims.Dp5)
         )
         OutlinedTextField(
@@ -49,7 +49,7 @@ fun IngredientRow(
             ),
             isError = ingredientModel.amount.isBlank(),
             modifier = Modifier
-                .weight(1f)
+                .weight(Dims.W1)
                 .padding(Dims.Dp5)
 
         )

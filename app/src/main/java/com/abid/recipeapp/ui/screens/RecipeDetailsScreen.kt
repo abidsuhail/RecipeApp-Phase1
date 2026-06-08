@@ -202,7 +202,7 @@ private fun ServingsAndDurationRow(recipe: RecipeModel) {
         getServingsAndUrList(recipe).forEach {
             Card(
                 Modifier
-                    .weight(1f)
+                    .weight(Dims.W1)
                     .height(Dims.Dp80),
                 colors = CardDefaults.cardColors(Orange40)
             ) {

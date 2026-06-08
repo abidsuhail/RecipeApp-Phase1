@@ -47,6 +47,7 @@ import com.abid.recipeapp.util.Constants.THEME
 import com.abid.recipeapp.util.Constants.TOTAL_RECIPES
 import com.abid.recipeapp.util.Constants.VERSION
 import com.abid.recipeapp.util.Dims
+import com.abid.recipeapp.util.Dims.W1
 import com.abid.recipeapp.viewmodel.SettingsViewModel
 
 
@@ -195,7 +196,7 @@ private fun RowScope.ThemeModeGridItem(
         Modifier
             .height(Dims.Dp100)
             .padding(Dims.Dp8)
-            .weight(1.0f)
+            .weight(W1)
             .clickable(
                 indication = LocalIndication.current,
                 interactionSource = remember { MutableInteractionSource() }

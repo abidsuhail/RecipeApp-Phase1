@@ -32,7 +32,7 @@ fun InstructionRow(
             label = { Text(INGREDIENT_NAME) },
             isError = instruction.isBlank(),
             modifier = Modifier
-                .weight(1f)
+                .weight(Dims.W1)
                 .padding(Dims.Dp5)
         )
 

@@ -39,4 +39,6 @@ object Dims {
     val Sp28 = 28.sp
     val Sp30 = 30.sp
     val Sp35 = 35.sp
+
+    val W1 = 1.0f
 }
