@@ -20,9 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.abid.recipeapp.util.Constants.CLICK_HERE_TO_PICK_FROM_GALLERY
+import com.abid.recipeapp.util.Dims
 
 
 @Composable
@@ -39,7 +39,7 @@ fun ImagePicker(onSuccessImageUri: (Uri?) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
+            .height(Dims.Dp200)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = LocalIndication.current,

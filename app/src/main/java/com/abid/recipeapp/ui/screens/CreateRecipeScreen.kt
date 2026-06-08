@@ -39,7 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
@@ -71,6 +70,7 @@ import com.abid.recipeapp.util.Constants.PROTEIN
 import com.abid.recipeapp.util.Constants.RECIPE_TITLE
 import com.abid.recipeapp.util.Constants.RECIPE_TITLE_CANNOT_BE_EMPTY
 import com.abid.recipeapp.util.Constants.SERVINGS
+import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
 
 
@@ -127,7 +127,7 @@ fun CreateRecipeScreen(
         Box(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(12.dp)
+                .padding(Dims.Dp12)
         ) {
             if (uiState?.isLoading == true) {
                 LoadingStateBox()
@@ -162,7 +162,7 @@ fun CreateRecipeScreen(
                     label = { Text(DESCRIPTION) },
                     isError = descError != null,
                     modifier = Modifier
-                        .height(140.dp)
+                        .height(Dims.Dp140)
                         .fillMaxWidth(),
                     singleLine = false,
                     maxLines = 5
@@ -183,7 +183,7 @@ fun CreateRecipeScreen(
                         modifier = Modifier
                             .weight(1f),
                     )
-                    Spacer(Modifier.width(5.dp))
+                    Spacer(Modifier.width(Dims.Dp5))
                     OutlinedTextField(
                         value = uiState!!.recipeModel.cookTime.toString(),
                         onValueChange = {
@@ -213,14 +213,14 @@ fun CreateRecipeScreen(
                     isError = servingsError != null,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Spacer(Modifier.height(15.dp))
+                Spacer(Modifier.height(Dims.Dp15))
                 Text(CATEGORY)
                 FlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(Dims.Dp12),
+                    horizontalArrangement = Arrangement.spacedBy(Dims.Dp8),
+                    verticalArrangement = Arrangement.spacedBy(Dims.Dp8)
                 ) {
                     uiState?.categoriesList?.forEach { item ->
                         Card(
@@ -239,19 +239,19 @@ fun CreateRecipeScreen(
                                 }
                             )
                         ) {
-                            Text(item.label, modifier = Modifier.padding(10.dp))
+                            Text(item.label, modifier = Modifier.padding(Dims.Dp10))
                         }
                     }
 
                 }
-                Spacer(Modifier.height(15.dp))
+                Spacer(Modifier.height(Dims.Dp15))
                 Text(CUISINE)
                 FlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(Dims.Dp12),
+                    horizontalArrangement = Arrangement.spacedBy(Dims.Dp8),
+                    verticalArrangement = Arrangement.spacedBy(Dims.Dp8)
                 ) {
                     uiState?.cuisinesList?.forEach { item ->
                         Card(
@@ -271,18 +271,18 @@ fun CreateRecipeScreen(
                                 }
                             )
                         ) {
-                            Text(item.label, modifier = Modifier.padding(10.dp))
+                            Text(item.label, modifier = Modifier.padding(Dims.Dp10))
                         }
                     }
                 }
-                Spacer(Modifier.height(15.dp))
+                Spacer(Modifier.height(Dims.Dp15))
                 Text(DIFFICULTY)
                 FlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(Dims.Dp12),
+                    horizontalArrangement = Arrangement.spacedBy(Dims.Dp8),
+                    verticalArrangement = Arrangement.spacedBy(Dims.Dp8)
                 ) {
                     uiState?.difficultiesList?.forEach { item ->
                         Card(
@@ -301,11 +301,11 @@ fun CreateRecipeScreen(
                                 }
                             )
                         ) {
-                            Text(item.label.name, modifier = Modifier.padding(10.dp))
+                            Text(item.label.name, modifier = Modifier.padding(Dims.Dp10))
                         }
                     }
                 }
-                Spacer(Modifier.height(15.dp))
+                Spacer(Modifier.height(Dims.Dp15))
                 Text(NUTRITION)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(
@@ -322,7 +322,7 @@ fun CreateRecipeScreen(
                         ),
                         modifier = Modifier
                             .weight(1f)
-                            .padding(5.dp)
+                            .padding(Dims.Dp5)
                     )
                     OutlinedTextField(
                         value = uiState!!.recipeModel.nutrition.protein.toString(),
@@ -338,7 +338,7 @@ fun CreateRecipeScreen(
                         isError = nutritionProteinError != null,
                         modifier = Modifier
                             .weight(1f)
-                            .padding(5.dp)
+                            .padding(Dims.Dp5)
                     )
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -356,7 +356,7 @@ fun CreateRecipeScreen(
                         ),
                         modifier = Modifier
                             .weight(1f)
-                            .padding(5.dp)
+                            .padding(Dims.Dp5)
                     )
                     OutlinedTextField(
                         value = uiState!!.recipeModel.nutrition.fat.toString(),
@@ -373,10 +373,10 @@ fun CreateRecipeScreen(
                         ),
                         modifier = Modifier
                             .weight(1f)
-                            .padding(5.dp)
+                            .padding(Dims.Dp5)
                     )
                 }
-                Spacer(Modifier.height(15.dp))
+                Spacer(Modifier.height(Dims.Dp15))
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
@@ -386,7 +386,7 @@ fun CreateRecipeScreen(
                         imageVector = Icons.Filled.AddCircle,
                         contentDescription = ADD_ICON,
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(Dims.Dp32)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = LocalIndication.current,
@@ -410,7 +410,7 @@ fun CreateRecipeScreen(
                             vm.onIngredientRemove(index)
                         })
                 }
-                Spacer(Modifier.height(15.dp))
+                Spacer(Modifier.height(Dims.Dp15))
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
@@ -420,7 +420,7 @@ fun CreateRecipeScreen(
                         imageVector = Icons.Filled.AddCircle,
                         contentDescription = ADD_ICON,
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(Dims.Dp32)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = LocalIndication.current,

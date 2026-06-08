@@ -16,11 +16,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.abid.recipeapp.data.model.IngredientFormStateModel
 import com.abid.recipeapp.util.Constants.AMOUNT
 import com.abid.recipeapp.util.Constants.CLOSE_ICON
 import com.abid.recipeapp.util.Constants.INGREDIENT_NAME
+import com.abid.recipeapp.util.Dims
 
 
 @Composable
@@ -38,7 +38,7 @@ fun IngredientRow(
             isError = ingredientModel.item.isBlank(),
             modifier = Modifier
                 .weight(1f)
-                .padding(5.dp)
+                .padding(Dims.Dp5)
         )
         OutlinedTextField(
             value = ingredientModel.amount,
@@ -50,14 +50,14 @@ fun IngredientRow(
             isError = ingredientModel.amount.isBlank(),
             modifier = Modifier
                 .weight(1f)
-                .padding(5.dp)
+                .padding(Dims.Dp5)
 
         )
         Icon(
             imageVector = Icons.Filled.Close,
             contentDescription = CLOSE_ICON,
             modifier = Modifier
-                .padding(horizontal = 5.dp)
+                .padding(horizontal = Dims.Dp5)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = LocalIndication.current,

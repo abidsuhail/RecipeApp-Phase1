@@ -9,12 +9,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.RecipeList
 import com.abid.recipeapp.util.Constants.FAVOURITES_SCREEN_HEADING
+import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.FavScreenViewModel
 
 
@@ -29,7 +29,7 @@ fun FavRecipeScreen(
         vm.loadAllFavList()
     }
 
-    Box(modifier = Modifier.padding(10.dp)) {
+    Box(modifier = Modifier.padding(Dims.Dp10)) {
         Column {
             Text(FAVOURITES_SCREEN_HEADING, fontSize = 35.sp)
             RecipeList(

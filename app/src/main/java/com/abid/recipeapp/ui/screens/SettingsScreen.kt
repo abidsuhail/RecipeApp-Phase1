@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.BuildConfig
@@ -48,6 +47,7 @@ import com.abid.recipeapp.util.Constants.SETTINGS
 import com.abid.recipeapp.util.Constants.THEME
 import com.abid.recipeapp.util.Constants.TOTAL_RECIPES
 import com.abid.recipeapp.util.Constants.VERSION
+import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.SettingsViewModel
 
 
@@ -58,7 +58,7 @@ fun SettingsScreen(
 ) {
     val state by vm.state.observeAsState(initial = SettingsUiState(AppThemeMode.SYSTEM))
 
-    Box(Modifier.padding(10.dp)) {
+    Box(Modifier.padding(Dims.Dp10)) {
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
@@ -85,7 +85,7 @@ private fun ThemeOptionsCardItem(
     currentThemeMode: AppThemeMode,
     onThemeSelected: (AppThemeMode) -> Unit
 ) {
-    Box(modifier = Modifier.padding(10.dp)) {
+    Box(modifier = Modifier.padding(Dims.Dp10)) {
         Column {
             Text(THEME, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Text(CHOOSE_YOUR_PREFERRED_THEME, fontSize = 12.sp)
@@ -115,7 +115,7 @@ private fun ThemeOptionsCardItem(
 private fun AboutCardColumn() {
     Column(
         modifier = Modifier
-            .padding(10.dp)
+            .padding(Dims.Dp10)
             .fillMaxWidth()
     ) {
         Text(ABOUT, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
@@ -128,8 +128,8 @@ private fun AboutCardColumn() {
         }
         Box(
             modifier = Modifier
-                .padding(vertical = 8.dp)
-                .height(1.dp)
+                .padding(vertical = Dims.Dp8)
+                .height(Dims.Dp1)
                 .fillMaxWidth()
                 .background(Color.LightGray)
         )
@@ -146,13 +146,13 @@ private fun AboutCardColumn() {
 
 @Composable
 private fun AppInfoCardItem() {
-    Box(modifier = Modifier.padding(10.dp)) {
+    Box(modifier = Modifier.padding(Dims.Dp10)) {
         Column {
             Text(APP_INFO, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Text(
                 Constants.RECIPE_APP_INFO,
                 fontSize = 12.sp,
-                modifier = Modifier.padding(5.dp)
+                modifier = Modifier.padding(Dims.Dp5)
             )
         }
     }
@@ -161,7 +161,7 @@ private fun AppInfoCardItem() {
 @Composable
 private fun GrayCard(content: @Composable () -> Unit) {
     Card(
-        modifier = Modifier.padding(vertical = 12.dp),
+        modifier = Modifier.padding(vertical = Dims.Dp12),
         colors = CardDefaults.cardColors(containerColor = SettingsTheme.cardColor)
     ) {
         content()
@@ -194,8 +194,8 @@ private fun RowScope.ThemeModeGridItem(
     }
     Card(
         Modifier
-            .height(100.dp)
-            .padding(8.dp)
+            .height(Dims.Dp100)
+            .padding(Dims.Dp8)
             .weight(1.0f)
             .clickable(
                 indication = LocalIndication.current,
@@ -203,7 +203,7 @@ private fun RowScope.ThemeModeGridItem(
             ) {
                 onThemeSelected(themeMode)
             },
-        border = BorderStroke(2.dp, borderColor),
+        border = BorderStroke(Dims.Dp2, borderColor),
         colors = CardDefaults.cardColors(containerColor = SettingsTheme.themeModeGrid),
     ) {
         Column(

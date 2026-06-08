@@ -6,8 +6,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.util.Dims
 
 @Composable
 fun LoadingStateBox() {
@@ -17,7 +17,7 @@ fun LoadingStateBox() {
     ) {
         CircularProgressIndicator(
             color = Orange40,
-            strokeWidth = 4.dp
+            strokeWidth = Dims.Dp4
         )
     }
 }

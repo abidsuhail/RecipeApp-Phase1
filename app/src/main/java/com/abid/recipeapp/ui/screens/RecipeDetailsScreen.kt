@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -49,6 +48,7 @@ import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.ui.theme.RecipeDetailsTheme
 import com.abid.recipeapp.util.Constants.FAVORITE_CONTENT_DESC
 import com.abid.recipeapp.util.Constants.getServingsAndUrList
+import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.RecipeDetailsViewModel
 import kotlinx.coroutines.delay
 
@@ -103,14 +103,14 @@ fun RecipeDetailsScreen(
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .height(300.dp),
+                        .height(Dims.Dp300),
                 ) {
                     AsyncImage(
                         model = uiState?.recipe!!.image,
                         contentDescription = "Recipe image",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(300.dp),
+                            .height(Dims.Dp300),
                         contentScale = ContentScale.Crop
                     )
                     BackButton {
@@ -132,15 +132,15 @@ private fun RecipeDetailsCard(
     Card(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 270.dp),
+            .padding(top = Dims.Dp270),
         colors = CardDefaults.cardColors(RecipeDetailsTheme.clippedCardBg),
-        shape = RoundedCornerShape(30.dp)
+        shape = RoundedCornerShape(Dims.Dp30)
     ) {
-        Column(Modifier.padding(20.dp)) {
+        Column(Modifier.padding(Dims.Dp20)) {
             Text(recipe.title, fontSize = 25.sp)
             Text("by ${recipe.author}", fontSize = 12.sp)
             ServingsAndDurationRow(recipe)
-            Text(recipe.description, modifier = Modifier.padding(vertical = 10.dp))
+            Text(recipe.description, modifier = Modifier.padding(vertical = Dims.Dp10))
             MacroCard(recipe)
             RecipeDetailsBottomTab(recipe, ingredientsTabModelList)
 
@@ -154,13 +154,13 @@ private fun MacroCard(recipe: RecipeModel) {
         Modifier
             .fillMaxWidth(),
     ) {
-        Box(Modifier.padding(10.dp)) {
+        Box(Modifier.padding(Dims.Dp10)) {
             Column {
                 Text("Nutrition (per serving)")
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(15.dp),
+                        .padding(Dims.Dp15),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     MacroItemColumn("Calories", recipe.nutrition.calories, Orange40)
@@ -189,14 +189,14 @@ private fun ServingsAndDurationRow(recipe: RecipeModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(top = Dims.Dp10),
+        horizontalArrangement = Arrangement.spacedBy(Dims.Dp8)
     ) {
         getServingsAndUrList(recipe).forEach {
             Card(
                 Modifier
                     .weight(1f)
-                    .height(80.dp),
+                    .height(Dims.Dp80),
                 colors = CardDefaults.cardColors(Orange40)
             ) {
                 Column(
@@ -222,7 +222,7 @@ private fun RecipeDetailsBottomTab(
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-    Column(modifier = Modifier.padding(vertical = 10.dp)) {
+    Column(modifier = Modifier.padding(vertical = Dims.Dp10)) {
         TabRow(
             selectedTabIndex = selectedTabIndex
         ) {
@@ -248,12 +248,12 @@ private fun IngredientsFragment(recipe: RecipeModel) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 5.dp)
+                    .padding(vertical = Dims.Dp5)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(15.dp),
+                        .padding(Dims.Dp15),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(ingredient.item)
@@ -269,7 +269,7 @@ private fun IngredientsFragment(recipe: RecipeModel) {
 private fun InstructionsFragment(recipe: RecipeModel) {
     Column {
         recipe.instructions.forEach { instruction ->
-            Box(Modifier.padding(vertical = 10.dp)) {
+            Box(Modifier.padding(vertical = Dims.Dp10)) {
                 Row {
                     Text("*")
                     Text(instruction)

@@ -7,7 +7,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -26,6 +25,7 @@ import com.abid.recipeapp.ui.screens.RecipeListScreen
 import com.abid.recipeapp.ui.screens.SearchRecipeScreen
 import com.abid.recipeapp.ui.screens.SettingsScreen
 import com.abid.recipeapp.ui.theme.AppThemeMode
+import com.abid.recipeapp.util.Dims
 
 @Composable
 fun AppNavHost(
@@ -55,7 +55,7 @@ fun AppNavHost(
 @Composable
 private fun AppNavGraph(
     navController: NavHostController,
-    paddingValues: PaddingValues = PaddingValues(0.dp),
+    paddingValues: PaddingValues = PaddingValues(Dims.Dp0),
     onThemeSelected: (AppThemeMode) -> Unit
 ) {
     NavHost(

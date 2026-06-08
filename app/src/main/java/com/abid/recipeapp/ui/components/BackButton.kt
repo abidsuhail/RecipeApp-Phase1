@@ -14,9 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.util.Constants.BACK_IMG
+import com.abid.recipeapp.util.Dims
 
 
 @Composable
@@ -26,14 +26,14 @@ fun BackButton(onClick: () -> Unit) {
         contentDescription = BACK_IMG,
         tint = Color.White,
         modifier = Modifier
-            .padding(top = 50.dp, start = 20.dp)
-            .size(40.dp)
+            .padding(top = Dims.Dp50, start = Dims.Dp20)
+            .size(Dims.Dp40)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = LocalIndication.current,
                 onClick = onClick
             )
-            .background(Orange40, RoundedCornerShape(100.dp))
+            .background(Orange40, RoundedCornerShape(Dims.Dp100))
 
     )
 }

@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.RecipeModel
@@ -34,6 +33,7 @@ import com.abid.recipeapp.ui.components.RecipeCatChipItem
 import com.abid.recipeapp.ui.components.RecipeList
 import com.abid.recipeapp.ui.state.RecipeListUiState
 import com.abid.recipeapp.util.Constants.DISCOVER_RECIPES
+import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.RecipeListViewModel
 
 @Composable
@@ -49,7 +49,7 @@ fun RecipeListScreen(
         recipeListViewModel.loadRecipeCategories()
     }
     Box() {
-        Column(modifier = Modifier.padding(top = 10.dp)) {
+        Column(modifier = Modifier.padding(top = Dims.Dp10)) {
             RecipeListHeader(onClickAddRecipe)
             RecipeCategoriesList(recipeListState) { category ->
                 recipeListViewModel.loadAllRecipes(category)
@@ -99,14 +99,14 @@ private fun RecipeListHeader(onClickAddRecipe: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 5.dp)
+            .padding(horizontal = Dims.Dp5)
     ) {
         Text(DISCOVER_RECIPES, fontSize = 30.sp)
         Icon(
             imageVector = Icons.Filled.AddCircle,
             contentDescription = "Add button",
             modifier = Modifier
-                .size(50.dp)
+                .size(Dims.Dp50)
                 .clickable(
                     onClick = {
                         onClickAddRecipe()

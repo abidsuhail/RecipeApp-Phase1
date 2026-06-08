@@ -14,9 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.abid.recipeapp.util.Constants.CLOSE_ICON
 import com.abid.recipeapp.util.Constants.INGREDIENT_NAME
+import com.abid.recipeapp.util.Dims
 
 
 @Composable
@@ -33,14 +33,14 @@ fun InstructionRow(
             isError = instruction.isBlank(),
             modifier = Modifier
                 .weight(1f)
-                .padding(5.dp)
+                .padding(Dims.Dp5)
         )
 
         Icon(
             imageVector = Icons.Filled.Close,
             contentDescription = CLOSE_ICON,
             modifier = Modifier
-                .padding(horizontal = 5.dp)
+                .padding(horizontal = Dims.Dp5)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = LocalIndication.current,
