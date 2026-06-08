@@ -24,7 +24,11 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.theme.getDifficultyLvlBgColor
+import com.abid.recipeapp.util.Constants.FACE_ICON
+import com.abid.recipeapp.util.Constants.INFO_ICON
+import com.abid.recipeapp.util.Constants.RECIPE_IMAGE
 import com.abid.recipeapp.util.Constants.getTotalCookTimeInMin
+
 
 @Composable
 fun RecipeCard(recipe: RecipeModel) {
@@ -37,7 +41,7 @@ fun RecipeCard(recipe: RecipeModel) {
         Column {
             AsyncImage(
                 model = recipe.image,
-                contentDescription = "Recipe image",
+                contentDescription = RECIPE_IMAGE,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
@@ -54,6 +58,7 @@ fun RecipeCard(recipe: RecipeModel) {
     }
 }
 
+
 @Composable
 private fun RecipeCardBottomRow(recipe: RecipeModel) {
     Row(
@@ -63,13 +68,13 @@ private fun RecipeCardBottomRow(recipe: RecipeModel) {
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Row {
-            Icon(imageVector = Icons.Filled.Info, contentDescription = "Info icon")
+            Icon(imageVector = Icons.Filled.Info, contentDescription = INFO_ICON)
             Text(
                 getTotalCookTimeInMin(recipe),
                 modifier = Modifier.padding(horizontal = 4.dp),
                 fontSize = 14.sp
             )
-            Icon(imageVector = Icons.Filled.Face, contentDescription = "Face icon")
+            Icon(imageVector = Icons.Filled.Face, contentDescription = FACE_ICON)
             Text(
                 recipe.servings.toString(),
                 modifier = Modifier.padding(horizontal = 4.dp),

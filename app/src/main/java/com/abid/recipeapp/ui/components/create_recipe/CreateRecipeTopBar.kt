@@ -15,6 +15,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.abid.recipeapp.util.Constants.BACK_BUTTON
+import com.abid.recipeapp.util.Constants.CREATE_RECIPE
+
 
 @Composable
 fun CreateRecipeTopBar(onClickBackBtn: () -> Unit, onClickSubmitBtn: () -> Unit) {
@@ -28,17 +31,17 @@ fun CreateRecipeTopBar(onClickBackBtn: () -> Unit, onClickSubmitBtn: () -> Unit)
         ) {
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
-                contentDescription = "Back button",
+                contentDescription = BACK_BUTTON,
                 modifier = Modifier.clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = LocalIndication.current,
                     onClick = onClickBackBtn
                 )
             )
-            Text("Create Recipe")
+            Text(CREATE_RECIPE)
             Icon(
                 imageVector = Icons.Filled.ThumbUp,
-                contentDescription = "Back button",
+                contentDescription = BACK_BUTTON,
                 modifier = Modifier.clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = LocalIndication.current,

@@ -47,9 +47,11 @@ import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.ui.theme.RecipeDetailsTheme
+import com.abid.recipeapp.util.Constants.FAVORITE_CONTENT_DESC
 import com.abid.recipeapp.util.Constants.getServingsAndUrList
 import com.abid.recipeapp.viewmodel.RecipeDetailsViewModel
 import kotlinx.coroutines.delay
+
 
 @Composable
 fun RecipeDetailsScreen(
@@ -88,7 +90,7 @@ fun RecipeDetailsScreen(
                 ) {
                     Icon(
                         imageVector = if (uiState?.isFav == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorite",
+                        contentDescription = FAVORITE_CONTENT_DESC,
                     )
                 }
             },

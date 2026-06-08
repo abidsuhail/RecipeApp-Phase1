@@ -18,6 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.abid.recipeapp.data.model.IngredientFormStateModel
+import com.abid.recipeapp.util.Constants.AMOUNT
+import com.abid.recipeapp.util.Constants.CLOSE_ICON
+import com.abid.recipeapp.util.Constants.INGREDIENT_NAME
+
 
 @Composable
 fun IngredientRow(
@@ -30,7 +34,7 @@ fun IngredientRow(
         OutlinedTextField(
             value = ingredientModel.item,
             onValueChange = onIngredientNameChange,
-            label = { Text("Ingredient name") },
+            label = { Text(INGREDIENT_NAME) },
             isError = ingredientModel.item.isBlank(),
             modifier = Modifier
                 .weight(1f)
@@ -39,7 +43,7 @@ fun IngredientRow(
         OutlinedTextField(
             value = ingredientModel.amount,
             onValueChange = onIngredientAmountChange,
-            label = { Text("Amount") },
+            label = { Text(AMOUNT) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number
             ),
@@ -51,7 +55,7 @@ fun IngredientRow(
         )
         Icon(
             imageVector = Icons.Filled.Close,
-            contentDescription = "Close icon",
+            contentDescription = CLOSE_ICON,
             modifier = Modifier
                 .padding(horizontal = 5.dp)
                 .clickable(

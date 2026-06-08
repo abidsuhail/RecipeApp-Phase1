@@ -16,12 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.util.Constants.BACK_IMG
+
 
 @Composable
 fun BackButton(onClick: () -> Unit) {
     Icon(
         imageVector = Icons.Filled.ArrowBack,
-        contentDescription = "Back img",
+        contentDescription = BACK_IMG,
         tint = Color.White,
         modifier = Modifier
             .padding(top = 50.dp, start = 20.dp)

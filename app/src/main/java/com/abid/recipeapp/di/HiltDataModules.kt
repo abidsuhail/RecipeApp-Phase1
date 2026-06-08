@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.abid.recipeapp.data.repository.RecipeRepository
+import com.abid.recipeapp.util.Constants.SETTINGS_DATASTORE_NAME
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
@@ -37,7 +38,7 @@ object RepositoryModule {
     fun provideDataStore(
         @ApplicationContext context: Context
     ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
-        produceFile = { context.preferencesDataStoreFile("settings") }
+        produceFile = { context.preferencesDataStoreFile(SETTINGS_DATASTORE_NAME) }
     )
 
 

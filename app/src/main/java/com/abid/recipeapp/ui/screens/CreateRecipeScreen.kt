@@ -49,6 +49,8 @@ import com.abid.recipeapp.ui.components.create_recipe.IngredientRow
 import com.abid.recipeapp.ui.components.create_recipe.InstructionRow
 import com.abid.recipeapp.ui.state.RecipeSaveState
 import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.util.Constants.DESCRIPTION_CANNOT_BE_EMPTY
+import com.abid.recipeapp.util.Constants.RECIPE_TITLE_CANNOT_BE_EMPTY
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
 
 
@@ -125,7 +127,7 @@ fun CreateRecipeScreen(
                     value = uiState!!.recipeModel.title,
                     onValueChange = {
                         vm.onTitleChange(it)
-                        recipeNameError = if (it.isBlank()) "Recipe Title cannot be empty" else null
+                        recipeNameError = if (it.isBlank()) RECIPE_TITLE_CANNOT_BE_EMPTY else null
                     },
                     label = { Text("Recipe Title") },
                     isError = recipeNameError != null,
@@ -135,7 +137,7 @@ fun CreateRecipeScreen(
                     value = uiState!!.recipeModel.description,
                     onValueChange = {
                         vm.onDescriptionChange(it)
-                        descError = if (it.isBlank()) "Description cannot be empty" else null
+                        descError = if (it.isBlank()) DESCRIPTION_CANNOT_BE_EMPTY else null
                     },
                     label = { Text("Description") },
                     isError = descError != null,
@@ -151,7 +153,7 @@ fun CreateRecipeScreen(
                         onValueChange = {
                             vm.onPrepTimeChange(it)
                             prepTimeError =
-                                if (it.isBlank()) "Description cannot be empty" else null
+                                if (it.isBlank()) DESCRIPTION_CANNOT_BE_EMPTY else null
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
@@ -167,7 +169,7 @@ fun CreateRecipeScreen(
                         onValueChange = {
                             vm.onCookTimeChange(it)
                             cookTimeMinError =
-                                if (it.isBlank()) "Description cannot be empty" else null
+                                if (it.isBlank()) DESCRIPTION_CANNOT_BE_EMPTY else null
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
@@ -182,7 +184,7 @@ fun CreateRecipeScreen(
                     value = uiState!!.recipeModel.servings.toString(),
                     onValueChange = {
                         vm.onServingsChange(it)
-                        servingsError = if (it.isBlank()) "Recipe Title cannot be empty" else null
+                        servingsError = if (it.isBlank()) RECIPE_TITLE_CANNOT_BE_EMPTY else null
                     },
                     label = { Text("Servings") },
                     keyboardOptions = KeyboardOptions(

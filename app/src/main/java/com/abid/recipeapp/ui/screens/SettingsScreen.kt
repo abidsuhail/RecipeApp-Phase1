@@ -41,6 +41,12 @@ import com.abid.recipeapp.ui.theme.AppThemeMode
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.ui.theme.SettingsTheme
 import com.abid.recipeapp.util.Constants
+import com.abid.recipeapp.util.Constants.ABOUT
+import com.abid.recipeapp.util.Constants.APP_INFO
+import com.abid.recipeapp.util.Constants.CHOOSE_YOUR_PREFERRED_THEME
+import com.abid.recipeapp.util.Constants.THEME
+import com.abid.recipeapp.util.Constants.TOTAL_RECIPES
+import com.abid.recipeapp.util.Constants.VERSION
 import com.abid.recipeapp.viewmodel.SettingsViewModel
 
 
@@ -72,6 +78,7 @@ fun SettingsScreen(
     }
 }
 
+
 @Composable
 private fun ThemeOptionsCardItem(
     currentThemeMode: AppThemeMode,
@@ -79,8 +86,8 @@ private fun ThemeOptionsCardItem(
 ) {
     Box(modifier = Modifier.padding(10.dp)) {
         Column {
-            Text("Theme", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-            Text("Choose your preferred theme", fontSize = 12.sp)
+            Text(THEME, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            Text(CHOOSE_YOUR_PREFERRED_THEME, fontSize = 12.sp)
             Row {
                 ThemeModeGridItem(
                     AppThemeMode.LIGHT,
@@ -102,6 +109,7 @@ private fun ThemeOptionsCardItem(
     }
 }
 
+
 @Composable
 private fun AboutCardColumn() {
     Column(
@@ -109,12 +117,12 @@ private fun AboutCardColumn() {
             .padding(10.dp)
             .fillMaxWidth()
     ) {
-        Text("About", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+        Text(ABOUT, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Version")
+            Text(VERSION)
             Text(BuildConfig.VERSION_NAME)
         }
         Box(
@@ -128,17 +136,18 @@ private fun AboutCardColumn() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Total Recipes")
+            Text(TOTAL_RECIPES)
             Text("8")
         }
     }
 }
 
+
 @Composable
 private fun AppInfoCardItem() {
     Box(modifier = Modifier.padding(10.dp)) {
         Column {
-            Text("App Info", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            Text(APP_INFO, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             Text(
                 Constants.RECIPE_APP_INFO,
                 fontSize = 12.sp,

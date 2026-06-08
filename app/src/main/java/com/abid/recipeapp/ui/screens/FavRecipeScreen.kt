@@ -14,7 +14,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.RecipeList
+import com.abid.recipeapp.util.Constants.FAVOURITES_SCREEN_HEADING
 import com.abid.recipeapp.viewmodel.FavScreenViewModel
+
 
 @Composable
 fun FavRecipeScreen(
@@ -29,7 +31,7 @@ fun FavRecipeScreen(
 
     Box(modifier = Modifier.padding(10.dp)) {
         Column {
-            Text("Favourites", fontSize = 35.sp)
+            Text(FAVOURITES_SCREEN_HEADING, fontSize = 35.sp)
             RecipeList(
                 isLoading = state?.isLoading,
                 errorMsg = state?.errorMsg,

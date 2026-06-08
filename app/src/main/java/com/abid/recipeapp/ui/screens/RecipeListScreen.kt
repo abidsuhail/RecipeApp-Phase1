@@ -33,6 +33,7 @@ import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.RecipeCatChipItem
 import com.abid.recipeapp.ui.components.RecipeList
 import com.abid.recipeapp.ui.state.RecipeListUiState
+import com.abid.recipeapp.util.Constants.DISCOVER_RECIPES
 import com.abid.recipeapp.viewmodel.RecipeListViewModel
 
 @Composable
@@ -90,6 +91,7 @@ private fun RecipeCategoriesList(
     }
 }
 
+
 @Composable
 private fun RecipeListHeader(onClickAddRecipe: () -> Unit) {
     Row(
@@ -99,7 +101,7 @@ private fun RecipeListHeader(onClickAddRecipe: () -> Unit) {
             .fillMaxWidth()
             .padding(horizontal = 5.dp)
     ) {
-        Text("Discover Recipes", fontSize = 30.sp)
+        Text(DISCOVER_RECIPES, fontSize = 30.sp)
         Icon(
             imageVector = Icons.Filled.AddCircle,
             contentDescription = "Add button",
