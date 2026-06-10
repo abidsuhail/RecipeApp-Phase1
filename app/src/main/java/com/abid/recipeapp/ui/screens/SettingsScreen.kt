@@ -1,6 +1,5 @@
 package com.abid.recipeapp.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -15,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.SystemSecurityUpdateGood
@@ -24,7 +25,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -32,14 +32,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.BuildConfig
 import com.abid.recipeapp.ui.state.SettingsUiState
 import com.abid.recipeapp.ui.theme.AppThemeMode
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.ui.theme.SettingsTheme
+import com.abid.recipeapp.util.Constants
+import com.abid.recipeapp.util.Constants.ABOUT
+import com.abid.recipeapp.util.Constants.APP_INFO
+import com.abid.recipeapp.util.Constants.CHOOSE_YOUR_PREFERRED_THEME
+import com.abid.recipeapp.util.Constants.SETTINGS
+import com.abid.recipeapp.util.Constants.THEME
+import com.abid.recipeapp.util.Constants.TOTAL_RECIPES
+import com.abid.recipeapp.util.Constants.VERSION
+import com.abid.recipeapp.util.Dims
+import com.abid.recipeapp.util.Dims.W1
 import com.abid.recipeapp.viewmodel.SettingsViewModel
 
 
@@ -50,12 +58,11 @@ fun SettingsScreen(
 ) {
     val state by vm.state.observeAsState(initial = SettingsUiState(AppThemeMode.SYSTEM))
 
-    LaunchedEffect(state.currentTheme) {
-        Log.e("SettingsScreen", "SettingsScreen: ${state.currentTheme}")
-    }
-    Box(Modifier.padding(10.dp)) {
-        Column {
-            Text("Settings", fontSize = 35.sp)
+    Box(Modifier.padding(Dims.Dp10)) {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
+            Text(SETTINGS, fontSize = Dims.Sp35)
             GrayCard {
                 ThemeOptionsCardItem(state.currentTheme) {
                     onThemeSelected(it)
@@ -72,15 +79,16 @@ fun SettingsScreen(
     }
 }
 
+
 @Composable
 private fun ThemeOptionsCardItem(
     currentThemeMode: AppThemeMode,
     onThemeSelected: (AppThemeMode) -> Unit
 ) {
-    Box(modifier = Modifier.padding(10.dp)) {
+    Box(modifier = Modifier.padding(Dims.Dp10)) {
         Column {
-            Text("Theme", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-            Text("Choose your preferred theme", fontSize = 12.sp)
+            Text(THEME, fontSize = Dims.Sp20, fontWeight = FontWeight.SemiBold)
+            Text(CHOOSE_YOUR_PREFERRED_THEME, fontSize = Dims.Sp12)
             Row {
                 ThemeModeGridItem(
                     AppThemeMode.LIGHT,
@@ -102,25 +110,26 @@ private fun ThemeOptionsCardItem(
     }
 }
 
+
 @Composable
 private fun AboutCardColumn() {
     Column(
         modifier = Modifier
-            .padding(10.dp)
+            .padding(Dims.Dp10)
             .fillMaxWidth()
     ) {
-        Text("About", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+        Text(ABOUT, fontSize = Dims.Sp20, fontWeight = FontWeight.SemiBold)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Version")
+            Text(VERSION)
             Text(BuildConfig.VERSION_NAME)
         }
         Box(
             modifier = Modifier
-                .padding(vertical = 8.dp)
-                .height(1.dp)
+                .padding(vertical = Dims.Dp8)
+                .height(Dims.Dp1)
                 .fillMaxWidth()
                 .background(Color.LightGray)
         )
@@ -128,21 +137,22 @@ private fun AboutCardColumn() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Total Recipes")
+            Text(TOTAL_RECIPES)
             Text("8")
         }
     }
 }
 
+
 @Composable
 private fun AppInfoCardItem() {
-    Box(modifier = Modifier.padding(10.dp)) {
+    Box(modifier = Modifier.padding(Dims.Dp10)) {
         Column {
-            Text("App Info", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            Text(APP_INFO, fontSize = Dims.Sp20, fontWeight = FontWeight.SemiBold)
             Text(
-                "Recipe app is your personal cooking companion. Discover,save, and create delicious recipes from around the world",
-                fontSize = 12.sp,
-                modifier = Modifier.padding(5.dp)
+                Constants.RECIPE_APP_INFO,
+                fontSize = Dims.Sp12,
+                modifier = Modifier.padding(Dims.Dp5)
             )
         }
     }
@@ -151,7 +161,7 @@ private fun AppInfoCardItem() {
 @Composable
 private fun GrayCard(content: @Composable () -> Unit) {
     Card(
-        modifier = Modifier.padding(vertical = 12.dp),
+        modifier = Modifier.padding(vertical = Dims.Dp12),
         colors = CardDefaults.cardColors(containerColor = SettingsTheme.cardColor)
     ) {
         content()
@@ -184,16 +194,16 @@ private fun RowScope.ThemeModeGridItem(
     }
     Card(
         Modifier
-            .height(100.dp)
-            .padding(8.dp)
-            .weight(1.0f)
+            .height(Dims.Dp100)
+            .padding(Dims.Dp8)
+            .weight(W1)
             .clickable(
                 indication = LocalIndication.current,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
                 onThemeSelected(themeMode)
             },
-        border = BorderStroke(2.dp, borderColor),
+        border = BorderStroke(Dims.Dp2, borderColor),
         colors = CardDefaults.cardColors(containerColor = SettingsTheme.themeModeGrid),
     ) {
         Column(

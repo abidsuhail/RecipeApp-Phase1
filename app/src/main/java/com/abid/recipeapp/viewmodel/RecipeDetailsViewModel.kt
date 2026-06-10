@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.abid.recipeapp.data.model.FavRecipeModel
 import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.ui.state.RecipeDetailsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +22,7 @@ class RecipeDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value?.copy(isLoading = true)
-                repository.toggleFav(FavRecipeModel(recipeId = recipeId))
+                repository.toggleFav(recipeId)
                 val isInFav = repository.isFav(recipeId)
                 _uiState.value = _uiState.value?.copy(isLoading = false, isFav = isInFav)
             } catch (e: Exception) {

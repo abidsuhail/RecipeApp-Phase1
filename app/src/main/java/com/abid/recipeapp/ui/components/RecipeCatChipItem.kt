@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.util.Dims
 
 @Composable
 fun RecipeCatChipItem(
@@ -39,9 +39,9 @@ fun RecipeCatChipItem(
     }
     Box(
         modifier = Modifier
-            .defaultMinSize(minWidth = 100.dp)
-            .padding(5.dp)
-            .clip(RoundedCornerShape(50.dp))
+            .defaultMinSize(minWidth = Dims.Dp100)
+            .padding(Dims.Dp5)
+            .clip(RoundedCornerShape(Dims.Dp50))
             .background(bagColor)
             .clickable(
                 onClick = {
@@ -55,7 +55,7 @@ fun RecipeCatChipItem(
             recipeCat.label,
             color = textColor,
             modifier = Modifier
-                .padding(8.dp)
+                .padding(Dims.Dp8)
                 .align(Alignment.Center),
             textAlign = TextAlign.Center,
         )

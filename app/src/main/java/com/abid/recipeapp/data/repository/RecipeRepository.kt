@@ -92,10 +92,10 @@ class RecipeRepository @Inject constructor(
         }
     }
 
-    suspend fun toggleFav(favRecipeModel: FavRecipeModel) {
+    suspend fun toggleFav(recipeId: String) {
         withContext(Dispatchers.IO) {
             // use recipeId as document ID directly
-            val docRef = db.collection(FAV).document(favRecipeModel.recipeId)
+            val docRef = db.collection(FAV).document(recipeId)
             val existingDoc = docRef.get().await()
 
             if (existingDoc.exists()) {
@@ -103,27 +103,24 @@ class RecipeRepository @Inject constructor(
                 docRef.delete().await()
             } else {
                 // not fav → add
-                docRef.set(favRecipeModel).await()
+                docRef.set(FavRecipeModel(recipeId)).await()
             }
         }
     }
 
     suspend fun getAllFavRecipesList(): List<RecipeModel> {
         return withContext(Dispatchers.IO) {
-            val recipes = db.collection(FAV)
+            val favIds = db.collection(FAV)
                 .get()
                 .await()
-            val favList = recipes.toObjects(FavRecipeModel::class.java)
-            val recipeList = mutableListOf<RecipeModel>()
-            favList.forEach {
-                val found = db.collection(RECIPES)
-                    .whereEqualTo("id", it.recipeId).get().await().firstOrNull()
-                if (found != null) {
-                    val foundRecipe = found.toObject(RecipeModel::class.java)
-                    recipeList.add(foundRecipe)
-                }
-            }
-            recipeList
+                .toObjects(FavRecipeModel::class.java)
+                .map { it.recipeId }
+            if (favIds.isEmpty()) return@withContext emptyList()
+            db.collection(RECIPES)
+                .whereIn("id", favIds)
+                .get()
+                .await()
+                .toObjects(RecipeModel::class.java)
         }
     }
 
