@@ -27,6 +27,8 @@ object Constants {
     const val SETTINGS = "Settings"
 
     const val RECIPE_NOT_FOUND_ERROR_MSG = "Recipe not found"
+    const val FAVOURITE_NOT_FOUND_ERROR_MSG = "Favourite not found"
+
     const val RECIPE_APP_INFO =
         "Recipe app is your personal cooking companion. Discover,save, and create delicious recipes from around the world"
     const val RECIPE_TITLE_CANNOT_BE_EMPTY = "Recipe Title cannot be empty"

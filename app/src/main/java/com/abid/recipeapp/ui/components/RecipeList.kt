@@ -10,38 +10,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.abid.recipeapp.data.model.RecipeModel
-import com.abid.recipeapp.util.Constants
 
 @Composable
 fun RecipeList(
-    isLoading: Boolean?,
-    errorMsg: String?,
     recipeList: List<RecipeModel>?,
     onClickRecipeItem: (RecipeModel) -> Unit,
 ) {
 
-    if (isLoading == true) {
-        LoadingStateBox()
-    } else if (!errorMsg.isNullOrBlank()) {
-        ErrorStateBox(errorMsg)
-    } else if (recipeList?.isNotEmpty() == true) {
-        LazyColumn {
-            items(items = recipeList, key = { recipe -> recipe.id }) { recipe ->
-                Box(
-                    modifier = Modifier.clickable(
-                        onClick = {
-                            onClickRecipeItem(recipe)
-                        },
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = LocalIndication.current,
-                    )
-                ) {
-                    RecipeCard(recipe)
-                }
+    LazyColumn {
+        items(items = recipeList ?: emptyList(), key = { recipe -> recipe.id }) { recipe ->
+            Box(
+                modifier = Modifier.clickable(
+                    onClick = {
+                        onClickRecipeItem(recipe)
+                    },
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = LocalIndication.current,
+                )
+            ) {
+                RecipeCard(recipe)
             }
         }
-    } else if (recipeList?.isEmpty() == true) {
-        ErrorStateBox(Constants.RECIPE_NOT_FOUND_ERROR_MSG)
     }
 
 }
