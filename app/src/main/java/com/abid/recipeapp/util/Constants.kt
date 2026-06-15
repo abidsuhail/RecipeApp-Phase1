@@ -36,7 +36,7 @@ object Constants {
     const val FAVOURITES_SCREEN_HEADING = "Favourites"
     const val FAVORITE_CONTENT_DESC = "Favorite"
     const val DISCOVER_RECIPES = "Discover Recipes"
-    const val SEARCH_RECIPE_SCREEN = "Search recipe screen"
+    const val SEARCH_RECIPE_SCREEN = "Search Recipes"
     const val ABOUT = "About"
     const val VERSION = "Version"
     const val TOTAL_RECIPES = "Total Recipes"
