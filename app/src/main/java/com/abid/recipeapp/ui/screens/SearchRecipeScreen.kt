@@ -73,8 +73,7 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
                         .verticalScroll(rememberScrollState()),
                 ) {
                     CategoryChipsGrid(
-                        state.recipesCategories,
-                        selectedCategory.value
+                        state.recipesCategories, selectedCategory.value
                     ) {
                         selectedCategory.value = it
                     }
