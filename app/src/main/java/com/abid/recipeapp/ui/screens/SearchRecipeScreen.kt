@@ -46,9 +46,9 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
     val sheetState = rememberModalBottomSheetState()
 
     val state by vm.state.observeAsState(initial = SearchRecipeUiState())
-    var selectedCategory = remember { mutableStateOf<RecipeCategoriesDataModel?>(null) }
-    var selectedCuisines = remember { mutableStateOf<RecipeCuisinesDataModel?>(null) }
-    var selectedDiffLvl = remember { mutableStateOf<RecipeDiffLvlDataModel?>(null) }
+    var selectedCategoryId by remember { mutableStateOf<String?>(null) }
+    var selectedCuisinesId by remember { mutableStateOf<String?>(null) }
+    var selectedDiffLvlId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         vm.loadRecipeCategories()
@@ -73,15 +73,15 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
                         .verticalScroll(rememberScrollState()),
                 ) {
                     CategoryChipsGrid(
-                        state.recipesCategories, selectedCategory.value
+                        state.recipesCategories, selectedCategoryId
                     ) {
-                        selectedCategory.value = it
+                        selectedCategoryId = it
                     }
-                    CuisineChipsGrid(state.recipesCuisines, selectedCuisines.value) {
-                        selectedCuisines.value = it
+                    CuisineChipsGrid(state.recipesCuisines, selectedCuisinesId) {
+                        selectedCuisinesId = it
                     }
-                    DifficultyChipsGrid(state.recipeDifficulties, selectedDiffLvl.value) {
-                        selectedDiffLvl.value = it
+                    DifficultyChipsGrid(state.recipeDifficulties, selectedDiffLvlId) {
+                        selectedDiffLvlId = it
                     }
                 }
             }
@@ -93,8 +93,8 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
 @Composable
 fun CategoryChipsGrid(
     recipeCategories: List<RecipeCategoriesDataModel>,
-    selectedCategory: RecipeCategoriesDataModel?,
-    onChipClicked: (RecipeCategoriesDataModel) -> Unit
+    selectedCategoryId: String?,
+    onChipClicked: (String) -> Unit
 ) {
     Column {
         Text(CATEGORY, fontSize = Dims.Sp20, fontWeight = FontWeight.SemiBold)
@@ -108,7 +108,7 @@ fun CategoryChipsGrid(
             recipeCategories.forEach { item ->
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = if (item.id == selectedCategory?.id) {
+                        containerColor = if (item.id == selectedCategoryId) {
                             Orange40
                         } else {
                             Color.Unspecified
@@ -118,7 +118,7 @@ fun CategoryChipsGrid(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            onChipClicked(item)
+                            onChipClicked(item.id)
                         }
                     )
                 ) {
@@ -132,8 +132,8 @@ fun CategoryChipsGrid(
 @Composable
 fun CuisineChipsGrid(
     recipeCuisines: List<RecipeCuisinesDataModel>,
-    selectedCuisine: RecipeCuisinesDataModel?,
-    onChipClicked: (RecipeCuisinesDataModel) -> Unit
+    selectedCuisineId: String?,
+    onChipClicked: (String) -> Unit
 ) {
     Column {
         Text(CUISINE, fontSize = Dims.Sp20, fontWeight = FontWeight.SemiBold)
@@ -147,7 +147,7 @@ fun CuisineChipsGrid(
             recipeCuisines.forEach { item ->
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = if (item.id == selectedCuisine?.id) {
+                        containerColor = if (item.id == selectedCuisineId) {
                             Orange40
                         } else {
                             Color.Unspecified
@@ -157,7 +157,7 @@ fun CuisineChipsGrid(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            onChipClicked(item)
+                            onChipClicked(item.id)
                         }
                     )
                 ) {
@@ -171,8 +171,8 @@ fun CuisineChipsGrid(
 @Composable
 fun DifficultyChipsGrid(
     recipeDifficulties: List<RecipeDiffLvlDataModel>,
-    selectedDiffLvl: RecipeDiffLvlDataModel?,
-    onChipClicked: (RecipeDiffLvlDataModel) -> Unit
+    selectedDiffLvlId: String?,
+    onChipClicked: (String) -> Unit
 ) {
     Column {
         Text(DIFFICULTY, fontSize = Dims.Sp20, fontWeight = FontWeight.SemiBold)
@@ -187,7 +187,7 @@ fun DifficultyChipsGrid(
             recipeDifficulties.forEach { item ->
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = if (item.id == selectedDiffLvl?.id) {
+                        containerColor = if (item.id == selectedDiffLvlId) {
                             Orange40
                         } else {
                             Color.Unspecified
@@ -197,7 +197,7 @@ fun DifficultyChipsGrid(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            onChipClicked(item)
+                            onChipClicked(item.id)
                         }
                     )
                 ) {
