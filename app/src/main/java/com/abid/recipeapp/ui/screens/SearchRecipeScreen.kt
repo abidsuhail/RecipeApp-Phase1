@@ -30,6 +30,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
+import com.abid.recipeapp.ui.components.RecipeSearchBar
 import com.abid.recipeapp.ui.state.SearchRecipeUiState
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.util.Constants.CATEGORY
@@ -61,6 +62,7 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
             Text(SEARCH_RECIPE_SCREEN, fontSize = Dims.Sp35)
+            RecipeSearchBar()
         }
         if (showSheet) {
             ModalBottomSheet(
