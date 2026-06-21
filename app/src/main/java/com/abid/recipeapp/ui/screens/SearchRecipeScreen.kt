@@ -25,9 +25,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
+import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
+import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
+import com.abid.recipeapp.ui.state.SearchRecipeUiState
 import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.util.Constants.CATEGORY
+import com.abid.recipeapp.util.Constants.CUISINE
+import com.abid.recipeapp.util.Constants.DIFFICULTY
 import com.abid.recipeapp.util.Constants.SEARCH_RECIPE_SCREEN
 import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.SearchRecipeViewModel
@@ -38,7 +45,10 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
     var showSheet by remember { mutableStateOf(true) }
     val sheetState = rememberModalBottomSheetState()
 
-    val state by vm.state.observeAsState()
+    val state by vm.state.observeAsState(initial = SearchRecipeUiState())
+    var selectedCategory = remember { mutableStateOf<RecipeCategoriesDataModel?>(null) }
+    var selectedCuisines = remember { mutableStateOf<RecipeCuisinesDataModel?>(null) }
+    var selectedDiffLvl = remember { mutableStateOf<RecipeDiffLvlDataModel?>(null) }
 
     LaunchedEffect(Unit) {
         vm.loadRecipeCategories()
@@ -57,99 +67,144 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
                 onDismissRequest = { showSheet = false },
                 sheetState = sheetState,
             ) {
-                // Sheet content
                 Column(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(Dims.Dp15)
                         .verticalScroll(rememberScrollState()),
                 ) {
-                    FlowRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(Dims.Dp12),
-                        horizontalArrangement = Arrangement.spacedBy(Dims.Dp8),
-                        verticalArrangement = Arrangement.spacedBy(Dims.Dp8)
+                    CategoryChipsGrid(
+                        state.recipesCategories,
+                        selectedCategory.value
                     ) {
-                        state?.recipesCategories?.forEach { item ->
-                            Card(
-                                colors = CardDefaults.cardColors(
-                                    containerColor = if (false) {
-                                        Orange40
-                                    } else {
-                                        Color.Unspecified
-                                    }
-                                ),
-                                modifier = Modifier.clickable(
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    onClick = {
-                                        // vm.onCategoryChange(item.label)
-                                    }
-                                )
-                            ) {
-                                Text(item.label, modifier = Modifier.padding(Dims.Dp10))
-                            }
-                        }
+                        selectedCategory.value = it
                     }
-                    FlowRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(Dims.Dp12),
-                        horizontalArrangement = Arrangement.spacedBy(Dims.Dp8),
-                        verticalArrangement = Arrangement.spacedBy(Dims.Dp8)
-                    ) {
-                        state?.recipesCuisines?.forEach { item ->
-                            Card(
-                                colors = CardDefaults.cardColors(
-                                    containerColor = if (false) {
-                                        Orange40
-                                    } else {
-                                        Color.Unspecified
-                                    }
-                                ),
-                                modifier = Modifier.clickable(
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    onClick = {
-                                        // vm.onCategoryChange(item.label)
-                                    }
-                                )
-                            ) {
-                                Text(item.label, modifier = Modifier.padding(Dims.Dp10))
-                            }
-                        }
+                    CuisineChipsGrid(state.recipesCuisines, selectedCuisines.value) {
+                        selectedCuisines.value = it
                     }
-                    FlowRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(Dims.Dp12),
-                        horizontalArrangement = Arrangement.spacedBy(Dims.Dp8),
-                        verticalArrangement = Arrangement.spacedBy(Dims.Dp8)
-                    ) {
-                        state?.recipeDifficulties?.forEach { item ->
-                            Card(
-                                colors = CardDefaults.cardColors(
-                                    containerColor = if (false) {
-                                        Orange40
-                                    } else {
-                                        Color.Unspecified
-                                    }
-                                ),
-                                modifier = Modifier.clickable(
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    onClick = {
-                                        // vm.onCategoryChange(item.label)
-                                    }
-                                )
-                            ) {
-                                Text(item.label.name, modifier = Modifier.padding(Dims.Dp10))
-                            }
-                        }
+                    DifficultyChipsGrid(state.recipeDifficulties, selectedDiffLvl.value) {
+                        selectedDiffLvl.value = it
                     }
                 }
             }
         }
     }
 
+}
+
+@Composable
+fun CategoryChipsGrid(
+    recipeCategories: List<RecipeCategoriesDataModel>,
+    selectedCategory: RecipeCategoriesDataModel?,
+    onChipClicked: (RecipeCategoriesDataModel) -> Unit
+) {
+    Column {
+        Text(CATEGORY, fontSize = Dims.Sp20, fontWeight = FontWeight.SemiBold)
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dims.Dp12),
+            horizontalArrangement = Arrangement.spacedBy(Dims.Dp8),
+            verticalArrangement = Arrangement.spacedBy(Dims.Dp8)
+        ) {
+            recipeCategories.forEach { item ->
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (item.id == selectedCategory?.id) {
+                            Orange40
+                        } else {
+                            Color.Unspecified
+                        }
+                    ),
+                    modifier = Modifier.clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = {
+                            onChipClicked(item)
+                        }
+                    )
+                ) {
+                    Text(item.label, modifier = Modifier.padding(Dims.Dp10))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CuisineChipsGrid(
+    recipeCuisines: List<RecipeCuisinesDataModel>,
+    selectedCuisine: RecipeCuisinesDataModel?,
+    onChipClicked: (RecipeCuisinesDataModel) -> Unit
+) {
+    Column {
+        Text(CUISINE, fontSize = Dims.Sp20, fontWeight = FontWeight.SemiBold)
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dims.Dp12),
+            horizontalArrangement = Arrangement.spacedBy(Dims.Dp8),
+            verticalArrangement = Arrangement.spacedBy(Dims.Dp8)
+        ) {
+            recipeCuisines.forEach { item ->
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (item.id == selectedCuisine?.id) {
+                            Orange40
+                        } else {
+                            Color.Unspecified
+                        }
+                    ),
+                    modifier = Modifier.clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = {
+                            onChipClicked(item)
+                        }
+                    )
+                ) {
+                    Text(item.label, modifier = Modifier.padding(Dims.Dp10))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DifficultyChipsGrid(
+    recipeDifficulties: List<RecipeDiffLvlDataModel>,
+    selectedDiffLvl: RecipeDiffLvlDataModel?,
+    onChipClicked: (RecipeDiffLvlDataModel) -> Unit
+) {
+    Column {
+        Text(DIFFICULTY, fontSize = Dims.Sp20, fontWeight = FontWeight.SemiBold)
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dims.Dp12),
+
+            horizontalArrangement = Arrangement.spacedBy(Dims.Dp8),
+            verticalArrangement = Arrangement.spacedBy(Dims.Dp8)
+        ) {
+            recipeDifficulties.forEach { item ->
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (item.id == selectedDiffLvl?.id) {
+                            Orange40
+                        } else {
+                            Color.Unspecified
+                        }
+                    ),
+                    modifier = Modifier.clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = {
+                            onChipClicked(item)
+                        }
+                    )
+                ) {
+                    Text(item.label.name, modifier = Modifier.padding(Dims.Dp10))
+                }
+            }
+        }
+    }
 }
