@@ -36,8 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.IngredientsTabModel
@@ -46,9 +44,20 @@ import com.abid.recipeapp.ui.components.BackButton
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.ui.theme.RecipeDetailsTheme
+import com.abid.recipeapp.util.Constants.CALORIES
+import com.abid.recipeapp.util.Constants.CARBS
+import com.abid.recipeapp.util.Constants.FAT
+import com.abid.recipeapp.util.Constants.FAVORITE_CONTENT_DESC
+import com.abid.recipeapp.util.Constants.NUTRITION_PER_SERVING_
+import com.abid.recipeapp.util.Constants.PROTEIN
 import com.abid.recipeapp.util.Constants.getServingsAndUrList
+import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.RecipeDetailsViewModel
 import kotlinx.coroutines.delay
+
+
+private const val RECIPE_IMAGE = "Recipe image"
 
 @Composable
 fun RecipeDetailsScreen(
@@ -60,6 +69,7 @@ fun RecipeDetailsScreen(
     LaunchedEffect(recipeId) {
         vm.loadRecipeById(recipeId)
         vm.loadIngredientsTabs()
+        vm.fetchIsInFav(recipeId)
     }
     LaunchedEffect(uiState?.errorMsg) {
         if (uiState?.errorMsg != null) {
@@ -81,11 +91,12 @@ fun RecipeDetailsScreen(
                     containerColor = Orange40,
                     onClick = {
                         isFavorite = !isFavorite
+                        vm.toggleFav(recipeId!!)
                     }
                 ) {
                     Icon(
-                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorite",
+                        imageVector = if (uiState?.isFav == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = FAVORITE_CONTENT_DESC,
                     )
                 }
             },
@@ -98,14 +109,14 @@ fun RecipeDetailsScreen(
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        .height(300.dp),
+                        .height(Dims.Dp300),
                 ) {
                     AsyncImage(
                         model = uiState?.recipe!!.image,
-                        contentDescription = "Recipe image",
+                        contentDescription = RECIPE_IMAGE,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(300.dp),
+                            .height(Dims.Dp300),
                         contentScale = ContentScale.Crop
                     )
                     BackButton {
@@ -127,15 +138,15 @@ private fun RecipeDetailsCard(
     Card(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 270.dp),
-        colors = CardDefaults.cardColors(Color.White),
-        shape = RoundedCornerShape(30.dp)
+            .padding(top = Dims.Dp270),
+        colors = CardDefaults.cardColors(RecipeDetailsTheme.clippedCardBg),
+        shape = RoundedCornerShape(Dims.Dp30)
     ) {
-        Column(Modifier.padding(20.dp)) {
-            Text(recipe.title, fontSize = 25.sp)
-            Text("by ${recipe.author}", fontSize = 12.sp)
+        Column(Modifier.padding(Dims.Dp20)) {
+            Text(recipe.title, fontSize = Dims.Sp25)
+            Text("by ${recipe.author}", fontSize = Dims.Sp12)
             ServingsAndDurationRow(recipe)
-            Text(recipe.description, modifier = Modifier.padding(vertical = 10.dp))
+            Text(recipe.description, modifier = Modifier.padding(vertical = Dims.Dp10))
             MacroCard(recipe)
             RecipeDetailsBottomTab(recipe, ingredientsTabModelList)
 
@@ -143,25 +154,26 @@ private fun RecipeDetailsCard(
     }
 }
 
+
 @Composable
 private fun MacroCard(recipe: RecipeModel) {
     Card(
         Modifier
             .fillMaxWidth(),
     ) {
-        Box(Modifier.padding(10.dp)) {
+        Box(Modifier.padding(Dims.Dp10)) {
             Column {
-                Text("Nutrition (per serving)")
+                Text(NUTRITION_PER_SERVING_)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(15.dp),
+                        .padding(Dims.Dp15),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    MacroItemColumn("Calories", recipe.nutrition.calories, Orange40)
-                    MacroItemColumn("Protein", recipe.nutrition.protein, Color.Green)
-                    MacroItemColumn("Carbs", recipe.nutrition.carbs, Color.Yellow)
-                    MacroItemColumn("Fat", recipe.nutrition.fat, Color.Red)
+                    MacroItemColumn(CALORIES, recipe.nutrition.calories, Orange40)
+                    MacroItemColumn(PROTEIN, recipe.nutrition.protein, Color.Green)
+                    MacroItemColumn(CARBS, recipe.nutrition.carbs, Color.Yellow)
+                    MacroItemColumn(FAT, recipe.nutrition.fat, Color.Red)
                 }
             }
         }
@@ -174,7 +186,7 @@ private fun MacroItemColumn(label: String, value: Int, valueColor: Color = Color
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(value.toString(), fontSize = 25.sp, color = valueColor)
+        Text(value.toString(), fontSize = Dims.Sp25, color = valueColor)
         Text(label)
     }
 }
@@ -184,14 +196,14 @@ private fun ServingsAndDurationRow(recipe: RecipeModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(top = Dims.Dp10),
+        horizontalArrangement = Arrangement.spacedBy(Dims.Dp8)
     ) {
         getServingsAndUrList(recipe).forEach {
             Card(
                 Modifier
-                    .weight(1f)
-                    .height(80.dp),
+                    .weight(Dims.W1)
+                    .height(Dims.Dp80),
                 colors = CardDefaults.cardColors(Orange40)
             ) {
                 Column(
@@ -202,7 +214,7 @@ private fun ServingsAndDurationRow(recipe: RecipeModel) {
                     Icon(imageVector = Icons.Filled.Info, contentDescription = "")
                     Text(
                         it.toString(),
-                        fontSize = 12.sp,
+                        fontSize = Dims.Sp12,
                     )
                 }
             }
@@ -217,7 +229,7 @@ private fun RecipeDetailsBottomTab(
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-    Column(modifier = Modifier.padding(vertical = 10.dp)) {
+    Column(modifier = Modifier.padding(vertical = Dims.Dp10)) {
         TabRow(
             selectedTabIndex = selectedTabIndex
         ) {
@@ -243,12 +255,12 @@ private fun IngredientsFragment(recipe: RecipeModel) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 5.dp)
+                    .padding(vertical = Dims.Dp5)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(15.dp),
+                        .padding(Dims.Dp15),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(ingredient.item)
@@ -264,7 +276,7 @@ private fun IngredientsFragment(recipe: RecipeModel) {
 private fun InstructionsFragment(recipe: RecipeModel) {
     Column {
         recipe.instructions.forEach { instruction ->
-            Box(Modifier.padding(vertical = 10.dp)) {
+            Box(Modifier.padding(vertical = Dims.Dp10)) {
                 Row {
                     Text("*")
                     Text(instruction)

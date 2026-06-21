@@ -39,7 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
@@ -49,6 +48,29 @@ import com.abid.recipeapp.ui.components.create_recipe.IngredientRow
 import com.abid.recipeapp.ui.components.create_recipe.InstructionRow
 import com.abid.recipeapp.ui.state.RecipeSaveState
 import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.util.Constants.ADD_ICON
+import com.abid.recipeapp.util.Constants.CALORIES
+import com.abid.recipeapp.util.Constants.CARBS
+import com.abid.recipeapp.util.Constants.CATEGORY
+import com.abid.recipeapp.util.Constants.COOK_TIME_MIN
+import com.abid.recipeapp.util.Constants.CUISINE
+import com.abid.recipeapp.util.Constants.DESCRIPTION
+import com.abid.recipeapp.util.Constants.DESCRIPTION_CANNOT_BE_EMPTY
+import com.abid.recipeapp.util.Constants.DIFFICULTY
+import com.abid.recipeapp.util.Constants.FATS
+import com.abid.recipeapp.util.Constants.INGREDIENTS
+import com.abid.recipeapp.util.Constants.INSTRUCTIONS
+import com.abid.recipeapp.util.Constants.NUTRITION
+import com.abid.recipeapp.util.Constants.PLEASE_ENTER_CALORIES
+import com.abid.recipeapp.util.Constants.PLEASE_ENTER_CARBS
+import com.abid.recipeapp.util.Constants.PLEASE_ENTER_FATS
+import com.abid.recipeapp.util.Constants.PLEASE_ENTER_PROTEIN
+import com.abid.recipeapp.util.Constants.PREP_TIME_MIN
+import com.abid.recipeapp.util.Constants.PROTEIN
+import com.abid.recipeapp.util.Constants.RECIPE_TITLE
+import com.abid.recipeapp.util.Constants.RECIPE_TITLE_CANNOT_BE_EMPTY
+import com.abid.recipeapp.util.Constants.SERVINGS
+import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.CreateRecipeViewModel
 
 
@@ -105,7 +127,7 @@ fun CreateRecipeScreen(
         Box(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(12.dp)
+                .padding(Dims.Dp12)
         ) {
             if (uiState?.isLoading == true) {
                 LoadingStateBox()
@@ -125,9 +147,9 @@ fun CreateRecipeScreen(
                     value = uiState!!.recipeModel.title,
                     onValueChange = {
                         vm.onTitleChange(it)
-                        recipeNameError = if (it.isBlank()) "Recipe Title cannot be empty" else null
+                        recipeNameError = if (it.isBlank()) RECIPE_TITLE_CANNOT_BE_EMPTY else null
                     },
-                    label = { Text("Recipe Title") },
+                    label = { Text(RECIPE_TITLE) },
                     isError = recipeNameError != null,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -135,12 +157,12 @@ fun CreateRecipeScreen(
                     value = uiState!!.recipeModel.description,
                     onValueChange = {
                         vm.onDescriptionChange(it)
-                        descError = if (it.isBlank()) "Description cannot be empty" else null
+                        descError = if (it.isBlank()) DESCRIPTION_CANNOT_BE_EMPTY else null
                     },
-                    label = { Text("Description") },
+                    label = { Text(DESCRIPTION) },
                     isError = descError != null,
                     modifier = Modifier
-                        .height(140.dp)
+                        .height(Dims.Dp140)
                         .fillMaxWidth(),
                     singleLine = false,
                     maxLines = 5
@@ -151,54 +173,54 @@ fun CreateRecipeScreen(
                         onValueChange = {
                             vm.onPrepTimeChange(it)
                             prepTimeError =
-                                if (it.isBlank()) "Description cannot be empty" else null
+                                if (it.isBlank()) DESCRIPTION_CANNOT_BE_EMPTY else null
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
                         ),
-                        label = { Text("Prep Time(min)") },
+                        label = { Text(PREP_TIME_MIN) },
                         isError = prepTimeError != null,
                         modifier = Modifier
-                            .weight(1f),
+                            .weight(Dims.W1),
                     )
-                    Spacer(Modifier.width(5.dp))
+                    Spacer(Modifier.width(Dims.Dp5))
                     OutlinedTextField(
                         value = uiState!!.recipeModel.cookTime.toString(),
                         onValueChange = {
                             vm.onCookTimeChange(it)
                             cookTimeMinError =
-                                if (it.isBlank()) "Description cannot be empty" else null
+                                if (it.isBlank()) DESCRIPTION_CANNOT_BE_EMPTY else null
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
                         ),
-                        label = { Text("Cook Time(min)") },
+                        label = { Text(COOK_TIME_MIN) },
                         isError = cookTimeMinError != null,
                         modifier = Modifier
-                            .weight(1f),
+                            .weight(Dims.W1),
                     )
                 }
                 OutlinedTextField(
                     value = uiState!!.recipeModel.servings.toString(),
                     onValueChange = {
                         vm.onServingsChange(it)
-                        servingsError = if (it.isBlank()) "Recipe Title cannot be empty" else null
+                        servingsError = if (it.isBlank()) RECIPE_TITLE_CANNOT_BE_EMPTY else null
                     },
-                    label = { Text("Servings") },
+                    label = { Text(SERVINGS) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number
                     ),
                     isError = servingsError != null,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Spacer(Modifier.height(15.dp))
-                Text("Category")
+                Spacer(Modifier.height(Dims.Dp15))
+                Text(CATEGORY)
                 FlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(Dims.Dp12),
+                    horizontalArrangement = Arrangement.spacedBy(Dims.Dp8),
+                    verticalArrangement = Arrangement.spacedBy(Dims.Dp8)
                 ) {
                     uiState?.categoriesList?.forEach { item ->
                         Card(
@@ -217,19 +239,19 @@ fun CreateRecipeScreen(
                                 }
                             )
                         ) {
-                            Text(item.label, modifier = Modifier.padding(10.dp))
+                            Text(item.label, modifier = Modifier.padding(Dims.Dp10))
                         }
                     }
 
                 }
-                Spacer(Modifier.height(15.dp))
-                Text("Cuisine")
+                Spacer(Modifier.height(Dims.Dp15))
+                Text(CUISINE)
                 FlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(Dims.Dp12),
+                    horizontalArrangement = Arrangement.spacedBy(Dims.Dp8),
+                    verticalArrangement = Arrangement.spacedBy(Dims.Dp8)
                 ) {
                     uiState?.cuisinesList?.forEach { item ->
                         Card(
@@ -249,18 +271,18 @@ fun CreateRecipeScreen(
                                 }
                             )
                         ) {
-                            Text(item.label, modifier = Modifier.padding(10.dp))
+                            Text(item.label, modifier = Modifier.padding(Dims.Dp10))
                         }
                     }
                 }
-                Spacer(Modifier.height(15.dp))
-                Text("Difficulty")
+                Spacer(Modifier.height(Dims.Dp15))
+                Text(DIFFICULTY)
                 FlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(Dims.Dp12),
+                    horizontalArrangement = Arrangement.spacedBy(Dims.Dp8),
+                    verticalArrangement = Arrangement.spacedBy(Dims.Dp8)
                 ) {
                     uiState?.difficultiesList?.forEach { item ->
                         Card(
@@ -279,44 +301,44 @@ fun CreateRecipeScreen(
                                 }
                             )
                         ) {
-                            Text(item.label.name, modifier = Modifier.padding(10.dp))
+                            Text(item.label.name, modifier = Modifier.padding(Dims.Dp10))
                         }
                     }
                 }
-                Spacer(Modifier.height(15.dp))
-                Text("Nutrition")
+                Spacer(Modifier.height(Dims.Dp15))
+                Text(NUTRITION)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(
                         value = uiState!!.recipeModel.nutrition.calories.toString(),
                         onValueChange = {
                             vm.onCaloriesChange(it)
                             nutritionCaloriesError =
-                                if (it.isBlank()) "Please enter the calories" else null
+                                if (it.isBlank()) PLEASE_ENTER_CALORIES else null
                         },
-                        label = { Text("Calories") },
+                        label = { Text(CALORIES) },
                         isError = nutritionCaloriesError != null,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
                         ),
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(5.dp)
+                            .weight(Dims.W1)
+                            .padding(Dims.Dp5)
                     )
                     OutlinedTextField(
                         value = uiState!!.recipeModel.nutrition.protein.toString(),
                         onValueChange = {
                             vm.onProteinChange(it)
                             nutritionProteinError =
-                                if (it.isBlank()) "Please enter the protein" else null
+                                if (it.isBlank()) PLEASE_ENTER_PROTEIN else null
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
                         ),
-                        label = { Text("Protein") },
+                        label = { Text(PROTEIN) },
                         isError = nutritionProteinError != null,
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(5.dp)
+                            .weight(Dims.W1)
+                            .padding(Dims.Dp5)
                     )
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -325,46 +347,46 @@ fun CreateRecipeScreen(
                         onValueChange = {
                             vm.onCarbsChange(it)
                             nutritionCarbsError =
-                                if (it.isBlank()) "Please enter the carbs" else null
+                                if (it.isBlank()) PLEASE_ENTER_CARBS else null
                         },
-                        label = { Text("Carbs") },
+                        label = { Text(CARBS) },
                         isError = nutritionCarbsError != null,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
                         ),
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(5.dp)
+                            .weight(Dims.W1)
+                            .padding(Dims.Dp5)
                     )
                     OutlinedTextField(
                         value = uiState!!.recipeModel.nutrition.fat.toString(),
                         onValueChange = {
                             vm.onFatChange(it)
                             nutritionFatsError =
-                                if (it.isBlank()) "Please enter the fats" else null
+                                if (it.isBlank()) PLEASE_ENTER_FATS else null
                         },
-                        label = { Text("Fats") },
+                        label = { Text(FATS) },
 
                         isError = nutritionFatsError != null,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
                         ),
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(5.dp)
+                            .weight(Dims.W1)
+                            .padding(Dims.Dp5)
                     )
                 }
-                Spacer(Modifier.height(15.dp))
+                Spacer(Modifier.height(Dims.Dp15))
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Ingredients")
+                    Text(INGREDIENTS)
                     Icon(
                         imageVector = Icons.Filled.AddCircle,
-                        contentDescription = "Add Icon",
+                        contentDescription = ADD_ICON,
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(Dims.Dp32)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = LocalIndication.current,
@@ -388,17 +410,17 @@ fun CreateRecipeScreen(
                             vm.onIngredientRemove(index)
                         })
                 }
-                Spacer(Modifier.height(15.dp))
+                Spacer(Modifier.height(Dims.Dp15))
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Instructions")
+                    Text(INSTRUCTIONS)
                     Icon(
                         imageVector = Icons.Filled.AddCircle,
-                        contentDescription = "Add Icon",
+                        contentDescription = ADD_ICON,
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(Dims.Dp32)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = LocalIndication.current,

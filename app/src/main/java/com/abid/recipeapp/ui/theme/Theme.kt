@@ -1,14 +1,19 @@
 package com.abid.recipeapp.ui.theme
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.abid.recipeapp.ui.navigation.AppNavHost
+import com.abid.recipeapp.viewmodel.ThemeViewModel
+
+val LocalIsDarkTheme = compositionLocalOf { false }
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -32,26 +37,53 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
-@Composable
-fun RecipeAppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false,
-    content: @Composable () -> Unit
-) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+enum class AppThemeMode {
+    LIGHT, DARK, SYSTEM
+}
+
+fun String?.toAppTheme(): AppThemeMode {
+    return when (this) {
+        AppThemeMode.DARK.name -> {
+            AppThemeMode.DARK
         }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        AppThemeMode.LIGHT.name -> {
+            AppThemeMode.LIGHT
+        }
+
+        AppThemeMode.SYSTEM.name -> {
+            AppThemeMode.SYSTEM
+        }
+
+        else -> {
+            AppThemeMode.SYSTEM
+        }
+    }
+}
+
+
+@Composable
+fun RecipeMainApp(
+    themeViewModel: ThemeViewModel = hiltViewModel(),
+) {
+    val appThemeMode by themeViewModel.state.observeAsState(initial = AppThemeMode.SYSTEM)
+
+    val isDark = when (appThemeMode) {
+        AppThemeMode.DARK -> true
+        AppThemeMode.LIGHT -> false
+        AppThemeMode.SYSTEM -> isSystemInDarkTheme()
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    val colorScheme = if (isDark) DarkColorScheme else LightColorScheme
+    CompositionLocalProvider(LocalIsDarkTheme provides (appThemeMode == AppThemeMode.DARK)) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = {
+                AppNavHost {
+                    themeViewModel.setTheme(it)
+                }
+            }
+        )
+    }
 }
