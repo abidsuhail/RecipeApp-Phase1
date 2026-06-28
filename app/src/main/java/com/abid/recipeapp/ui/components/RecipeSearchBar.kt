@@ -28,10 +28,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.abid.recipeapp.ui.theme.SearchRecipeTheme
 
 /**
  * A pill-shaped search bar matching the design: search icon, editable text
@@ -41,8 +41,6 @@ import androidx.compose.ui.unit.dp
 fun RecipeSearchBar(
     modifier: Modifier = Modifier,
     placeholder: String = "Search recipes...",
-    backgroundColor: Color = Color(0xFF8E8E93),
-    contentColor: Color = Color.Black,
     onFilterClick: () -> Unit = {}
 ) {
     var query by remember { mutableStateOf("") }
@@ -52,7 +50,7 @@ fun RecipeSearchBar(
             .fillMaxWidth()
             .height(56.dp)
             .background(
-                color = backgroundColor,
+                color = SearchRecipeTheme.searchCardBg,
                 shape = RoundedCornerShape(percent = 50)
             )
             .padding(horizontal = 18.dp),
@@ -61,7 +59,6 @@ fun RecipeSearchBar(
         Icon(
             imageVector = Icons.Default.Search,
             contentDescription = "Search",
-            tint = contentColor,
             modifier = Modifier.size(22.dp)
         )
 
@@ -73,10 +70,8 @@ fun RecipeSearchBar(
                 onValueChange = { query = it },
                 singleLine = true,
                 textStyle = LocalTextStyle.current.copy(
-                    color = contentColor,
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
                 ),
-                cursorBrush = androidx.compose.ui.graphics.SolidColor(contentColor),
                 interactionSource = remember { MutableInteractionSource() },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -84,7 +79,6 @@ fun RecipeSearchBar(
             if (query.isEmpty()) {
                 Text(
                     text = placeholder,
-                    color = contentColor.copy(alpha = 0.7f),
                     style = MaterialTheme.typography.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -97,7 +91,6 @@ fun RecipeSearchBar(
         Icon(
             imageVector = Icons.Default.Tune,
             contentDescription = "Filter",
-            tint = contentColor,
             modifier = Modifier
                 .size(22.dp)
                 .clickable(

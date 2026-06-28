@@ -6,13 +6,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -26,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
@@ -33,6 +39,7 @@ import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.ui.components.RecipeSearchBar
 import com.abid.recipeapp.ui.state.SearchRecipeUiState
 import com.abid.recipeapp.ui.theme.Orange40
+import com.abid.recipeapp.ui.theme.SearchRecipeTheme
 import com.abid.recipeapp.util.Constants.CATEGORY
 import com.abid.recipeapp.util.Constants.CUISINE
 import com.abid.recipeapp.util.Constants.DIFFICULTY
@@ -61,7 +68,11 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            Text(SEARCH_RECIPE_SCREEN, fontSize = Dims.Sp35)
+            Text(
+                SEARCH_RECIPE_SCREEN,
+                fontSize = Dims.Sp35,
+                modifier = Modifier.padding(bottom = Dims.Dp15)
+            )
             RecipeSearchBar()
         }
         if (showSheet) {
@@ -69,11 +80,21 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
                 onDismissRequest = { showSheet = false },
                 sheetState = sheetState,
             ) {
+
                 Column(
                     modifier = Modifier
                         .padding(Dims.Dp15)
                         .verticalScroll(rememberScrollState()),
                 ) {
+                    Text("Filters", fontSize = Dims.Sp30)
+
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = Dims.Dp15),
+                        thickness = 1.dp,
+                        color = Color.Gray
+                    )
                     CategoryChipsGrid(
                         state.recipesCategories, selectedCategoryId
                     ) {
@@ -85,11 +106,44 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
                     DifficultyChipsGrid(state.recipeDifficulties, selectedDiffLvlId) {
                         selectedDiffLvlId = it
                     }
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = Dims.Dp15),
+                        thickness = 1.dp,
+                        color = Color.Gray
+                    )
+                    ApplyFilterRow()
                 }
             }
         }
     }
 
+}
+
+@Composable
+fun RowScope.ApplyFilterButton(btnTxt: String, isResetBtn: Boolean) {
+    Button(
+        onClick = {},
+        modifier = Modifier
+            .weight(1f)
+            .padding(horizontal = Dims.Dp8),
+        colors = ButtonDefaults.buttonColors()
+            .copy(containerColor = if (isResetBtn) SearchRecipeTheme.applyFilterResetBtnBg else SearchRecipeTheme.applyFilterApplyBtnBg)
+
+    ) {
+        Text(btnTxt, color = SearchRecipeTheme.resetFilterTxtColor)
+    }
+}
+
+@Composable
+fun ApplyFilterRow() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        ApplyFilterButton("Reset", true)
+        ApplyFilterButton("Apply filters", false)
+    }
 }
 
 @Composable

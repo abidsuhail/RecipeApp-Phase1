@@ -29,6 +29,20 @@ object HomeTheme {
 object RecipeDetailsTheme {
     val clippedCardBg: Color
         @Composable get() = if (LocalIsDarkTheme.current) Color.Black else Color.White
+}
+
+object SearchRecipeTheme {
+    val searchCardBg: Color
+        @Composable get() = if (LocalIsDarkTheme.current) Color.Black else Color(0xFFE0E0E0)
+
+    val applyFilterResetBtnBg: Color
+        @Composable get() = Color.Gray
+
+    val applyFilterApplyBtnBg: Color
+        @Composable get() = Orange40
+
+    val resetFilterTxtColor: Color
+        @Composable get() = if (LocalIsDarkTheme.current) Color.White else Color.Unspecified
 
 }
 
