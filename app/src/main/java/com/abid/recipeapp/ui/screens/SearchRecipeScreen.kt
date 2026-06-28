@@ -31,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
@@ -40,12 +39,16 @@ import com.abid.recipeapp.ui.components.RecipeSearchBar
 import com.abid.recipeapp.ui.state.SearchRecipeUiState
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.ui.theme.SearchRecipeTheme
+import com.abid.recipeapp.util.Constants.APPLY_FILTERS
 import com.abid.recipeapp.util.Constants.CATEGORY
 import com.abid.recipeapp.util.Constants.CUISINE
 import com.abid.recipeapp.util.Constants.DIFFICULTY
+import com.abid.recipeapp.util.Constants.RESET
+import com.abid.recipeapp.util.Constants.SEARCH_FILTERS
 import com.abid.recipeapp.util.Constants.SEARCH_RECIPE_SCREEN
 import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.SearchRecipeViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,15 +89,10 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
                         .padding(Dims.Dp15)
                         .verticalScroll(rememberScrollState()),
                 ) {
-                    Text("Filters", fontSize = Dims.Sp30)
+                    Text(SEARCH_FILTERS, fontSize = Dims.Sp30)
 
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = Dims.Dp15),
-                        thickness = 1.dp,
-                        color = Color.Gray
-                    )
+                    SearchHorizontalDivider()
+
                     CategoryChipsGrid(
                         state.recipesCategories, selectedCategoryId
                     ) {
@@ -106,19 +104,24 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
                     DifficultyChipsGrid(state.recipeDifficulties, selectedDiffLvlId) {
                         selectedDiffLvlId = it
                     }
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = Dims.Dp15),
-                        thickness = 1.dp,
-                        color = Color.Gray
-                    )
+                    SearchHorizontalDivider()
                     ApplyFilterRow()
                 }
             }
         }
     }
 
+}
+
+@Composable
+fun SearchHorizontalDivider() {
+    HorizontalDivider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = Dims.Dp15),
+        thickness = Dims.Dp1,
+        color = Color.Gray
+    )
 }
 
 @Composable
@@ -136,13 +139,14 @@ fun RowScope.ApplyFilterButton(btnTxt: String, isResetBtn: Boolean) {
     }
 }
 
+
 @Composable
 fun ApplyFilterRow() {
     Row(
         modifier = Modifier.fillMaxWidth(),
     ) {
-        ApplyFilterButton("Reset", true)
-        ApplyFilterButton("Apply filters", false)
+        ApplyFilterButton(RESET, true)
+        ApplyFilterButton(APPLY_FILTERS, false)
     }
 }
 

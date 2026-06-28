@@ -80,6 +80,9 @@ object Constants {
     const val HOME = "Home"
     const val SEARCH = "Search"
     const val FAVOURITE = "Favourite"
+    const val SEARCH_FILTERS = "Filters"
+    const val RESET = "Reset"
+    const val APPLY_FILTERS = "Apply filters"
 }
 
 
