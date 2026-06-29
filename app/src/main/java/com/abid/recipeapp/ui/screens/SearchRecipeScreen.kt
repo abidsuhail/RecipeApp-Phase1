@@ -35,6 +35,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
+import com.abid.recipeapp.ui.components.RecipeList
 import com.abid.recipeapp.ui.components.RecipeSearchBar
 import com.abid.recipeapp.ui.state.SearchRecipeUiState
 import com.abid.recipeapp.ui.theme.Orange40
@@ -57,9 +58,9 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
     val sheetState = rememberModalBottomSheetState()
 
     val state by vm.state.observeAsState(initial = SearchRecipeUiState())
-    var selectedCategoryId by remember { mutableStateOf<String?>(null) }
-    var selectedCuisinesId by remember { mutableStateOf<String?>(null) }
-    var selectedDiffLvlId by remember { mutableStateOf<String?>(null) }
+    var selectedCategoryName by remember { mutableStateOf<String?>(null) }
+    var selectedCuisinesName by remember { mutableStateOf<String?>(null) }
+    var selectedDiffLvlName by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         vm.loadRecipeCategories()
@@ -68,9 +69,7 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
     }
 
     Box(Modifier.padding(Dims.Dp10)) {
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
+        Column {
             Text(
                 SEARCH_RECIPE_SCREEN,
                 fontSize = Dims.Sp35,
@@ -79,7 +78,12 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
             RecipeSearchBar(onFilterClick = {
                 showSheet = true
             })
+            if (state.recipeList.isNotEmpty()) {
+                RecipeList(recipeList = state.recipeList, onClickRecipeItem = {})
+            }
         }
+
+
         if (showSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showSheet = false },
@@ -97,31 +101,37 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
 
                     CategoryChipsGrid(
                         state.recipesCategories,
-                        selectedCategoryId,
+                        selectedCategoryName,
                         onChipClicked = {
-                            selectedCategoryId = it
+                            selectedCategoryName = it
                         }
                     )
                     CuisineChipsGrid(
                         state.recipesCuisines,
-                        selectedCuisinesId,
+                        selectedCuisinesName,
                         onChipClicked = {
-                            selectedCuisinesId = it
+                            selectedCuisinesName = it
                         })
                     DifficultyChipsGrid(
                         state.recipeDifficulties,
-                        selectedDiffLvlId,
+                        selectedDiffLvlName,
                         onChipClicked = {
-                            selectedDiffLvlId = it
+                            selectedDiffLvlName = it
                         })
                     SearchHorizontalDivider()
                     ApplyFilterRow(
-                        onClickReset = {},
+                        onClickReset = {
+                            showSheet = false
+                            selectedCategoryName = null
+                            selectedCuisinesName = null
+                            selectedDiffLvlName = null
+                        },
                         onClickApply = {
+                            showSheet = false
                             vm.loadAllRecipes(
-                                categoryName = selectedCategoryId,
-                                cuisineName = selectedCuisinesId,
-                                diffLvl = selectedDiffLvlId
+                                categoryName = selectedCategoryName,
+                                cuisineName = selectedCuisinesName,
+                                diffLvl = selectedDiffLvlName
                             )
                         }
                     )
@@ -172,7 +182,7 @@ fun ApplyFilterRow(onClickReset: () -> Unit, onClickApply: () -> Unit) {
 @Composable
 fun CategoryChipsGrid(
     recipeCategories: List<RecipeCategoriesDataModel>,
-    selectedCategoryId: String?,
+    selectedCategoryName: String?,
     onChipClicked: (String) -> Unit
 ) {
     Column {
@@ -187,7 +197,7 @@ fun CategoryChipsGrid(
             recipeCategories.forEach { item ->
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = if (item.id == selectedCategoryId) {
+                        containerColor = if (item.label == selectedCategoryName) {
                             Orange40
                         } else {
                             Color.Unspecified
@@ -197,7 +207,7 @@ fun CategoryChipsGrid(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            onChipClicked(item.id)
+                            onChipClicked(item.label)
                         }
                     )
                 ) {
@@ -211,7 +221,7 @@ fun CategoryChipsGrid(
 @Composable
 fun CuisineChipsGrid(
     recipeCuisines: List<RecipeCuisinesDataModel>,
-    selectedCuisineId: String?,
+    selectedCuisineName: String?,
     onChipClicked: (String) -> Unit
 ) {
     Column {
@@ -226,7 +236,7 @@ fun CuisineChipsGrid(
             recipeCuisines.forEach { item ->
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = if (item.id == selectedCuisineId) {
+                        containerColor = if (item.label == selectedCuisineName) {
                             Orange40
                         } else {
                             Color.Unspecified
@@ -236,7 +246,7 @@ fun CuisineChipsGrid(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            onChipClicked(item.id)
+                            onChipClicked(item.label)
                         }
                     )
                 ) {
@@ -250,7 +260,7 @@ fun CuisineChipsGrid(
 @Composable
 fun DifficultyChipsGrid(
     recipeDifficulties: List<RecipeDiffLvlDataModel>,
-    selectedDiffLvlId: String?,
+    selectedDiffLvlName: String?,
     onChipClicked: (String) -> Unit
 ) {
     Column {
@@ -266,7 +276,7 @@ fun DifficultyChipsGrid(
             recipeDifficulties.forEach { item ->
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = if (item.id == selectedDiffLvlId) {
+                        containerColor = if (item.label.name == selectedDiffLvlName) {
                             Orange40
                         } else {
                             Color.Unspecified
@@ -276,7 +286,7 @@ fun DifficultyChipsGrid(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            onChipClicked(item.id)
+                            onChipClicked(item.label.name)
                         }
                     )
                 ) {

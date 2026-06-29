@@ -51,7 +51,7 @@ class RecipeRepository @Inject constructor(
             }
 
             if (!diffLvl.isNullOrBlank()) {
-                query = query.whereEqualTo("difficultyLevel", diffLvl)
+                query = query.whereEqualTo("difficulty", diffLvl)
             }
 
             query.get().await().toObjects(RecipeModel::class.java)
