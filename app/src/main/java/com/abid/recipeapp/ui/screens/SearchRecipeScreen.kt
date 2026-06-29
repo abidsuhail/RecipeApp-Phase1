@@ -59,7 +59,7 @@ fun SearchRecipeScreen(
     onClickRecipeItem: (RecipeModel) -> Unit
 ) {
     var showSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val state by vm.state.observeAsState(initial = SearchRecipeUiState())
     var selectedCategoryName by remember { mutableStateOf<String?>(null) }
@@ -125,7 +125,6 @@ fun SearchRecipeScreen(
                     SearchHorizontalDivider()
                     ApplyFilterRow(
                         onClickReset = {
-                            showSheet = false
                             selectedCategoryName = null
                             selectedCuisinesName = null
                             selectedDiffLvlName = null
