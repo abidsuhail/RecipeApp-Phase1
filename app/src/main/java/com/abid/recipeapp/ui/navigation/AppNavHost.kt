@@ -89,7 +89,9 @@ private fun AppNavGraph(
         composable(
             route = NavHelper.Screen.Search.route,
         ) { backStackEntry ->
-            SearchRecipeScreen()
+            SearchRecipeScreen() { recipe ->
+                navController.goToRecipeDetailsScreen(recipe.id)
+            }
         }
         composable(
             route = NavHelper.Screen.Favourite.route,

@@ -35,6 +35,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
+import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.RecipeList
 import com.abid.recipeapp.ui.components.RecipeSearchBar
 import com.abid.recipeapp.ui.state.SearchRecipeUiState
@@ -53,7 +54,10 @@ import com.abid.recipeapp.viewmodel.SearchRecipeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
+fun SearchRecipeScreen(
+    vm: SearchRecipeViewModel = hiltViewModel(),
+    onClickRecipeItem: (RecipeModel) -> Unit
+) {
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
@@ -79,7 +83,7 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
                 showSheet = true
             })
             if (state.recipeList.isNotEmpty()) {
-                RecipeList(recipeList = state.recipeList, onClickRecipeItem = {})
+                RecipeList(recipeList = state.recipeList, onClickRecipeItem = onClickRecipeItem)
             }
         }
 
