@@ -36,7 +36,8 @@ class RecipeRepository @Inject constructor(
     suspend fun getAllRecipes(
         categoryName: String? = null,
         cuisineName: String? = null,
-        diffLvl: String? = null
+        diffLvl: String? = null,
+        title: String? = null
     ): List<RecipeModel> {
         return withContext(Dispatchers.IO) {
 
@@ -54,7 +55,15 @@ class RecipeRepository @Inject constructor(
                 query = query.whereEqualTo("difficulty", diffLvl)
             }
 
-            query.get().await().toObjects(RecipeModel::class.java)
+            val results = query.get().await().toObjects(RecipeModel::class.java)
+
+            if (!title.isNullOrBlank()) {
+                results.filter { recipe ->
+                    recipe.title.contains(title, ignoreCase = true)
+                }
+            } else {
+                results
+            }
         }
     }
 

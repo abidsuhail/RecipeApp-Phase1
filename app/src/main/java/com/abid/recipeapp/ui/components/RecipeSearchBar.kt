@@ -40,6 +40,7 @@ import com.abid.recipeapp.ui.theme.SearchRecipeTheme
 fun RecipeSearchBar(
     modifier: Modifier = Modifier,
     placeholder: String = "Search recipes...",
+    onTxtEntered: (String) -> Unit,
     onFilterClick: () -> Unit
 ) {
     var query by remember { mutableStateOf("") }
@@ -66,7 +67,10 @@ fun RecipeSearchBar(
         Box(modifier = Modifier.weight(1f)) {
             BasicTextField(
                 value = query,
-                onValueChange = { query = it },
+                onValueChange = {
+                    query = it
+                    onTxtEntered(it)
+                },
                 singleLine = true,
                 textStyle = LocalTextStyle.current.copy(
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize

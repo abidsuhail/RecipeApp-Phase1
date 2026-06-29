@@ -65,11 +65,18 @@ fun SearchRecipeScreen(
     var selectedCategoryName by remember { mutableStateOf<String?>(null) }
     var selectedCuisinesName by remember { mutableStateOf<String?>(null) }
     var selectedDiffLvlName by remember { mutableStateOf<String?>(null) }
+    var enteredSearchTitle by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         vm.loadRecipeCategories()
         vm.loadRecipeCuisines()
         vm.loadRecipeDifficultyLvl()
+        vm.loadAllRecipes(
+            categoryName = null,
+            cuisineName = null,
+            diffLvl = null,
+            title = null,
+        )
     }
 
     Box(Modifier.padding(Dims.Dp10)) {
@@ -81,6 +88,14 @@ fun SearchRecipeScreen(
             )
             RecipeSearchBar(onFilterClick = {
                 showSheet = true
+            }, onTxtEntered = {
+                enteredSearchTitle = it
+                vm.loadAllRecipes(
+                    categoryName = selectedCategoryName,
+                    cuisineName = selectedCuisinesName,
+                    diffLvl = selectedDiffLvlName,
+                    title = enteredSearchTitle,
+                )
             })
             if (state.recipeList.isNotEmpty()) {
                 RecipeList(recipeList = state.recipeList, onClickRecipeItem = onClickRecipeItem)
@@ -134,7 +149,8 @@ fun SearchRecipeScreen(
                             vm.loadAllRecipes(
                                 categoryName = selectedCategoryName,
                                 cuisineName = selectedCuisinesName,
-                                diffLvl = selectedDiffLvlName
+                                diffLvl = selectedDiffLvlName,
+                                title = enteredSearchTitle
                             )
                         }
                     )

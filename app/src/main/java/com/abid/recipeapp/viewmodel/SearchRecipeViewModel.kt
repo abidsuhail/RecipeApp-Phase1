@@ -21,7 +21,8 @@ class SearchRecipeViewModel @Inject constructor(
     fun loadAllRecipes(
         categoryName: String?,
         cuisineName: String?,
-        diffLvl: String?
+        diffLvl: String?,
+        title: String?
     ) {
         viewModelScope.launch {
             try {
@@ -29,7 +30,8 @@ class SearchRecipeViewModel @Inject constructor(
                 val data = repository.getAllRecipes(
                     categoryName = categoryName,
                     cuisineName = cuisineName,
-                    diffLvl = diffLvl
+                    diffLvl = diffLvl,
+                    title = title
                 )
                 _state.value = _state.value?.copy(recipeList = data, isLoading = false)
             } catch (e: Exception) {
