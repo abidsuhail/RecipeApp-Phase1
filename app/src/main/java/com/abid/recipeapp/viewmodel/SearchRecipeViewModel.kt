@@ -18,6 +18,26 @@ class SearchRecipeViewModel @Inject constructor(
     private val _state = MutableLiveData(SearchRecipeUiState(isLoading = true))
     val state: LiveData<SearchRecipeUiState> = _state
 
+    fun loadAllRecipes(
+        categoryName: String?,
+        cuisineName: String?,
+        diffLvl: String?
+    ) {
+        viewModelScope.launch {
+            try {
+                _state.value = _state.value?.copy(isLoading = true)
+                val data = repository.getAllRecipes(
+                    categoryName = categoryName,
+                    cuisineName = cuisineName,
+                    diffLvl = diffLvl
+                )
+                _state.value = _state.value?.copy(recipeList = data, isLoading = false)
+            } catch (e: Exception) {
+                _state.value = _state.value?.copy(errorMsg = e.message)
+            }
+        }
+    }
+
     fun loadRecipeCategories() {
         viewModelScope.launch {
             try {

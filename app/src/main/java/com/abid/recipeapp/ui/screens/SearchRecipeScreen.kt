@@ -53,7 +53,7 @@ import com.abid.recipeapp.viewmodel.SearchRecipeViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
-    var showSheet by remember { mutableStateOf(true) }
+    var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
     val state by vm.state.observeAsState(initial = SearchRecipeUiState())
@@ -76,7 +76,9 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
                 fontSize = Dims.Sp35,
                 modifier = Modifier.padding(bottom = Dims.Dp15)
             )
-            RecipeSearchBar()
+            RecipeSearchBar(onFilterClick = {
+                showSheet = true
+            })
         }
         if (showSheet) {
             ModalBottomSheet(
@@ -94,18 +96,35 @@ fun SearchRecipeScreen(vm: SearchRecipeViewModel = hiltViewModel()) {
                     SearchHorizontalDivider()
 
                     CategoryChipsGrid(
-                        state.recipesCategories, selectedCategoryId
-                    ) {
-                        selectedCategoryId = it
-                    }
-                    CuisineChipsGrid(state.recipesCuisines, selectedCuisinesId) {
-                        selectedCuisinesId = it
-                    }
-                    DifficultyChipsGrid(state.recipeDifficulties, selectedDiffLvlId) {
-                        selectedDiffLvlId = it
-                    }
+                        state.recipesCategories,
+                        selectedCategoryId,
+                        onChipClicked = {
+                            selectedCategoryId = it
+                        }
+                    )
+                    CuisineChipsGrid(
+                        state.recipesCuisines,
+                        selectedCuisinesId,
+                        onChipClicked = {
+                            selectedCuisinesId = it
+                        })
+                    DifficultyChipsGrid(
+                        state.recipeDifficulties,
+                        selectedDiffLvlId,
+                        onChipClicked = {
+                            selectedDiffLvlId = it
+                        })
                     SearchHorizontalDivider()
-                    ApplyFilterRow()
+                    ApplyFilterRow(
+                        onClickReset = {},
+                        onClickApply = {
+                            vm.loadAllRecipes(
+                                categoryName = selectedCategoryId,
+                                cuisineName = selectedCuisinesId,
+                                diffLvl = selectedDiffLvlId
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -125,9 +144,9 @@ fun SearchHorizontalDivider() {
 }
 
 @Composable
-fun RowScope.ApplyFilterButton(btnTxt: String, isResetBtn: Boolean) {
+fun RowScope.ApplyFilterButton(btnTxt: String, isResetBtn: Boolean, onClick: () -> Unit) {
     Button(
-        onClick = {},
+        onClick = onClick,
         modifier = Modifier
             .weight(1f)
             .padding(horizontal = Dims.Dp8),
@@ -141,12 +160,12 @@ fun RowScope.ApplyFilterButton(btnTxt: String, isResetBtn: Boolean) {
 
 
 @Composable
-fun ApplyFilterRow() {
+fun ApplyFilterRow(onClickReset: () -> Unit, onClickApply: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
     ) {
-        ApplyFilterButton(RESET, true)
-        ApplyFilterButton(APPLY_FILTERS, false)
+        ApplyFilterButton(RESET, true, onClick = onClickReset)
+        ApplyFilterButton(APPLY_FILTERS, false, onClick = onClickApply)
     }
 }
 
