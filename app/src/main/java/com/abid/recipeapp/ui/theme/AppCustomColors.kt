@@ -11,5 +11,6 @@ data class AppCustomColors(
     val searchCardBg: Color,
     val searchApplyFilterResetBtnBg: Color,
     val searchApplyFilterApplyBtnBg: Color,
-    val searchResetFilterTxtColor: Color
+    val searchResetFilterTxtColor: Color,
+    val searchQueryTxtColor: Color
 )

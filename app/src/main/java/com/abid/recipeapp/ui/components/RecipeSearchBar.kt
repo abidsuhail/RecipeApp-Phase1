@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import com.abid.recipeapp.ui.theme.LocalAppCustomColors
 import com.abid.recipeapp.util.Constants.FILTER
@@ -85,9 +85,7 @@ fun RecipeSearchBar(
                     onTxtEntered(it)
                 },
                 singleLine = true,
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = MaterialTheme.typography.bodyLarge.fontSize
-                ),
+                textStyle = TextStyle(color = LocalAppCustomColors.current.searchQueryTxtColor),
                 interactionSource = remember { MutableInteractionSource() },
                 modifier = Modifier
                     .fillMaxWidth()

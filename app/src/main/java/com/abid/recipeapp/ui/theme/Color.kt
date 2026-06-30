@@ -20,7 +20,8 @@ val LightAppColors = AppCustomColors(
     searchCardBg = Color(0xFFE0E0E0),
     searchApplyFilterResetBtnBg = Color.Gray,
     searchApplyFilterApplyBtnBg = Orange40,
-    searchResetFilterTxtColor = Color.Unspecified
+    searchResetFilterTxtColor = Color.Unspecified,
+    searchQueryTxtColor = Color.Black,
 )
 
 val DarkAppColors = AppCustomColors(
@@ -31,7 +32,8 @@ val DarkAppColors = AppCustomColors(
     searchCardBg = Color.Black,
     searchApplyFilterResetBtnBg = Color.Gray,
     searchApplyFilterApplyBtnBg = Orange40,
-    searchResetFilterTxtColor = Color.White
+    searchResetFilterTxtColor = Color.White,
+    searchQueryTxtColor = Color.White,
 )
 
 fun getDifficultyLvlBgColor(difficultyLvl: RecipeDiffLvl): Color {
