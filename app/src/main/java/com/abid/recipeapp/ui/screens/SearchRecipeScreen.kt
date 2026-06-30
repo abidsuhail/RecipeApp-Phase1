@@ -74,9 +74,7 @@ fun SearchRecipeScreen(
         searchRecipes()
     }
     LaunchedEffect(enteredSearchTitle) {
-        println("Started waiting for: $enteredSearchTitle")
         delay(500)
-        println("Finished waiting, searching: $enteredSearchTitle")
         searchRecipes()
     }
 
