@@ -22,12 +22,16 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextOverflow
 import com.abid.recipeapp.ui.theme.LocalAppCustomColors
 import com.abid.recipeapp.util.Constants.FILTER
@@ -48,7 +52,12 @@ fun RecipeSearchBar(
     onFilterClick: () -> Unit
 ) {
     var query by remember { mutableStateOf("") }
-
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()   // ✅ focus the field
+        keyboardController?.show()      // ✅ force keyboard to show
+    }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -80,7 +89,9 @@ fun RecipeSearchBar(
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize
                 ),
                 interactionSource = remember { MutableInteractionSource() },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester)
             )
 
             if (query.isEmpty()) {

@@ -40,6 +40,7 @@ import com.abid.recipeapp.util.Constants.SEARCH_FILTERS
 import com.abid.recipeapp.util.Constants.SEARCH_RECIPE_SCREEN
 import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.SearchRecipeViewModel
+import kotlinx.coroutines.delay
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +51,6 @@ fun SearchRecipeScreen(
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
     val state by vm.state.observeAsState(initial = SearchRecipeUiState())
     var selectedCategoryName by remember { mutableStateOf<String?>(null) }
     var selectedCuisinesName by remember { mutableStateOf<String?>(null) }
@@ -65,6 +65,7 @@ fun SearchRecipeScreen(
             title = enteredSearchTitle,
         )
     }
+
     LaunchedEffect(Unit) {
         vm.loadRecipeCategories()
         vm.loadRecipeCuisines()
@@ -72,6 +73,13 @@ fun SearchRecipeScreen(
         vm.loadSearchRecipe()
         searchRecipes()
     }
+    LaunchedEffect(enteredSearchTitle) {
+        println("Started waiting for: $enteredSearchTitle")
+        delay(500)
+        println("Finished waiting, searching: $enteredSearchTitle")
+        searchRecipes()
+    }
+
 
     Box(Modifier.padding(Dims.Dp10)) {
         Column {
@@ -80,12 +88,13 @@ fun SearchRecipeScreen(
                 fontSize = Dims.Sp35,
                 modifier = Modifier.padding(bottom = Dims.Dp15)
             )
-            RecipeSearchBar(onFilterClick = {
-                showSheet = true
-            }, onTxtEntered = {
-                enteredSearchTitle = it
-                searchRecipes()
-            })
+            RecipeSearchBar(
+                onFilterClick = {
+                    showSheet = true
+                },
+                onTxtEntered = {
+                    enteredSearchTitle = it
+                })
             if (state.recipeList.isNotEmpty()) {
                 RecipeList(recipeList = state.recipeList, onClickRecipeItem = onClickRecipeItem)
             }
