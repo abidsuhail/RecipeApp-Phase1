@@ -39,8 +39,8 @@ import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.RecipeList
 import com.abid.recipeapp.ui.components.RecipeSearchBar
 import com.abid.recipeapp.ui.state.SearchRecipeUiState
+import com.abid.recipeapp.ui.theme.LocalAppCustomColors
 import com.abid.recipeapp.ui.theme.Orange40
-import com.abid.recipeapp.ui.theme.SearchRecipeTheme
 import com.abid.recipeapp.util.Constants.APPLY_FILTERS
 import com.abid.recipeapp.util.Constants.CATEGORY
 import com.abid.recipeapp.util.Constants.CUISINE
@@ -174,16 +174,17 @@ fun SearchHorizontalDivider() {
 
 @Composable
 fun RowScope.ApplyFilterButton(btnTxt: String, isResetBtn: Boolean, onClick: () -> Unit) {
+    val customColors = LocalAppCustomColors.current
     Button(
         onClick = onClick,
         modifier = Modifier
             .weight(1f)
             .padding(horizontal = Dims.Dp8),
         colors = ButtonDefaults.buttonColors()
-            .copy(containerColor = if (isResetBtn) SearchRecipeTheme.applyFilterResetBtnBg else SearchRecipeTheme.applyFilterApplyBtnBg)
+            .copy(containerColor = if (isResetBtn) customColors.searchApplyFilterResetBtnBg else customColors.searchApplyFilterApplyBtnBg)
 
     ) {
-        Text(btnTxt, color = SearchRecipeTheme.resetFilterTxtColor)
+        Text(btnTxt, color = customColors.searchResetFilterTxtColor)
     }
 }
 

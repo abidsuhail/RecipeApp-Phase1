@@ -43,8 +43,8 @@ import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.BackButton
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
+import com.abid.recipeapp.ui.theme.LocalAppCustomColors
 import com.abid.recipeapp.ui.theme.Orange40
-import com.abid.recipeapp.ui.theme.RecipeDetailsTheme
 import com.abid.recipeapp.util.Constants.CALORIES
 import com.abid.recipeapp.util.Constants.CARBS
 import com.abid.recipeapp.util.Constants.FAT
@@ -139,7 +139,7 @@ private fun RecipeDetailsCard(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = Dims.Dp270),
-        colors = CardDefaults.cardColors(RecipeDetailsTheme.clippedCardBg),
+        colors = CardDefaults.cardColors(LocalAppCustomColors.current.recipeDetailsClippedCardBg),
         shape = RoundedCornerShape(Dims.Dp30)
     ) {
         Column(Modifier.padding(Dims.Dp20)) {

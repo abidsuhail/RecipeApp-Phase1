@@ -30,7 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.abid.recipeapp.ui.theme.SearchRecipeTheme
+import com.abid.recipeapp.ui.theme.LocalAppCustomColors
 
 /**
  * A pill-shaped search bar matching the design: search icon, editable text
@@ -50,7 +50,7 @@ fun RecipeSearchBar(
             .fillMaxWidth()
             .height(56.dp)
             .background(
-                color = SearchRecipeTheme.searchCardBg,
+                color = LocalAppCustomColors.current.searchCardBg,
                 shape = RoundedCornerShape(percent = 50)
             )
             .padding(horizontal = 18.dp),
