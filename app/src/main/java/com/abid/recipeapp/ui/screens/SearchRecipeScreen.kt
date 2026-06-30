@@ -57,7 +57,7 @@ fun SearchRecipeScreen(
     var selectedDiffLvlName by remember { mutableStateOf<String?>(null) }
     var enteredSearchTitle by remember { mutableStateOf<String?>(null) }
 
-    fun searchRecipes() {
+    fun fetchSearchRecipes() {
         vm.loadSearchRecipe(
             categoryName = selectedCategoryName,
             cuisineName = selectedCuisinesName,
@@ -70,12 +70,14 @@ fun SearchRecipeScreen(
         vm.loadRecipeCategories()
         vm.loadRecipeCuisines()
         vm.loadRecipeDifficultyLvl()
-        vm.loadSearchRecipe()
-        searchRecipes()
     }
     LaunchedEffect(enteredSearchTitle) {
-        delay(500)
-        searchRecipes()
+        if (enteredSearchTitle.isNullOrBlank()) {
+            fetchSearchRecipes()
+        } else {
+            delay(500)
+            fetchSearchRecipes()
+        }
     }
 
 
@@ -150,7 +152,7 @@ fun SearchRecipeScreen(
                         },
                         onClickApply = {
                             showSheet = false
-                            searchRecipes()
+                            fetchSearchRecipes()
                         }
                     )
                 }
