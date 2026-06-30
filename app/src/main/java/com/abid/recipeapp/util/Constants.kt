@@ -86,6 +86,13 @@ object Constants {
     const val SEARCH_RECIPES = "Search recipes..."
     const val FILTER = "Filter"
 
+    fun searchedRecipeNotFoundMsg(enteredSearchTitle: String?): String {
+        if (enteredSearchTitle.isNullOrBlank()) {
+            return "Recipe not found!"
+        }
+        return "'$enteredSearchTitle' named recipe not found"
+    }
+
 
 }
 

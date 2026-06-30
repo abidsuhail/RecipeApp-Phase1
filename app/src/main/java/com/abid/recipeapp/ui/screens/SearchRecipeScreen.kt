@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.BottomSheetChipGridItem
+import com.abid.recipeapp.ui.components.ErrorStateBox
+import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.RecipeList
 import com.abid.recipeapp.ui.components.RecipeSearchBar
 import com.abid.recipeapp.ui.state.SearchRecipeUiState
@@ -38,6 +40,7 @@ import com.abid.recipeapp.util.Constants.DIFFICULTY
 import com.abid.recipeapp.util.Constants.RESET
 import com.abid.recipeapp.util.Constants.SEARCH_FILTERS
 import com.abid.recipeapp.util.Constants.SEARCH_RECIPE_SCREEN
+import com.abid.recipeapp.util.Constants.searchedRecipeNotFoundMsg
 import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.SearchRecipeViewModel
 import kotlinx.coroutines.delay
@@ -95,8 +98,13 @@ fun SearchRecipeScreen(
                 onTxtEntered = {
                     enteredSearchTitle = it
                 })
-            if (state.recipeList.isNotEmpty()) {
+
+            if (state.isLoading) {
+                LoadingStateBox()
+            } else if (state.recipeList.isNotEmpty()) {
                 RecipeList(recipeList = state.recipeList, onClickRecipeItem = onClickRecipeItem)
+            } else {
+                ErrorStateBox(searchedRecipeNotFoundMsg(enteredSearchTitle))
             }
         }
 
