@@ -18,11 +18,11 @@ class SearchRecipeViewModel @Inject constructor(
     private val _state = MutableLiveData(SearchRecipeUiState(isLoading = true))
     val state: LiveData<SearchRecipeUiState> = _state
 
-    fun loadAllRecipes(
-        categoryName: String?,
-        cuisineName: String?,
-        diffLvl: String?,
-        title: String?
+    fun loadSearchRecipe(
+        categoryName: String? = null,
+        cuisineName: String? = null,
+        diffLvl: String? = null,
+        title: String? = null
     ) {
         viewModelScope.launch {
             try {
