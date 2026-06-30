@@ -55,8 +55,8 @@ fun RecipeSearchBar(
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     LaunchedEffect(Unit) {
-        focusRequester.requestFocus()   // ✅ focus the field
-        keyboardController?.show()      // ✅ force keyboard to show
+        focusRequester.requestFocus()
+        keyboardController?.show()
     }
     Row(
         modifier = modifier
