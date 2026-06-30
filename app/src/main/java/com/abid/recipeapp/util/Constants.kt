@@ -83,6 +83,10 @@ object Constants {
     const val SEARCH_FILTERS = "Filters"
     const val RESET = "Reset"
     const val APPLY_FILTERS = "Apply filters"
+    const val SEARCH_RECIPES = "Search recipes..."
+    const val FILTER = "Filter"
+
+
 }
 
 

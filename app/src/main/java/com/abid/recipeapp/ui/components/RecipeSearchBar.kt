@@ -29,8 +29,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import com.abid.recipeapp.ui.theme.LocalAppCustomColors
+import com.abid.recipeapp.util.Constants.FILTER
+import com.abid.recipeapp.util.Constants.SEARCH
+import com.abid.recipeapp.util.Constants.SEARCH_RECIPES
+import com.abid.recipeapp.util.Dims
+
 
 /**
  * A pill-shaped search bar matching the design: search icon, editable text
@@ -39,7 +43,7 @@ import com.abid.recipeapp.ui.theme.LocalAppCustomColors
 @Composable
 fun RecipeSearchBar(
     modifier: Modifier = Modifier,
-    placeholder: String = "Search recipes...",
+    placeholder: String = SEARCH_RECIPES,
     onTxtEntered: (String) -> Unit,
     onFilterClick: () -> Unit
 ) {
@@ -48,23 +52,23 @@ fun RecipeSearchBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(Dims.Dp56)
             .background(
                 color = LocalAppCustomColors.current.searchCardBg,
-                shape = RoundedCornerShape(percent = 50)
+                shape = RoundedCornerShape(percent = Dims.const50)
             )
-            .padding(horizontal = 18.dp),
+            .padding(horizontal = Dims.Dp18),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = Icons.Default.Search,
-            contentDescription = "Search",
-            modifier = Modifier.size(22.dp)
+            contentDescription = SEARCH,
+            modifier = Modifier.size(Dims.Dp22)
         )
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(Dims.Dp12))
 
-        Box(modifier = Modifier.weight(1f)) {
+        Box(modifier = Modifier.weight(Dims.W1)) {
             BasicTextField(
                 value = query,
                 onValueChange = {
@@ -83,19 +87,19 @@ fun RecipeSearchBar(
                 Text(
                     text = placeholder,
                     style = MaterialTheme.typography.bodyLarge,
-                    maxLines = 1,
+                    maxLines = Dims.const1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
         }
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(Dims.Dp12))
 
         Icon(
             imageVector = Icons.Default.Tune,
-            contentDescription = "Filter",
+            contentDescription = FILTER,
             modifier = Modifier
-                .size(22.dp)
+                .size(Dims.Dp22)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,

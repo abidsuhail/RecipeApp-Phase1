@@ -13,11 +13,14 @@ object Dims {
     val Dp10 = 10.dp
     val Dp12 = 12.dp
     val Dp15 = 15.dp
+    val Dp18 = 18.dp
     val Dp20 = 20.dp
+    val Dp22 = 22.dp
     val Dp30 = 30.dp
     val Dp32 = 32.dp
     val Dp40 = 40.dp
     val Dp50 = 50.dp
+    val Dp56 = 56.dp
     val Dp80 = 80.dp
     val Dp100 = 100.dp
     val Dp140 = 140.dp
@@ -41,4 +44,7 @@ object Dims {
     val Sp35 = 35.sp
 
     val W1 = 1.0f
+
+    val const1 = 1
+    val const50 = 50
 }
