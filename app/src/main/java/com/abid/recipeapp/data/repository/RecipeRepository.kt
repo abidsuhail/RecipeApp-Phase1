@@ -57,7 +57,7 @@ class RecipeRepository @Inject constructor(
 
             val results = query.get().await().toObjects(RecipeModel::class.java)
 
-            if (!title.isNullOrBlank()) {
+            return@withContext if (!title.isNullOrBlank()) {
                 results.filter { recipe ->
                     recipe.title.contains(title, ignoreCase = true)
                 }
