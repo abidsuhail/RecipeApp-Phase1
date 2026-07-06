@@ -34,8 +34,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import com.abid.recipeapp.ui.theme.LocalAppCustomColors
-import com.abid.recipeapp.util.Constants.FILTER
-import com.abid.recipeapp.util.Constants.SEARCH
+import com.abid.recipeapp.util.Constants.FILTER_CONTENT_DESC
+import com.abid.recipeapp.util.Constants.SEARCH_CONTENT_DESC
 import com.abid.recipeapp.util.Constants.SEARCH_RECIPES
 import com.abid.recipeapp.util.Dims
 
@@ -71,7 +71,7 @@ fun RecipeSearchBar(
     ) {
         Icon(
             imageVector = Icons.Default.Search,
-            contentDescription = SEARCH,
+            contentDescription = SEARCH_CONTENT_DESC,
             modifier = Modifier.size(Dims.Dp22)
         )
 
@@ -106,7 +106,7 @@ fun RecipeSearchBar(
 
         Icon(
             imageVector = Icons.Default.Tune,
-            contentDescription = FILTER,
+            contentDescription = FILTER_CONTENT_DESC,
             modifier = Modifier
                 .size(Dims.Dp22)
                 .clickable(

@@ -79,12 +79,16 @@ object Constants {
     const val ADD_BUTTON = "Add button"
     const val HOME = "Home"
     const val SEARCH = "Search"
+    const val SEARCH_CONTENT_DESC = "Search"
+
     const val FAVOURITE = "Favourite"
     const val SEARCH_FILTERS = "Filters"
     const val RESET = "Reset"
     const val APPLY_FILTERS = "Apply filters"
     const val SEARCH_RECIPES = "Search recipes..."
     const val FILTER = "Filter"
+    const val FILTER_CONTENT_DESC = "Filter"
+
 
     fun searchedRecipeNotFoundMsg(enteredSearchTitle: String?): String {
         if (enteredSearchTitle.isNullOrBlank()) {
