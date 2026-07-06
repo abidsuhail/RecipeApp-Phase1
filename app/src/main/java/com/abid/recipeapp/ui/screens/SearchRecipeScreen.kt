@@ -219,7 +219,7 @@ private fun RowScope.ApplyFilterButton(btnTxt: String, isResetBtn: Boolean, onCl
     Button(
         onClick = onClick,
         modifier = Modifier
-            .weight(1f)
+            .weight(Dims.W1)
             .padding(horizontal = Dims.Dp8),
         colors = ButtonDefaults.buttonColors()
             .copy(containerColor = if (isResetBtn) customColors.searchApplyFilterResetBtnBg else customColors.searchApplyFilterApplyBtnBg)
