@@ -1,5 +1,8 @@
 package com.abid.recipeapp.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +11,8 @@ import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.ui.state.SearchRecipeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,20 +23,70 @@ class SearchRecipeViewModel @Inject constructor(
     private val _state = MutableLiveData(SearchRecipeUiState())
     val state: LiveData<SearchRecipeUiState> = _state
 
-    fun loadSearchRecipe(
-        categoryName: String? = null,
-        cuisineName: String? = null,
-        diffLvl: String? = null,
-        title: String? = null
-    ) {
+    private var searchJob: Job? = null
+
+    var searchQueryRecipeTitle by mutableStateOf("")
+        private set
+
+    var selectedCategoryName by mutableStateOf<String?>(null)
+        private set
+
+    var selectedCuisinesName by mutableStateOf<String?>(null)
+        private set
+
+    var selectedDiffLvlName by mutableStateOf<String?>(null)
+        private set
+
+    fun onSearchQueryChanged(query: String) {
+        searchQueryRecipeTitle = query
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(500)
+            loadSearchRecipe()
+        }
+    }
+
+    fun onCategorySelected(name: String?) {
+        selectedCategoryName = name
+    }
+
+    fun onCuisineSelected(name: String?) {
+        selectedCuisinesName = name
+    }
+
+    fun onDiffLvlSelected(name: String?) {
+        selectedDiffLvlName = name
+    }
+
+    fun onResetFilters() {
+        selectedCategoryName = null
+        selectedCuisinesName = null
+        selectedDiffLvlName = null
+    }
+
+    fun loadInitialRecipes() {
+        loadSearchRecipe()
+    }
+
+    fun onApplyFilters() {
+        loadSearchRecipe()
+    }
+
+    fun loadBottomSheetChipsData() {
+        loadRecipeCategories()
+        loadRecipeCuisines()
+        loadRecipeDifficultyLvl()
+    }
+
+    private fun loadSearchRecipe() {
         viewModelScope.launch {
             try {
                 _state.value = _state.value?.copy(isSearchLoading = true)
                 val data = repository.getAllRecipes(
-                    categoryName = categoryName,
-                    cuisineName = cuisineName,
-                    diffLvl = diffLvl,
-                    title = title
+                    categoryName = selectedCategoryName,
+                    cuisineName = selectedCuisinesName,
+                    diffLvl = selectedDiffLvlName,
+                    title = searchQueryRecipeTitle
                 )
                 _state.value = _state.value?.copy(recipeList = data, isSearchLoading = false)
             } catch (e: Exception) {
@@ -41,7 +96,8 @@ class SearchRecipeViewModel @Inject constructor(
         }
     }
 
-    fun loadRecipeCategories() {
+
+    private fun loadRecipeCategories() {
         viewModelScope.launch {
             try {
                 _state.value = _state.value?.copy(isCategoriesLoading = true)
@@ -56,7 +112,7 @@ class SearchRecipeViewModel @Inject constructor(
         }
     }
 
-    fun loadRecipeCuisines() {
+    private fun loadRecipeCuisines() {
         viewModelScope.launch {
             try {
                 _state.value = _state.value?.copy(isCuisinesLoading = true)
@@ -69,7 +125,7 @@ class SearchRecipeViewModel @Inject constructor(
         }
     }
 
-    fun loadRecipeDifficultyLvl() {
+    private fun loadRecipeDifficultyLvl() {
         viewModelScope.launch {
             try {
                 _state.value = _state.value?.copy(isDiffLvlLoading = true)

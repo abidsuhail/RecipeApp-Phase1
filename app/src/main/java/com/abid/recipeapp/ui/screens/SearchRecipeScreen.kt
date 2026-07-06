@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,7 +47,6 @@ import com.abid.recipeapp.util.Constants.UNABLE_TO_LOAD_DIFFICULTY_LEVELS
 import com.abid.recipeapp.util.Constants.searchedRecipeNotFoundMsg
 import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.SearchRecipeViewModel
-import kotlinx.coroutines.delay
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,34 +58,11 @@ fun SearchRecipeScreen(
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val state by vm.state.observeAsState(initial = SearchRecipeUiState())
-    var selectedCategoryName by rememberSaveable { mutableStateOf<String?>(null) }
-    var selectedCuisinesName by rememberSaveable { mutableStateOf<String?>(null) }
-    var selectedDiffLvlName by rememberSaveable { mutableStateOf<String?>(null) }
-    var enteredSearchTitle by rememberSaveable { mutableStateOf("") }
-
-    fun fetchSearchRecipes() {
-        vm.loadSearchRecipe(
-            categoryName = selectedCategoryName,
-            cuisineName = selectedCuisinesName,
-            diffLvl = selectedDiffLvlName,
-            title = enteredSearchTitle,
-        )
-    }
 
     LaunchedEffect(Unit) {
-        vm.loadRecipeCategories()
-        vm.loadRecipeCuisines()
-        vm.loadRecipeDifficultyLvl()
+        vm.loadBottomSheetChipsData()
+        vm.loadInitialRecipes()
     }
-    LaunchedEffect(enteredSearchTitle) {
-        if (enteredSearchTitle.isBlank()) {
-            fetchSearchRecipes()
-        } else {
-            delay(500)
-            fetchSearchRecipes()
-        }
-    }
-
 
     Box(Modifier.padding(Dims.Dp10)) {
         Column {
@@ -97,12 +72,12 @@ fun SearchRecipeScreen(
                 modifier = Modifier.padding(bottom = Dims.Dp15)
             )
             RecipeSearchBar(
-                enteredTxt = enteredSearchTitle,
+                enteredTxt = vm.searchQueryRecipeTitle,
                 onFilterClick = {
                     showSheet = true
                 },
                 onTxtEntered = {
-                    enteredSearchTitle = it
+                    vm.onSearchQueryChanged(it)
                 })
 
             if (state.isSearchLoading) {
@@ -110,7 +85,7 @@ fun SearchRecipeScreen(
             } else if (state.recipeList.isNotEmpty()) {
                 RecipeList(recipeList = state.recipeList, onClickRecipeItem = onClickRecipeItem)
             } else {
-                ErrorStateBox(searchedRecipeNotFoundMsg(enteredSearchTitle))
+                ErrorStateBox(searchedRecipeNotFoundMsg(vm.searchQueryRecipeTitle))
             }
         }
 
@@ -135,9 +110,9 @@ fun SearchRecipeScreen(
                             title = CATEGORY,
                             labelOf = { it.label },
                             items = state.recipesCategories,
-                            selectedLabel = selectedCategoryName,
+                            selectedLabel = vm.selectedCategoryName,
                             onChipClicked = {
-                                selectedCategoryName = it
+                                vm.onCategorySelected(it)
                             }
                         )
                     } else {
@@ -148,9 +123,9 @@ fun SearchRecipeScreen(
                             title = CUISINE,
                             labelOf = { it.label },
                             items = state.recipesCuisines,
-                            selectedLabel = selectedCuisinesName,
+                            selectedLabel = vm.selectedCuisinesName,
                             onChipClicked = {
-                                selectedCuisinesName = it
+                                vm.onCuisineSelected(it)
                             }
                         )
                     } else {
@@ -161,9 +136,9 @@ fun SearchRecipeScreen(
                             title = DIFFICULTY,
                             labelOf = { it.label.name },
                             items = state.recipeDifficulties,
-                            selectedLabel = selectedDiffLvlName,
+                            selectedLabel = vm.selectedDiffLvlName,
                             onChipClicked = {
-                                selectedDiffLvlName = it
+                                vm.onDiffLvlSelected(it)
                             }
                         )
                     } else {
@@ -172,13 +147,11 @@ fun SearchRecipeScreen(
                     SearchHorizontalDivider()
                     ApplyFilterRow(
                         onClickReset = {
-                            selectedCategoryName = null
-                            selectedCuisinesName = null
-                            selectedDiffLvlName = null
+                            vm.onResetFilters()
                         },
                         onClickApply = {
                             showSheet = false
-                            fetchSearchRecipes()
+                            vm.onApplyFilters()
                         }
                     )
                 }
