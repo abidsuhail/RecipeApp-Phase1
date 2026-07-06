@@ -32,7 +32,8 @@ import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.RecipeList
 import com.abid.recipeapp.ui.components.RecipeSearchBar
-import com.abid.recipeapp.ui.state.SearchRecipeUiState
+import com.abid.recipeapp.ui.state.SearchFilterOptionsUiState
+import com.abid.recipeapp.ui.state.SearchResultUiState
 import com.abid.recipeapp.ui.theme.LocalAppCustomColors
 import com.abid.recipeapp.util.Constants.APPLY_FILTERS
 import com.abid.recipeapp.util.Constants.CATEGORY
@@ -57,7 +58,9 @@ fun SearchRecipeScreen(
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val state by vm.state.observeAsState(initial = SearchRecipeUiState())
+    val searchResultState by vm.searchResultState.observeAsState(initial = SearchResultUiState())
+    val searchFilterState by vm.searchFilterState.observeAsState(initial = SearchFilterOptionsUiState())
+
 
     LaunchedEffect(Unit) {
         vm.loadBottomSheetChipsData()
@@ -80,10 +83,13 @@ fun SearchRecipeScreen(
                     vm.onSearchQueryChanged(it)
                 })
 
-            if (state.isSearchLoading) {
+            if (searchResultState.isLoading) {
                 LoadingStateBox()
-            } else if (state.recipeList.isNotEmpty()) {
-                RecipeList(recipeList = state.recipeList, onClickRecipeItem = onClickRecipeItem)
+            } else if (searchResultState.recipeList.isNotEmpty()) {
+                RecipeList(
+                    recipeList = searchResultState.recipeList,
+                    onClickRecipeItem = onClickRecipeItem
+                )
             } else {
                 ErrorStateBox(searchedRecipeNotFoundMsg(vm.searchQueryRecipeTitle))
             }
@@ -101,15 +107,15 @@ fun SearchRecipeScreen(
                         .padding(Dims.Dp15)
                         .verticalScroll(rememberScrollState()),
                 ) {
-                    BottomSheetHeader(state.isCategoriesLoading || state.isCuisinesLoading || state.isDiffLvlLoading)
+                    BottomSheetHeader(searchFilterState.isCategoriesLoading || searchFilterState.isCuisinesLoading || searchFilterState.isDiffLvlLoading)
 
                     SearchHorizontalDivider()
 
-                    if (state.categoriesErrorMsg.isNullOrBlank()) {
+                    if (searchFilterState.categoriesErrorMsg.isNullOrBlank()) {
                         BottomSheetChipGridItem(
                             title = CATEGORY,
                             labelOf = { it.label },
-                            items = state.recipesCategories,
+                            items = searchFilterState.recipeCategories,
                             selectedLabel = vm.selectedCategoryName,
                             onChipClicked = {
                                 vm.onCategorySelected(it)
@@ -118,11 +124,11 @@ fun SearchRecipeScreen(
                     } else {
                         ErrorStateBox(UNABLE_TO_LOAD_CATEGORIES)
                     }
-                    if (state.cuisinesErrorMsg.isNullOrBlank()) {
+                    if (searchFilterState.cuisinesErrorMsg.isNullOrBlank()) {
                         BottomSheetChipGridItem(
                             title = CUISINE,
                             labelOf = { it.label },
-                            items = state.recipesCuisines,
+                            items = searchFilterState.recipeCuisines,
                             selectedLabel = vm.selectedCuisinesName,
                             onChipClicked = {
                                 vm.onCuisineSelected(it)
@@ -131,11 +137,11 @@ fun SearchRecipeScreen(
                     } else {
                         ErrorStateBox(UNABLE_TO_LOAD_CUISINES)
                     }
-                    if (state.diffLvlErrorMsg.isNullOrBlank()) {
+                    if (searchFilterState.diffLvlErrorMsg.isNullOrBlank()) {
                         BottomSheetChipGridItem(
                             title = DIFFICULTY,
                             labelOf = { it.label.name },
-                            items = state.recipeDifficulties,
+                            items = searchFilterState.recipeDifficulties,
                             selectedLabel = vm.selectedDiffLvlName,
                             onChipClicked = {
                                 vm.onDiffLvlSelected(it)

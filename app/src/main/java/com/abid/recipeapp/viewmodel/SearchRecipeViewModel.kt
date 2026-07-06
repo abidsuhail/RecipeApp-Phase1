@@ -9,7 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.repository.RecipeRepository
-import com.abid.recipeapp.ui.state.SearchRecipeUiState
+import com.abid.recipeapp.ui.state.SearchFilterOptionsUiState
+import com.abid.recipeapp.ui.state.SearchResultUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -20,8 +21,11 @@ import javax.inject.Inject
 class SearchRecipeViewModel @Inject constructor(
     private val repository: RecipeRepository
 ) : ViewModel() {
-    private val _state = MutableLiveData(SearchRecipeUiState())
-    val state: LiveData<SearchRecipeUiState> = _state
+    private val _searchResultState = MutableLiveData(SearchResultUiState())
+    val searchResultState: LiveData<SearchResultUiState> = _searchResultState
+
+    private val _searchFilterState = MutableLiveData(SearchFilterOptionsUiState())
+    val searchFilterState: LiveData<SearchFilterOptionsUiState> = _searchFilterState
 
     private var searchJob: Job? = null
 
@@ -81,17 +85,18 @@ class SearchRecipeViewModel @Inject constructor(
     private fun loadSearchRecipe() {
         viewModelScope.launch {
             try {
-                _state.value = _state.value?.copy(isSearchLoading = true)
+                _searchResultState.value = _searchResultState.value?.copy(isLoading = true)
                 val data = repository.getAllRecipes(
                     categoryName = selectedCategoryName,
                     cuisineName = selectedCuisinesName,
                     diffLvl = selectedDiffLvlName,
                     title = searchQueryRecipeTitle
                 )
-                _state.value = _state.value?.copy(recipeList = data, isSearchLoading = false)
+                _searchResultState.value =
+                    _searchResultState.value?.copy(recipeList = data, isLoading = false)
             } catch (e: Exception) {
-                _state.value =
-                    _state.value?.copy(searchErrorMsg = e.message, isSearchLoading = false)
+                _searchResultState.value =
+                    _searchResultState.value?.copy(errorMsg = e.message, isLoading = false)
             }
         }
     }
@@ -100,14 +105,21 @@ class SearchRecipeViewModel @Inject constructor(
     private fun loadRecipeCategories() {
         viewModelScope.launch {
             try {
-                _state.value = _state.value?.copy(isCategoriesLoading = true)
+                _searchFilterState.value =
+                    _searchFilterState.value?.copy(isCategoriesLoading = true)
                 val data = repository.getRecipeCategories()
                 val finalData = listOf(RecipeCategoriesDataModel("-1", "All")) + data
-                _state.value =
-                    _state.value?.copy(recipesCategories = finalData, isCategoriesLoading = false)
+                _searchFilterState.value =
+                    _searchFilterState.value?.copy(
+                        recipeCategories = finalData,
+                        isCategoriesLoading = false
+                    )
             } catch (e: Exception) {
-                _state.value =
-                    _state.value?.copy(categoriesErrorMsg = e.message, isCategoriesLoading = false)
+                _searchFilterState.value =
+                    _searchFilterState.value?.copy(
+                        categoriesErrorMsg = e.message,
+                        isCategoriesLoading = false
+                    )
             }
         }
     }
@@ -115,12 +127,18 @@ class SearchRecipeViewModel @Inject constructor(
     private fun loadRecipeCuisines() {
         viewModelScope.launch {
             try {
-                _state.value = _state.value?.copy(isCuisinesLoading = true)
+                _searchFilterState.value = _searchFilterState.value?.copy(isCuisinesLoading = true)
                 val data = repository.getCuisines()
-                _state.value = _state.value?.copy(recipesCuisines = data, isCuisinesLoading = false)
+                _searchFilterState.value = _searchFilterState.value?.copy(
+                    recipeCuisines = data,
+                    isCuisinesLoading = false
+                )
             } catch (e: Exception) {
-                _state.value =
-                    _state.value?.copy(cuisinesErrorMsg = e.message, isCuisinesLoading = false)
+                _searchFilterState.value =
+                    _searchFilterState.value?.copy(
+                        cuisinesErrorMsg = e.message,
+                        isCuisinesLoading = false
+                    )
             }
         }
     }
@@ -128,13 +146,19 @@ class SearchRecipeViewModel @Inject constructor(
     private fun loadRecipeDifficultyLvl() {
         viewModelScope.launch {
             try {
-                _state.value = _state.value?.copy(isDiffLvlLoading = true)
+                _searchFilterState.value = _searchFilterState.value?.copy(isDiffLvlLoading = true)
                 val data = repository.getRecipeDifficulties()
-                _state.value =
-                    _state.value?.copy(recipeDifficulties = data, isDiffLvlLoading = false)
+                _searchFilterState.value =
+                    _searchFilterState.value?.copy(
+                        recipeDifficulties = data,
+                        isDiffLvlLoading = false
+                    )
             } catch (e: Exception) {
-                _state.value =
-                    _state.value?.copy(diffLvlErrorMsg = e.message, isDiffLvlLoading = false)
+                _searchFilterState.value =
+                    _searchFilterState.value?.copy(
+                        diffLvlErrorMsg = e.message,
+                        isDiffLvlLoading = false
+                    )
             }
         }
     }
