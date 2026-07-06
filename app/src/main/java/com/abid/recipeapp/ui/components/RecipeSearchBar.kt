@@ -89,17 +89,23 @@ fun RecipeSearchBar(
                 interactionSource = remember { MutableInteractionSource() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .focusRequester(focusRequester)
+                    .focusRequester(focusRequester),
+                decorationBox = { innerTextField ->
+                    Box(
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        if (query.isEmpty()) {
+                            Text(
+                                text = placeholder,
+                                style = MaterialTheme.typography.bodyLarge,
+                                maxLines = Dims.const1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        innerTextField()
+                    }
+                }
             )
-
-            if (query.isEmpty()) {
-                Text(
-                    text = placeholder,
-                    style = MaterialTheme.typography.bodyLarge,
-                    maxLines = Dims.const1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
         }
 
         Spacer(modifier = Modifier.width(Dims.Dp12))
