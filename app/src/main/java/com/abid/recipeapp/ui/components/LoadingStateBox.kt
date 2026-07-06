@@ -10,9 +10,11 @@ import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.util.Dims
 
 @Composable
-fun LoadingStateBox() {
+fun LoadingStateBox(
+    modifier: Modifier = Modifier.fillMaxSize()
+) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -40,6 +41,9 @@ import com.abid.recipeapp.util.Constants.DIFFICULTY
 import com.abid.recipeapp.util.Constants.RESET
 import com.abid.recipeapp.util.Constants.SEARCH_FILTERS
 import com.abid.recipeapp.util.Constants.SEARCH_RECIPE_SCREEN
+import com.abid.recipeapp.util.Constants.UNABLE_TO_LOAD_CATEGORIES
+import com.abid.recipeapp.util.Constants.UNABLE_TO_LOAD_CUISINES
+import com.abid.recipeapp.util.Constants.UNABLE_TO_LOAD_DIFFICULTY_LEVELS
 import com.abid.recipeapp.util.Constants.searchedRecipeNotFoundMsg
 import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.SearchRecipeViewModel
@@ -99,7 +103,7 @@ fun SearchRecipeScreen(
                     enteredSearchTitle = it
                 })
 
-            if (state.isLoading) {
+            if (state.isSearchLoading) {
                 LoadingStateBox()
             } else if (state.recipeList.isNotEmpty()) {
                 RecipeList(recipeList = state.recipeList, onClickRecipeItem = onClickRecipeItem)
@@ -120,37 +124,49 @@ fun SearchRecipeScreen(
                         .padding(Dims.Dp15)
                         .verticalScroll(rememberScrollState()),
                 ) {
-                    Text(SEARCH_FILTERS, fontSize = Dims.Sp30)
+                    BottomSheetHeader(state.isCategoriesLoading || state.isCuisinesLoading || state.isDiffLvlLoading)
 
                     SearchHorizontalDivider()
 
-                    BottomSheetChipGridItem(
-                        title = CATEGORY,
-                        labelOf = { it.label },
-                        items = state.recipesCategories,
-                        selectedLabel = selectedCategoryName,
-                        onChipClicked = {
-                            selectedCategoryName = it
-                        }
-                    )
-                    BottomSheetChipGridItem(
-                        title = CUISINE,
-                        labelOf = { it.label },
-                        items = state.recipesCuisines,
-                        selectedLabel = selectedCuisinesName,
-                        onChipClicked = {
-                            selectedCuisinesName = it
-                        }
-                    )
-                    BottomSheetChipGridItem(
-                        title = DIFFICULTY,
-                        labelOf = { it.label.name },
-                        items = state.recipeDifficulties,
-                        selectedLabel = selectedDiffLvlName,
-                        onChipClicked = {
-                            selectedDiffLvlName = it
-                        }
-                    )
+                    if (state.categoriesErrorMsg.isNullOrBlank()) {
+                        BottomSheetChipGridItem(
+                            title = CATEGORY,
+                            labelOf = { it.label },
+                            items = state.recipesCategories,
+                            selectedLabel = selectedCategoryName,
+                            onChipClicked = {
+                                selectedCategoryName = it
+                            }
+                        )
+                    } else {
+                        ErrorStateBox(UNABLE_TO_LOAD_CATEGORIES)
+                    }
+                    if (state.cuisinesErrorMsg.isNullOrBlank()) {
+                        BottomSheetChipGridItem(
+                            title = CUISINE,
+                            labelOf = { it.label },
+                            items = state.recipesCuisines,
+                            selectedLabel = selectedCuisinesName,
+                            onChipClicked = {
+                                selectedCuisinesName = it
+                            }
+                        )
+                    } else {
+                        ErrorStateBox(UNABLE_TO_LOAD_CUISINES)
+                    }
+                    if (state.diffLvlErrorMsg.isNullOrBlank()) {
+                        BottomSheetChipGridItem(
+                            title = DIFFICULTY,
+                            labelOf = { it.label.name },
+                            items = state.recipeDifficulties,
+                            selectedLabel = selectedDiffLvlName,
+                            onChipClicked = {
+                                selectedDiffLvlName = it
+                            }
+                        )
+                    } else {
+                        ErrorStateBox(UNABLE_TO_LOAD_DIFFICULTY_LEVELS)
+                    }
                     SearchHorizontalDivider()
                     ApplyFilterRow(
                         onClickReset = {
@@ -171,7 +187,21 @@ fun SearchRecipeScreen(
 }
 
 @Composable
-fun SearchHorizontalDivider() {
+private fun BottomSheetHeader(isBottomSheetItemsLoading: Boolean) {
+    Row {
+        Text(
+            SEARCH_FILTERS,
+            fontSize = Dims.Sp30,
+            modifier = Modifier.weight(Dims.W1)
+        )
+        if (isBottomSheetItemsLoading) {
+            LoadingStateBox(modifier = Modifier.wrapContentSize())
+        }
+    }
+}
+
+@Composable
+private fun SearchHorizontalDivider() {
     HorizontalDivider(
         modifier = Modifier
             .fillMaxWidth()
@@ -182,7 +212,7 @@ fun SearchHorizontalDivider() {
 }
 
 @Composable
-fun RowScope.ApplyFilterButton(btnTxt: String, isResetBtn: Boolean, onClick: () -> Unit) {
+private fun RowScope.ApplyFilterButton(btnTxt: String, isResetBtn: Boolean, onClick: () -> Unit) {
     val customColors = LocalAppCustomColors.current
     Button(
         onClick = onClick,
@@ -199,7 +229,7 @@ fun RowScope.ApplyFilterButton(btnTxt: String, isResetBtn: Boolean, onClick: () 
 
 
 @Composable
-fun ApplyFilterRow(onClickReset: () -> Unit, onClickApply: () -> Unit) {
+private fun ApplyFilterRow(onClickReset: () -> Unit, onClickApply: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
     ) {
