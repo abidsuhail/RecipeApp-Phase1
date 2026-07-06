@@ -22,10 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -48,10 +45,10 @@ import com.abid.recipeapp.util.Dims
 fun RecipeSearchBar(
     modifier: Modifier = Modifier,
     placeholder: String = SEARCH_RECIPES,
+    enteredTxt: String,
     onTxtEntered: (String) -> Unit,
     onFilterClick: () -> Unit
 ) {
-    var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     LaunchedEffect(Unit) {
@@ -79,9 +76,8 @@ fun RecipeSearchBar(
 
         Box(modifier = Modifier.weight(Dims.W1)) {
             BasicTextField(
-                value = query,
+                value = enteredTxt,
                 onValueChange = {
-                    query = it
                     onTxtEntered(it)
                 },
                 singleLine = true,
@@ -94,7 +90,7 @@ fun RecipeSearchBar(
                     Box(
                         contentAlignment = Alignment.CenterStart
                     ) {
-                        if (query.isEmpty()) {
+                        if (enteredTxt.isEmpty()) {
                             Text(
                                 text = placeholder,
                                 style = MaterialTheme.typography.bodyLarge,

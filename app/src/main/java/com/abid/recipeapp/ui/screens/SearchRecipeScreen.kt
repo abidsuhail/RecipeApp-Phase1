@@ -62,7 +62,7 @@ fun SearchRecipeScreen(
     var selectedCategoryName by remember { mutableStateOf<String?>(null) }
     var selectedCuisinesName by remember { mutableStateOf<String?>(null) }
     var selectedDiffLvlName by remember { mutableStateOf<String?>(null) }
-    var enteredSearchTitle by remember { mutableStateOf<String?>(null) }
+    var enteredSearchTitle by remember { mutableStateOf("") }
 
     fun fetchSearchRecipes() {
         vm.loadSearchRecipe(
@@ -79,7 +79,7 @@ fun SearchRecipeScreen(
         vm.loadRecipeDifficultyLvl()
     }
     LaunchedEffect(enteredSearchTitle) {
-        if (enteredSearchTitle.isNullOrBlank()) {
+        if (enteredSearchTitle.isBlank()) {
             fetchSearchRecipes()
         } else {
             delay(500)
@@ -96,6 +96,7 @@ fun SearchRecipeScreen(
                 modifier = Modifier.padding(bottom = Dims.Dp15)
             )
             RecipeSearchBar(
+                enteredTxt = enteredSearchTitle,
                 onFilterClick = {
                     showSheet = true
                 },
