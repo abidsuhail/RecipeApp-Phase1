@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,10 +60,10 @@ fun SearchRecipeScreen(
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val state by vm.state.observeAsState(initial = SearchRecipeUiState())
-    var selectedCategoryName by remember { mutableStateOf<String?>(null) }
-    var selectedCuisinesName by remember { mutableStateOf<String?>(null) }
-    var selectedDiffLvlName by remember { mutableStateOf<String?>(null) }
-    var enteredSearchTitle by remember { mutableStateOf("") }
+    var selectedCategoryName by rememberSaveable { mutableStateOf<String?>(null) }
+    var selectedCuisinesName by rememberSaveable { mutableStateOf<String?>(null) }
+    var selectedDiffLvlName by rememberSaveable { mutableStateOf<String?>(null) }
+    var enteredSearchTitle by rememberSaveable { mutableStateOf("") }
 
     fun fetchSearchRecipes() {
         vm.loadSearchRecipe(
