@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.abid.recipeapp.ui.theme.Orange40
 import com.abid.recipeapp.util.Dims
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun <T> BottomSheetChipGridItem(
     title: String,
