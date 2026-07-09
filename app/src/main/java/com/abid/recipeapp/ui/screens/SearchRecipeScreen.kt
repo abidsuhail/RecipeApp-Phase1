@@ -76,6 +76,7 @@ fun SearchRecipeScreen(
             )
             RecipeSearchBar(
                 enteredTxt = vm.searchQueryRecipeTitle,
+                autoFocusEnabled = true,
                 onFilterClick = {
                     showSheet = true
                 },

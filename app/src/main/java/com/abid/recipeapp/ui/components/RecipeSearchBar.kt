@@ -46,14 +46,17 @@ fun RecipeSearchBar(
     modifier: Modifier = Modifier,
     placeholder: String = SEARCH_RECIPES,
     enteredTxt: String,
+    autoFocusEnabled: Boolean,
     onTxtEntered: (String) -> Unit,
     onFilterClick: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        keyboardController?.show()
+        if (autoFocusEnabled) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
     }
     Row(
         modifier = modifier
