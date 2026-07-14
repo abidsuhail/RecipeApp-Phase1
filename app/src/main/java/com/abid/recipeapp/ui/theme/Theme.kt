@@ -14,6 +14,7 @@ import com.abid.recipeapp.ui.navigation.AppNavHost
 import com.abid.recipeapp.viewmodel.ThemeViewModel
 
 val LocalIsDarkTheme = compositionLocalOf { false }
+val LocalAppCustomColors = compositionLocalOf { LightAppColors }
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -75,7 +76,8 @@ fun RecipeMainApp(
     }
 
     val colorScheme = if (isDark) DarkColorScheme else LightColorScheme
-    CompositionLocalProvider(LocalIsDarkTheme provides (appThemeMode == AppThemeMode.DARK)) {
+    val customColors = if (isDark) DarkAppColors else LightAppColors
+    CompositionLocalProvider(LocalAppCustomColors provides customColors) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = Typography,

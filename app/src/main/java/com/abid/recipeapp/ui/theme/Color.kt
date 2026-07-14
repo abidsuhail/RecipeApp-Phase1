@@ -1,6 +1,5 @@
 package com.abid.recipeapp.ui.theme
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.abid.recipeapp.data.model.RecipeDiffLvl
 
@@ -12,25 +11,30 @@ val Orange40 = Color(0xFFff8c00)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-object SettingsTheme {
-    val themeModeGrid: Color
-        @Composable get() = if (LocalIsDarkTheme.current) Color.Black else Color.LightGray
 
-    val cardColor: Color
-        @Composable get() = if (LocalIsDarkTheme.current) Color.Black else Color(0xFFE0E0E0)
-}
+val LightAppColors = AppCustomColors(
+    settingsThemeModeGrid = Color.LightGray,
+    settingsCardColor = Color(0xFFE0E0E0),
+    homeBottomNavColor = Color.White,
+    recipeDetailsClippedCardBg = Color.White,
+    searchCardBg = Color(0xFFE0E0E0),
+    searchApplyFilterResetBtnBg = Color.Gray,
+    searchApplyFilterApplyBtnBg = Orange40,
+    searchResetFilterTxtColor = Color.Unspecified,
+    searchQueryTxtColor = Color.Black,
+)
 
-object HomeTheme {
-    val bottomNavColor: Color
-        @Composable get() = if (LocalIsDarkTheme.current) Color.Black else Color.White
-
-}
-
-object RecipeDetailsTheme {
-    val clippedCardBg: Color
-        @Composable get() = if (LocalIsDarkTheme.current) Color.Black else Color.White
-
-}
+val DarkAppColors = AppCustomColors(
+    settingsThemeModeGrid = Color.Black,
+    settingsCardColor = Color.Black,
+    homeBottomNavColor = Color.Black,
+    recipeDetailsClippedCardBg = Color.Black,
+    searchCardBg = Color.Black,
+    searchApplyFilterResetBtnBg = Color.Gray,
+    searchApplyFilterApplyBtnBg = Orange40,
+    searchResetFilterTxtColor = Color.White,
+    searchQueryTxtColor = Color.White,
+)
 
 fun getDifficultyLvlBgColor(difficultyLvl: RecipeDiffLvl): Color {
     return when (difficultyLvl) {

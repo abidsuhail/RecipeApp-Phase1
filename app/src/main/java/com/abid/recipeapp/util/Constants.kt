@@ -36,7 +36,7 @@ object Constants {
     const val FAVOURITES_SCREEN_HEADING = "Favourites"
     const val FAVORITE_CONTENT_DESC = "Favorite"
     const val DISCOVER_RECIPES = "Discover Recipes"
-    const val SEARCH_RECIPE_SCREEN = "Search recipe screen"
+    const val SEARCH_RECIPE_SCREEN = "Search Recipes"
     const val ABOUT = "About"
     const val VERSION = "Version"
     const val TOTAL_RECIPES = "Total Recipes"
@@ -79,7 +79,27 @@ object Constants {
     const val ADD_BUTTON = "Add button"
     const val HOME = "Home"
     const val SEARCH = "Search"
+    const val SEARCH_CONTENT_DESC = "Search"
+
     const val FAVOURITE = "Favourite"
+    const val SEARCH_FILTERS = "Filters"
+    const val RESET = "Reset"
+    const val APPLY_FILTERS = "Apply filters"
+    const val SEARCH_RECIPES = "Search recipes..."
+    const val FILTER = "Filter"
+    const val FILTER_CONTENT_DESC = "Filter"
+    const val UNABLE_TO_LOAD_CATEGORIES = "Unable to load categories"
+    const val UNABLE_TO_LOAD_CUISINES = "Unable to load cuisines"
+    const val UNABLE_TO_LOAD_DIFFICULTY_LEVELS = "Unable to load difficulty levels"
+
+    fun searchedRecipeNotFoundMsg(enteredSearchTitle: String?): String {
+        if (enteredSearchTitle.isNullOrBlank()) {
+            return "Recipe not found!"
+        }
+        return "'$enteredSearchTitle' named recipe not found"
+    }
+
+
 }
 
 

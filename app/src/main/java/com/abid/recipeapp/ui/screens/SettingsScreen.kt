@@ -36,8 +36,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.BuildConfig
 import com.abid.recipeapp.ui.state.SettingsUiState
 import com.abid.recipeapp.ui.theme.AppThemeMode
+import com.abid.recipeapp.ui.theme.LocalAppCustomColors
 import com.abid.recipeapp.ui.theme.Orange40
-import com.abid.recipeapp.ui.theme.SettingsTheme
 import com.abid.recipeapp.util.Constants
 import com.abid.recipeapp.util.Constants.ABOUT
 import com.abid.recipeapp.util.Constants.APP_INFO
@@ -162,7 +162,7 @@ private fun AppInfoCardItem() {
 private fun GrayCard(content: @Composable () -> Unit) {
     Card(
         modifier = Modifier.padding(vertical = Dims.Dp12),
-        colors = CardDefaults.cardColors(containerColor = SettingsTheme.cardColor)
+        colors = CardDefaults.cardColors(containerColor = LocalAppCustomColors.current.settingsCardColor)
     ) {
         content()
     }
@@ -204,7 +204,7 @@ private fun RowScope.ThemeModeGridItem(
                 onThemeSelected(themeMode)
             },
         border = BorderStroke(Dims.Dp2, borderColor),
-        colors = CardDefaults.cardColors(containerColor = SettingsTheme.themeModeGrid),
+        colors = CardDefaults.cardColors(containerColor = LocalAppCustomColors.current.settingsThemeModeGrid),
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),

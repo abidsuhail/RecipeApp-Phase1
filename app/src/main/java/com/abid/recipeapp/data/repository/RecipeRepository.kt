@@ -19,6 +19,7 @@ import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
@@ -32,18 +33,37 @@ class RecipeRepository @Inject constructor(
     private val db: FirebaseFirestore
 ) {
 
-    suspend fun getAllRecipes(categoryName: String?): List<RecipeModel> {
+    suspend fun getAllRecipes(
+        categoryName: String? = null,
+        cuisineName: String? = null,
+        diffLvl: String? = null,
+        title: String? = null
+    ): List<RecipeModel> {
         return withContext(Dispatchers.IO) {
-            val query = if (categoryName == null) {
-                db.collection(RECIPES)
-            } else {
-                db.collection(RECIPES)
-                    .whereEqualTo("category", categoryName)
+
+            var query: Query = db.collection(RECIPES)
+
+            if (!categoryName.isNullOrBlank()) {
+                query = query.whereEqualTo("category", categoryName)
             }
-            val recipes = query
-                .get()
-                .await()
-            recipes.toObjects(RecipeModel::class.java)
+
+            if (!cuisineName.isNullOrBlank()) {
+                query = query.whereEqualTo("cuisine", cuisineName)
+            }
+
+            if (!diffLvl.isNullOrBlank()) {
+                query = query.whereEqualTo("difficulty", diffLvl)
+            }
+
+            val results = query.get().await().toObjects(RecipeModel::class.java)
+
+            return@withContext if (!title.isNullOrBlank()) {
+                results.filter { recipe ->
+                    recipe.title.contains(title, ignoreCase = true)
+                }
+            } else {
+                results
+            }
         }
     }
 
