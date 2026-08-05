@@ -5,6 +5,7 @@ plugins {
     kotlin("kapt")
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.google.gms.google.services)
+    //alias(libs.plugins.ksp)
 }
 
 android {
@@ -83,5 +84,12 @@ dependencies {
     implementation(libs.cloudinary.android)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.datastore.preferences)
+
+
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+    implementation(libs.gson)
 
 }
