@@ -1,6 +1,7 @@
 package com.abid.recipeapp.data.repository
 
 import android.net.Uri
+import com.abid.recipeapp.data.local.RecipeDao
 import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
 import com.abid.recipeapp.data.model.FavRecipeModel
 import com.abid.recipeapp.data.model.IngredientsTabModel
@@ -30,7 +31,8 @@ import kotlin.coroutines.resumeWithException
 
 
 class RecipeRepository @Inject constructor(
-    private val db: FirebaseFirestore
+    private val db: FirebaseFirestore,
+    private val recipeDao: RecipeDao
 ) {
 
     suspend fun getAllRecipes(

@@ -5,7 +5,11 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.room.Room
+import com.abid.recipeapp.data.local.RecipeDao
+import com.abid.recipeapp.data.local.RecipeDatabase
 import com.abid.recipeapp.data.repository.RecipeRepository
+import com.abid.recipeapp.util.Constants
 import com.abid.recipeapp.util.Constants.SETTINGS_DATASTORE_NAME
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -29,8 +33,8 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideRecipeRepository(db: FirebaseFirestore): RecipeRepository {
-        return RecipeRepository(db)
+    fun provideRecipeRepository(db: FirebaseFirestore, recipeDao: RecipeDao): RecipeRepository {
+        return RecipeRepository(db, recipeDao)
     }
 
     @Provides
@@ -42,4 +46,24 @@ object RepositoryModule {
     )
 
 
+    @Provides
+    @Singleton
+    fun provideRecipeDatabase(
+        @ApplicationContext context: Context
+    ): RecipeDatabase {
+        return Room.databaseBuilder(
+            context,
+            RecipeDatabase::class.java,
+            Constants.RECIPE_DB_NAME
+        )
+            .fallbackToDestructiveMigration()   // remove for production
+            // .addMigrations(MIGRATION_1_2)        // add real migrations here instead
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecipeDao(recipeDatabase: RecipeDatabase): RecipeDao {
+        return recipeDatabase.recipeDao()
+    }
 }
