@@ -80,7 +80,7 @@ class RecipeRepository @Inject constructor(
 
                 val results = query.get().await().toObjects(RecipeModel::class.java)
 
-                if (categoryName.isNullOrBlank() && cuisineName.isNullOrBlank() && diffLvl.isNullOrBlank()) {
+                if (categoryName.isNullOrBlank() && cuisineName.isNullOrBlank() && diffLvl.isNullOrBlank() && title.isNullOrBlank()) {
                     //all recipes,now save
                     saveRecipeListToDb(results)
                 }
