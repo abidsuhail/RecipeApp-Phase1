@@ -36,17 +36,15 @@ class RecipeRepository @Inject constructor(
     private val recipeDao: RecipeDao
 ) {
 
-    suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
+    private suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
         recipeDao.insert(recipeModel.toEntity())
     }
 
-    suspend fun saveRecipeListToDb(recipeModels: List<RecipeModel>) {
-        recipeModels.forEach { recipe ->
-            recipeDao.insert(recipe.toEntity())
-        }
+    private suspend fun saveRecipeListToDb(recipeModels: List<RecipeModel>) {
+        recipeDao.insertAll(recipeModels.map { it.toEntity() })
     }
 
-    suspend fun getAllRecipes(
+    suspend fun getAndSaveAllRecipes(
         categoryName: String? = null,
         cuisineName: String? = null,
         diffLvl: String? = null,
@@ -70,13 +68,15 @@ class RecipeRepository @Inject constructor(
 
             val results = query.get().await().toObjects(RecipeModel::class.java)
 
-            return@withContext if (!title.isNullOrBlank()) {
+            val finalData = if (!title.isNullOrBlank()) {
                 results.filter { recipe ->
                     recipe.title.contains(title, ignoreCase = true)
                 }
             } else {
                 results
             }
+            saveRecipeListToDb(finalData)
+            return@withContext finalData
         }
     }
 
