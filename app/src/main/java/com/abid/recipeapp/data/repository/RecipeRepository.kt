@@ -1,6 +1,7 @@
 package com.abid.recipeapp.data.repository
 
 import android.net.Uri
+import androidx.lifecycle.asFlow
 import com.abid.recipeapp.data.local.RecipeDao
 import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
 import com.abid.recipeapp.data.model.FavRecipeModel
@@ -15,7 +16,9 @@ import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CATEGORIES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CUISINES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_DIFFICULTY_LEVELS
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_INGREDIENTS_INST_TAB
+import com.abid.recipeapp.util.network.NetworkMonitor
 import com.abid.recipeapp.util.toEntity
+import com.abid.recipeapp.util.toModel
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
@@ -23,6 +26,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -33,7 +37,8 @@ import kotlin.coroutines.resumeWithException
 
 class RecipeRepository @Inject constructor(
     private val db: FirebaseFirestore,
-    private val recipeDao: RecipeDao
+    private val recipeDao: RecipeDao,
+    private val networkMonitor: NetworkMonitor
 ) {
 
     private suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
@@ -44,6 +49,10 @@ class RecipeRepository @Inject constructor(
         recipeDao.insertAll(recipeModels.map { it.toEntity() })
     }
 
+    private suspend fun getLocalAllRecipesList(): List<RecipeModel> {
+        return recipeDao.getAllRecipes().asFlow().firstOrNull()?.map { it.toModel() } ?: emptyList()
+    }
+
     suspend fun getAndSaveAllRecipes(
         categoryName: String? = null,
         cuisineName: String? = null,
@@ -51,32 +60,36 @@ class RecipeRepository @Inject constructor(
         title: String? = null
     ): List<RecipeModel> {
         return withContext(Dispatchers.IO) {
-
-            var query: Query = db.collection(RECIPES)
-
-            if (!categoryName.isNullOrBlank()) {
-                query = query.whereEqualTo("category", categoryName)
-            }
-
-            if (!cuisineName.isNullOrBlank()) {
-                query = query.whereEqualTo("cuisine", cuisineName)
-            }
-
-            if (!diffLvl.isNullOrBlank()) {
-                query = query.whereEqualTo("difficulty", diffLvl)
-            }
-
-            val results = query.get().await().toObjects(RecipeModel::class.java)
-
-            val finalData = if (!title.isNullOrBlank()) {
-                results.filter { recipe ->
-                    recipe.title.contains(title, ignoreCase = true)
-                }
+            if (!networkMonitor.isConnected()) {
+                val localRecipeList = getLocalAllRecipesList()
+                return@withContext localRecipeList
             } else {
-                results
+                var query: Query = db.collection(RECIPES)
+
+                if (!categoryName.isNullOrBlank()) {
+                    query = query.whereEqualTo("category", categoryName)
+                }
+
+                if (!cuisineName.isNullOrBlank()) {
+                    query = query.whereEqualTo("cuisine", cuisineName)
+                }
+
+                if (!diffLvl.isNullOrBlank()) {
+                    query = query.whereEqualTo("difficulty", diffLvl)
+                }
+
+                val results = query.get().await().toObjects(RecipeModel::class.java)
+
+                val finalData = if (!title.isNullOrBlank()) {
+                    results.filter { recipe ->
+                        recipe.title.contains(title, ignoreCase = true)
+                    }
+                } else {
+                    saveRecipeListToDb(results)
+                    results
+                }
+                return@withContext finalData
             }
-            saveRecipeListToDb(finalData)
-            return@withContext finalData
         }
     }
 
