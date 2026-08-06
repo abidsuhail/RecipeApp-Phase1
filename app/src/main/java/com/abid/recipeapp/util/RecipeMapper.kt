@@ -46,8 +46,8 @@ fun RecipeEntity.toModel(): RecipeModel = RecipeModel(
     nutrition = nutrition.toModel()
 )
 
-fun IngredientModel.toEntity() = IngredientEntity(item, amount)
-fun IngredientEntity.toModel() = IngredientModel(item, amount)
+private fun IngredientModel.toEntity() = IngredientEntity(item, amount)
+private fun IngredientEntity.toModel() = IngredientModel(item, amount)
 
-fun NutritionModel.toEntity() = NutritionEntity(calories, protein, carbs, fat)
-fun NutritionEntity.toModel() = NutritionModel(calories, protein, carbs, fat)
+private fun NutritionModel.toEntity() = NutritionEntity(calories, protein, carbs, fat)
+private fun NutritionEntity.toModel() = NutritionModel(calories, protein, carbs, fat)
