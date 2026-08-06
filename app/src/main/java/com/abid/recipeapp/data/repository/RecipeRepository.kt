@@ -80,12 +80,17 @@ class RecipeRepository @Inject constructor(
 
                 val results = query.get().await().toObjects(RecipeModel::class.java)
 
+                if (categoryName.isNullOrBlank() && cuisineName.isNullOrBlank() && diffLvl.isNullOrBlank()) {
+                    //all recipes,now save
+                    saveRecipeListToDb(results)
+                }
+
+                //don't save filtered recipes
                 val finalData = if (!title.isNullOrBlank()) {
                     results.filter { recipe ->
                         recipe.title.contains(title, ignoreCase = true)
                     }
                 } else {
-                    saveRecipeListToDb(results)
                     results
                 }
                 return@withContext finalData
