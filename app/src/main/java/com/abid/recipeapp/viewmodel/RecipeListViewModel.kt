@@ -19,6 +19,7 @@ class RecipeListViewModel @Inject constructor(
     private val _state = MutableLiveData(RecipeListUiState(isLoading = true))
     val state: LiveData<RecipeListUiState> = _state
 
+
     fun loadAllRecipes(categoryName: String? = null) {
         viewModelScope.launch {
             try {

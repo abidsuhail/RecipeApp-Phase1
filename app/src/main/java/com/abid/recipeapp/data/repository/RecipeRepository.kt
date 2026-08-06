@@ -15,6 +15,7 @@ import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CATEGORIES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CUISINES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_DIFFICULTY_LEVELS
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_INGREDIENTS_INST_TAB
+import com.abid.recipeapp.util.toEntity
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
@@ -34,6 +35,16 @@ class RecipeRepository @Inject constructor(
     private val db: FirebaseFirestore,
     private val recipeDao: RecipeDao
 ) {
+
+    suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
+        recipeDao.insert(recipeModel.toEntity())
+    }
+
+    suspend fun saveRecipeListToDb(recipeModels: List<RecipeModel>) {
+        recipeModels.forEach { recipe ->
+            recipeDao.insert(recipe.toEntity())
+        }
+    }
 
     suspend fun getAllRecipes(
         categoryName: String? = null,
