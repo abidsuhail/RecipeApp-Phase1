@@ -35,8 +35,12 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideRecipeRepository(db: FirebaseFirestore, recipeDao: RecipeDao): RecipeRepository {
-        return RecipeRepository(db, recipeDao)
+    fun provideRecipeRepository(
+        db: FirebaseFirestore,
+        recipeDao: RecipeDao,
+        networkMonitor: NetworkMonitor
+    ): RecipeRepository {
+        return RecipeRepository(db, recipeDao, networkMonitor)
     }
 
     @Provides
@@ -72,9 +76,5 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideNetworkMonitor(
-        @ApplicationContext context: Context
-    ): NetworkMonitor {
-        return NetworkMonitorImpl(context)
-    }
+    fun provideNetworkMonitor(impl: NetworkMonitorImpl): NetworkMonitor = impl
 }
