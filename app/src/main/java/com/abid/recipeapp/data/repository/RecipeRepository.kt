@@ -54,14 +54,17 @@ class RecipeRepository @Inject constructor(
         }
     }
 
+    suspend fun getRecipeCategories(): List<RecipeCategoriesDataModel> {
+        return if (networkMonitor.isConnected()) {
+            recipeRemoteDataSource.getRecipeCategories()
+        } else {
+            recipeLocalDataSource.getLocalAllCategoriesList()
+        }
+    }
+
     suspend fun getIngredientsTabsItems(): List<IngredientsTabModel> {
         return recipeRemoteDataSource.getIngredientsTabsItems()
     }
-
-    suspend fun getRecipeCategories(): List<RecipeCategoriesDataModel> {
-        return recipeRemoteDataSource.getRecipeCategories()
-    }
-
 
     suspend fun getRecipeDifficulties(): List<RecipeDiffLvlDataModel> {
         return recipeRemoteDataSource.getRecipeDifficulties()
