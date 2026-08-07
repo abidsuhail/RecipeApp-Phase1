@@ -14,7 +14,7 @@ interface CategoriesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(categories: List<RecipeCategoriesEntity>)
 
-    @Query("SELECT * FROM cuisines ORDER BY id ASC")
+    @Query("SELECT * FROM categories ORDER BY id ASC")
     suspend fun getAllCategories(): List<RecipeCategoriesEntity>
 
 }

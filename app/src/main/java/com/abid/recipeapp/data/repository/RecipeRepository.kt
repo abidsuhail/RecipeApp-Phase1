@@ -56,7 +56,9 @@ class RecipeRepository @Inject constructor(
 
     suspend fun getRecipeCategories(): List<RecipeCategoriesDataModel> {
         return if (networkMonitor.isConnected()) {
-            recipeRemoteDataSource.getRecipeCategories()
+            val remoteCategories = recipeRemoteDataSource.getRecipeCategories()
+            recipeLocalDataSource.saveCategoriesListToDb(remoteCategories)
+            remoteCategories
         } else {
             recipeLocalDataSource.getLocalAllCategoriesList()
         }
