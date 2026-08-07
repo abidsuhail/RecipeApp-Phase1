@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
+import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.ui.state.RecipeDetailsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecipeDetailsViewModel @Inject constructor(
-    private val repository: RecipeRemoteDataSource
+    private val repository: RecipeRepository
 ) : ViewModel() {
 
     private val _uiState = MutableLiveData(RecipeDetailsUiState(isLoading = true))

@@ -48,14 +48,14 @@ fun RecipeListScreen(
     val recipeListState by recipeListViewModel.state.observeAsState()
 
     LaunchedEffect(Unit) {
-        recipeListViewModel.loadAllRecipes()
+        recipeListViewModel.loadAndSaveAllRecipes()
         recipeListViewModel.loadRecipeCategories()
     }
     Box() {
         Column(modifier = Modifier.padding(top = Dims.Dp10)) {
             RecipeListHeader(onClickAddRecipe)
             RecipeCategoriesList(recipeListState) { category ->
-                recipeListViewModel.loadAllRecipes(category)
+                recipeListViewModel.loadRecipesByFilter(categoryName = category)
             }
             if (recipeListState?.isLoading == true) {
                 LoadingStateBox()

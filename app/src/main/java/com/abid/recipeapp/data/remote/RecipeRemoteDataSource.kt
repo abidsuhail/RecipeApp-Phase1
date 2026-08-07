@@ -37,7 +37,7 @@ class RecipeRemoteDataSource @Inject constructor(
         db.collection(RECIPES).get().await().toObjects(RecipeModel::class.java)
     }
 
-    suspend fun getRecipesByFilter(
+    suspend fun getRecipesByFilters(
         categoryName: String? = null,
         cuisineName: String? = null,
         diffLvl: String? = null,
