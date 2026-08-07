@@ -19,6 +19,17 @@ class RecipeListViewModel @Inject constructor(
     private val _state = MutableLiveData(RecipeListUiState(isLoading = true))
     val state: LiveData<RecipeListUiState> = _state
 
+    fun loadAndSaveAllRecipes() {
+        viewModelScope.launch {
+            try {
+                _state.value = _state.value?.copy(isLoading = true)
+                val data = repository.getAndSaveAllRecipes()
+                _state.value = _state.value?.copy(recipeList = data, isLoading = false)
+            } catch (e: Exception) {
+                _state.value = _state.value?.copy(errorMsg = e.message)
+            }
+        }
+    }
 
     fun loadRecipesByFilter(categoryName: String? = null) {
         viewModelScope.launch {
@@ -32,17 +43,6 @@ class RecipeListViewModel @Inject constructor(
         }
     }
 
-    fun loadAndSaveAllRecipes() {
-        viewModelScope.launch {
-            try {
-                _state.value = _state.value?.copy(isLoading = true)
-                val data = repository.getAndSaveAllRecipes()
-                _state.value = _state.value?.copy(recipeList = data, isLoading = false)
-            } catch (e: Exception) {
-                _state.value = _state.value?.copy(errorMsg = e.message)
-            }
-        }
-    }
 
     fun loadRecipeCategories() {
         viewModelScope.launch {

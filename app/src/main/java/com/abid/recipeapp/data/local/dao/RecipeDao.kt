@@ -1,6 +1,5 @@
 package com.abid.recipeapp.data.local.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -24,13 +23,13 @@ interface RecipeDao {
     suspend fun delete(recipe: RecipeEntity)
 
     @Query("SELECT * FROM recipes ORDER BY id ASC")
-    fun getAllRecipes(): LiveData<List<RecipeEntity>>
+    suspend fun getAllRecipes(): List<RecipeEntity>
 
     @Query("SELECT * FROM recipes WHERE id = :id")
     suspend fun getRecipeById(id: Int): RecipeEntity?
 
     @Query("SELECT * FROM recipes WHERE title LIKE '%' || :query || '%' ORDER BY id ASC")
-    fun searchRecipesByTitle(query: String): LiveData<List<RecipeEntity>>
+    suspend fun searchRecipesByTitle(query: String): List<RecipeEntity>
 
     @Query("DELETE FROM recipes")
     suspend fun deleteAll()

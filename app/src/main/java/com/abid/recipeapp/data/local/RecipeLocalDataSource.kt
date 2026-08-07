@@ -21,7 +21,7 @@ class RecipeLocalDataSource(
     }
 
     suspend fun getLocalAllRecipesList(): List<RecipeModel> {
-        return recipeDao.getAllRecipes().value?.map { it.toModel() } ?: emptyList()
+        return recipeDao.getAllRecipes().map { it.toModel() } ?: emptyList()
     }
 
     suspend fun getLocalAllCuisinesList(): List<RecipeCuisinesDataModel> {

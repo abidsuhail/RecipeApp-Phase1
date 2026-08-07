@@ -10,13 +10,13 @@ import com.abid.recipeapp.data.local.entities.RecipeCuisinesEntity
 @Dao
 interface CuisinesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(ingredient: RecipeCuisinesEntity)
+    fun insert(ingredient: RecipeCuisinesEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(recipes: List<RecipeCuisinesEntity>)
+    fun insertAll(recipes: List<RecipeCuisinesEntity>)
 
     @Query("SELECT * FROM cuisines ORDER BY id ASC")
-    suspend fun getAllCuisines(): LiveData<List<RecipeCuisinesEntity>>
+    fun getAllCuisines(): LiveData<List<RecipeCuisinesEntity>>
 
 
     /*

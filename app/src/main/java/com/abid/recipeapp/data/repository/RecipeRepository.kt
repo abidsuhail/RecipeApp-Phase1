@@ -23,7 +23,7 @@ class RecipeRepository @Inject constructor(
     suspend fun getAndSaveAllRecipes(): List<RecipeModel> = withContext(Dispatchers.IO) {
         if (networkMonitor.isConnected()) {
             val allRecipes = recipeRemoteDataSource.getAllRecipes()
-            recipeLocalDataSource.saveRecipeListToDb(allRecipes)   // always saves — no condition needed
+            recipeLocalDataSource.saveRecipeListToDb(allRecipes)
             allRecipes
         } else {
             recipeLocalDataSource.getLocalAllRecipesList()
