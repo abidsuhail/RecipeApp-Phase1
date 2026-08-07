@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.abid.recipeapp.data.repository.RecipeRepository
+import com.abid.recipeapp.data.remote.RecipeRepository
 import com.abid.recipeapp.ui.state.FavUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

@@ -9,7 +9,7 @@ import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
 import com.abid.recipeapp.data.model.IngredientFormStateModel
 import com.abid.recipeapp.data.model.NutritionFormStateModel
 import com.abid.recipeapp.data.model.RecipeDiffLvl
-import com.abid.recipeapp.data.repository.RecipeRepository
+import com.abid.recipeapp.data.remote.RecipeRepository
 import com.abid.recipeapp.ui.state.CreateRecipeUiState
 import com.abid.recipeapp.ui.state.RecipeSaveState
 import dagger.hilt.android.lifecycle.HiltViewModel

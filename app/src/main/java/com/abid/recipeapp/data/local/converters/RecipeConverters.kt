@@ -1,4 +1,4 @@
-package com.abid.recipeapp.data.local
+package com.abid.recipeapp.data.local.converters
 
 import androidx.room.TypeConverter
 import com.abid.recipeapp.data.local.entities.IngredientEntity

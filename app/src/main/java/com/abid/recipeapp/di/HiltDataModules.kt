@@ -6,9 +6,10 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
-import com.abid.recipeapp.data.local.RecipeDao
 import com.abid.recipeapp.data.local.RecipeDatabase
-import com.abid.recipeapp.data.repository.RecipeRepository
+import com.abid.recipeapp.data.local.dao.IngredientsDao
+import com.abid.recipeapp.data.local.dao.RecipeDao
+import com.abid.recipeapp.data.remote.RecipeRepository
 import com.abid.recipeapp.util.Constants
 import com.abid.recipeapp.util.Constants.SETTINGS_DATASTORE_NAME
 import com.abid.recipeapp.util.network.NetworkMonitor
@@ -71,6 +72,12 @@ object RepositoryModule {
     @Singleton
     fun provideRecipeDao(recipeDatabase: RecipeDatabase): RecipeDao {
         return recipeDatabase.recipeDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideIngredientsDao(recipeDatabase: RecipeDatabase): IngredientsDao {
+        return recipeDatabase.ingredientsDao()
     }
 
 

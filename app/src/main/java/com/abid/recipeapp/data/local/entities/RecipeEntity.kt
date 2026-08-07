@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.abid.recipeapp.data.local.RecipeConverters
+import com.abid.recipeapp.data.local.converters.RecipeConverters
 import com.abid.recipeapp.data.model.RecipeDiffLvl
 
 @Entity(tableName = "recipes")
@@ -28,7 +28,9 @@ data class RecipeEntity(
     @Embedded(prefix = "nutrition_") val nutrition: NutritionEntity = NutritionEntity()
 )
 
+@Entity(tableName = "ingredients")
 data class IngredientEntity(
+    @PrimaryKey val id: String = "",
     val item: String = "",
     val amount: String = ""
 )

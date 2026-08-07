@@ -1,4 +1,4 @@
-package com.abid.recipeapp.data.local
+package com.abid.recipeapp.data.local.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
