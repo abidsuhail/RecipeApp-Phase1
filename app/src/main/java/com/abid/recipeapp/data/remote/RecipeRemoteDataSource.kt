@@ -16,9 +16,9 @@ import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CATEGORIES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CUISINES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_DIFFICULTY_LEVELS
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_INGREDIENTS_INST_TAB
+import com.abid.recipeapp.util.datamapper.toEntity
+import com.abid.recipeapp.util.datamapper.toModel
 import com.abid.recipeapp.util.network.NetworkMonitor
-import com.abid.recipeapp.util.toEntity
-import com.abid.recipeapp.util.toModel
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback

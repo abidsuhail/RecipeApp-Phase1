@@ -1,4 +1,4 @@
-package com.abid.recipeapp.util
+package com.abid.recipeapp.util.datamapper
 
 import com.abid.recipeapp.data.local.entities.IngredientEntity
 import com.abid.recipeapp.data.local.entities.NutritionEntity
