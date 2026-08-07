@@ -1,8 +1,6 @@
 package com.abid.recipeapp.data.remote
 
 import android.net.Uri
-import com.abid.recipeapp.data.local.dao.CuisinesDao
-import com.abid.recipeapp.data.local.dao.RecipeDao
 import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
 import com.abid.recipeapp.data.model.FavRecipeModel
 import com.abid.recipeapp.data.model.IngredientsTabModel
@@ -16,9 +14,6 @@ import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CATEGORIES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CUISINES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_DIFFICULTY_LEVELS
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_INGREDIENTS_INST_TAB
-import com.abid.recipeapp.util.datamapper.toEntity
-import com.abid.recipeapp.util.datamapper.toModel
-import com.abid.recipeapp.util.network.NetworkMonitor
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
@@ -36,27 +31,7 @@ import kotlin.coroutines.resumeWithException
 
 class RecipeRemoteDataSource @Inject constructor(
     private val db: FirebaseFirestore,
-    private val recipeDao: RecipeDao,
-    private val cuisinesDao: CuisinesDao,
-    private val networkMonitor: NetworkMonitor
 ) {
-
-    private suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
-        recipeDao.insert(recipeModel.toEntity())
-    }
-
-    private suspend fun saveRecipeListToDb(recipeModels: List<RecipeModel>) {
-        recipeDao.insertAll(recipeModels.map { it.toEntity() })
-    }
-
-    private suspend fun getLocalAllRecipesList(): List<RecipeModel> {
-        return recipeDao.getAllRecipes().value?.map { it.toModel() } ?: emptyList()
-    }
-
-    private suspend fun getLocalAllCuisinesList(): List<RecipeCuisinesDataModel> {
-        return cuisinesDao.getAllCuisines().value?.map { it.toModel() }
-            ?: emptyList()
-    }
 
     suspend fun getAndSaveAllRecipes(
         categoryName: String? = null,
