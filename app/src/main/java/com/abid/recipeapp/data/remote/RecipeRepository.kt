@@ -55,8 +55,10 @@ class RecipeRepository @Inject constructor(
     private suspend fun getLocalAllRecipesList(): List<RecipeModel> {
         return recipeDao.getAllRecipes().asFlow().firstOrNull()?.map { it.toModel() } ?: emptyList()
     }
+
     private suspend fun getLocalAllIngredientsList(): List<IngredientModel> {
-        return ingredientsDao.getAllIngredients().asFlow().firstOrNull()?.map { it.toModel() } ?: emptyList()
+        return ingredientsDao.getAllIngredients().asFlow().firstOrNull()?.map { it.toModel() }
+            ?: emptyList()
     }
 
     suspend fun getAndSaveAllRecipes(
@@ -106,13 +108,9 @@ class RecipeRepository @Inject constructor(
 
     suspend fun getIngredientsTabsItems(): List<IngredientsTabModel> {
         return withContext(Dispatchers.IO) {
-            if (networkMonitor.isConnected()) {
-                val ingredientsAndInstTabItems =
-                    db.collection(RECIPE_INGREDIENTS_INST_TAB).get().await()
-                return@withContext ingredientsAndInstTabItems.toObjects(IngredientsTabModel::class.java)
-            }else{
-                return@withContext getLocalAllIngredientsList().map { IngredientsTabModel(id =  , label = it.item) }
-            }
+            val ingredientsAndInstTabItems =
+                db.collection(RECIPE_INGREDIENTS_INST_TAB).get().await()
+            return@withContext ingredientsAndInstTabItems.toObjects(IngredientsTabModel::class.java)
         }
     }
 
