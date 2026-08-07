@@ -9,7 +9,7 @@ import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
 import com.abid.recipeapp.data.model.IngredientFormStateModel
 import com.abid.recipeapp.data.model.NutritionFormStateModel
 import com.abid.recipeapp.data.model.RecipeDiffLvl
-import com.abid.recipeapp.data.remote.RecipeRepository
+import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
 import com.abid.recipeapp.ui.state.CreateRecipeUiState
 import com.abid.recipeapp.ui.state.RecipeSaveState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateRecipeViewModel @Inject constructor(
-    private val repository: RecipeRepository
+    private val repository: RecipeRemoteDataSource
 ) : ViewModel() {
 
     private val _uiState = MutableLiveData(CreateRecipeUiState(isLoading = true))

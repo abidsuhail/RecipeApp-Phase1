@@ -1,12 +1,10 @@
 package com.abid.recipeapp.data.remote
 
 import android.net.Uri
-import androidx.lifecycle.asFlow
-import com.abid.recipeapp.data.local.dao.IngredientsDao
+import com.abid.recipeapp.data.local.dao.CuisinesDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
 import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
 import com.abid.recipeapp.data.model.FavRecipeModel
-import com.abid.recipeapp.data.model.IngredientModel
 import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
@@ -28,7 +26,6 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -37,10 +34,10 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 
-class RecipeRepository @Inject constructor(
+class RecipeRemoteDataSource @Inject constructor(
     private val db: FirebaseFirestore,
     private val recipeDao: RecipeDao,
-    private val ingredientsDao: IngredientsDao,
+    private val cuisinesDao: CuisinesDao,
     private val networkMonitor: NetworkMonitor
 ) {
 
@@ -53,11 +50,11 @@ class RecipeRepository @Inject constructor(
     }
 
     private suspend fun getLocalAllRecipesList(): List<RecipeModel> {
-        return recipeDao.getAllRecipes().asFlow().firstOrNull()?.map { it.toModel() } ?: emptyList()
+        return recipeDao.getAllRecipes().value?.map { it.toModel() } ?: emptyList()
     }
 
-    private suspend fun getLocalAllIngredientsList(): List<IngredientModel> {
-        return ingredientsDao.getAllIngredients().asFlow().firstOrNull()?.map { it.toModel() }
+    private suspend fun getLocalAllCuisinesList(): List<RecipeCuisinesDataModel> {
+        return cuisinesDao.getAllCuisines().value?.map { it.toModel() }
             ?: emptyList()
     }
 

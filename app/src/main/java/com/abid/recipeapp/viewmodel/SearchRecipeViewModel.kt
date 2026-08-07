@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
-import com.abid.recipeapp.data.remote.RecipeRepository
+import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
 import com.abid.recipeapp.ui.state.SearchFilterOptionsUiState
 import com.abid.recipeapp.ui.state.SearchResultUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchRecipeViewModel @Inject constructor(
-    private val repository: RecipeRepository
+    private val repository: RecipeRemoteDataSource
 ) : ViewModel() {
     private val _searchResultState = MutableLiveData(SearchResultUiState())
     val searchResultState: LiveData<SearchResultUiState> = _searchResultState

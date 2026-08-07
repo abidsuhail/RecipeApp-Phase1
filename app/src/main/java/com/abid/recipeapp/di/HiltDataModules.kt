@@ -7,9 +7,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.abid.recipeapp.data.local.RecipeDatabase
-import com.abid.recipeapp.data.local.dao.IngredientsDao
+import com.abid.recipeapp.data.local.dao.CuisinesDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
-import com.abid.recipeapp.data.remote.RecipeRepository
+import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
 import com.abid.recipeapp.util.Constants
 import com.abid.recipeapp.util.Constants.SETTINGS_DATASTORE_NAME
 import com.abid.recipeapp.util.network.NetworkMonitor
@@ -40,8 +40,8 @@ object RepositoryModule {
         db: FirebaseFirestore,
         recipeDao: RecipeDao,
         networkMonitor: NetworkMonitor
-    ): RecipeRepository {
-        return RecipeRepository(db, recipeDao, networkMonitor)
+    ): RecipeRemoteDataSource {
+        return RecipeRemoteDataSource(db, recipeDao, networkMonitor)
     }
 
     @Provides
@@ -76,7 +76,7 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideIngredientsDao(recipeDatabase: RecipeDatabase): IngredientsDao {
+    fun provideIngredientsDao(recipeDatabase: RecipeDatabase): CuisinesDao {
         return recipeDatabase.ingredientsDao()
     }
 

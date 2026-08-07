@@ -28,9 +28,7 @@ data class RecipeEntity(
     @Embedded(prefix = "nutrition_") val nutrition: NutritionEntity = NutritionEntity()
 )
 
-@Entity(tableName = "ingredients")
 data class IngredientEntity(
-    @PrimaryKey val id: String = "",
     val item: String = "",
     val amount: String = ""
 )
