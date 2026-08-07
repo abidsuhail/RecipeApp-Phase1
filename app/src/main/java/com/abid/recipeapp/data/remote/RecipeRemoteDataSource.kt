@@ -33,48 +33,42 @@ class RecipeRemoteDataSource @Inject constructor(
     private val db: FirebaseFirestore,
 ) {
 
-    suspend fun getAndSaveAllRecipes(
+    suspend fun getAllRecipes(): List<RecipeModel> = withContext(Dispatchers.IO) {
+        db.collection(RECIPES).get().await().toObjects(RecipeModel::class.java)
+    }
+
+    suspend fun getRecipesByFilter(
         categoryName: String? = null,
         cuisineName: String? = null,
         diffLvl: String? = null,
         title: String? = null
     ): List<RecipeModel> {
         return withContext(Dispatchers.IO) {
-            if (!networkMonitor.isConnected()) {
-                val localRecipeList = getLocalAllRecipesList()
-                return@withContext localRecipeList
-            } else {
-                var query: Query = db.collection(RECIPES)
+            var query: Query = db.collection(RECIPES)
 
-                if (!categoryName.isNullOrBlank()) {
-                    query = query.whereEqualTo("category", categoryName)
-                }
-
-                if (!cuisineName.isNullOrBlank()) {
-                    query = query.whereEqualTo("cuisine", cuisineName)
-                }
-
-                if (!diffLvl.isNullOrBlank()) {
-                    query = query.whereEqualTo("difficulty", diffLvl)
-                }
-
-                val results = query.get().await().toObjects(RecipeModel::class.java)
-
-                if (categoryName.isNullOrBlank() && cuisineName.isNullOrBlank() && diffLvl.isNullOrBlank() && title.isNullOrBlank()) {
-                    //all recipes,now save
-                    saveRecipeListToDb(results)
-                }
-
-                //don't save filtered recipes
-                val finalData = if (!title.isNullOrBlank()) {
-                    results.filter { recipe ->
-                        recipe.title.contains(title, ignoreCase = true)
-                    }
-                } else {
-                    results
-                }
-                return@withContext finalData
+            if (!categoryName.isNullOrBlank()) {
+                query = query.whereEqualTo("category", categoryName)
             }
+
+            if (!cuisineName.isNullOrBlank()) {
+                query = query.whereEqualTo("cuisine", cuisineName)
+            }
+
+            if (!diffLvl.isNullOrBlank()) {
+                query = query.whereEqualTo("difficulty", diffLvl)
+            }
+
+            val results = query.get().await().toObjects(RecipeModel::class.java)
+
+            //don't save filtered recipes
+            val finalData = if (!title.isNullOrBlank()) {
+                results.filter { recipe ->
+                    recipe.title.contains(title, ignoreCase = true)
+                }
+            } else {
+                results
+            }
+            return@withContext finalData
         }
     }
 

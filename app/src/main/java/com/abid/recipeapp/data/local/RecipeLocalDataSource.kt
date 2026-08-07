@@ -12,19 +12,19 @@ class RecipeLocalDataSource(
     private val cuisinesDao: CuisinesDao,
 ) {
 
-    private suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
+    suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
         recipeDao.insert(recipeModel.toEntity())
     }
 
-    private suspend fun saveRecipeListToDb(recipeModels: List<RecipeModel>) {
+    suspend fun saveRecipeListToDb(recipeModels: List<RecipeModel>) {
         recipeDao.insertAll(recipeModels.map { it.toEntity() })
     }
 
-    private suspend fun getLocalAllRecipesList(): List<RecipeModel> {
+    suspend fun getLocalAllRecipesList(): List<RecipeModel> {
         return recipeDao.getAllRecipes().value?.map { it.toModel() } ?: emptyList()
     }
 
-    private suspend fun getLocalAllCuisinesList(): List<RecipeCuisinesDataModel> {
+    suspend fun getLocalAllCuisinesList(): List<RecipeCuisinesDataModel> {
         return cuisinesDao.getAllCuisines().value?.map { it.toModel() }
             ?: emptyList()
     }

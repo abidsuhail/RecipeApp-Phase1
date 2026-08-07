@@ -24,7 +24,7 @@ class RecipeListViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _state.value = _state.value?.copy(isLoading = true)
-                val data = repository.getAndSaveAllRecipes(categoryName)
+                val data = repository.getRecipesByFilter(categoryName)
                 _state.value = _state.value?.copy(recipeList = data, isLoading = false)
             } catch (e: Exception) {
                 _state.value = _state.value?.copy(errorMsg = e.message)
