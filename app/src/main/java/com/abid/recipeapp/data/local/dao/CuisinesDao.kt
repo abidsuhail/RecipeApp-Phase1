@@ -1,6 +1,5 @@
 package com.abid.recipeapp.data.local.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -10,13 +9,13 @@ import com.abid.recipeapp.data.local.entities.RecipeCuisinesEntity
 @Dao
 interface CuisinesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(ingredient: RecipeCuisinesEntity)
+    suspend fun insert(ingredient: RecipeCuisinesEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(recipes: List<RecipeCuisinesEntity>)
+    suspend fun insertAll(recipes: List<RecipeCuisinesEntity>)
 
     @Query("SELECT * FROM cuisines ORDER BY id ASC")
-    fun getAllCuisines(): LiveData<List<RecipeCuisinesEntity>>
+    suspend fun getAllCuisines(): List<RecipeCuisinesEntity>
 
 
     /*

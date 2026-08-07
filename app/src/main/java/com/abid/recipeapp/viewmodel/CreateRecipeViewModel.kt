@@ -109,7 +109,7 @@ class CreateRecipeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value?.copy(isLoading = true)
-                val data = repository.getCuisines()
+                val data = repository.getAndSaveCuisines()
                 if (data != null) {
                     _uiState.value = _uiState.value?.copy(isLoading = false, cuisinesList = data)
                 } else {

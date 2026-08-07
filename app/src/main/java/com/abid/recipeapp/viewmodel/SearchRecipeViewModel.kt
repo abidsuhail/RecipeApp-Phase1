@@ -128,7 +128,7 @@ class SearchRecipeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _searchFilterState.value = _searchFilterState.value?.copy(isCuisinesLoading = true)
-                val data = repository.getCuisines()
+                val data = repository.getAndSaveCuisines()
                 _searchFilterState.value = _searchFilterState.value?.copy(
                     recipeCuisines = data,
                     isCuisinesLoading = false

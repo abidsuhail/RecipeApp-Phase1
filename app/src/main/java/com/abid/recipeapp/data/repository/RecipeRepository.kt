@@ -36,18 +36,21 @@ class RecipeRepository @Inject constructor(
         diffLvl: String? = null,
         title: String? = null
     ): List<RecipeModel> {
-        return withContext(Dispatchers.IO) {
-            if (networkMonitor.isConnected()) {
-                recipeRemoteDataSource.getRecipesByFilters(
-                    categoryName,
-                    cuisineName,
-                    diffLvl,
-                    title
-                )
-            } else {
-                val localRecipeList = recipeLocalDataSource.getLocalAllRecipesList()
-                localRecipeList
-            }
+        return recipeRemoteDataSource.getRecipesByFilters(
+            categoryName,
+            cuisineName,
+            diffLvl,
+            title
+        )
+    }
+
+    suspend fun getAndSaveCuisines(): List<RecipeCuisinesDataModel> {
+        return if (networkMonitor.isConnected()) {
+            val remoteCuisines = recipeRemoteDataSource.getCuisines()
+            recipeLocalDataSource.saveCuisinesListToDb(remoteCuisines)
+            remoteCuisines
+        } else {
+            recipeLocalDataSource.getLocalAllCuisinesList()
         }
     }
 
@@ -59,9 +62,6 @@ class RecipeRepository @Inject constructor(
         return recipeRemoteDataSource.getRecipeCategories()
     }
 
-    suspend fun getCuisines(): List<RecipeCuisinesDataModel> {
-        return recipeRemoteDataSource.getCuisines()
-    }
 
     suspend fun getRecipeDifficulties(): List<RecipeDiffLvlDataModel> {
         return recipeRemoteDataSource.getRecipeDifficulties()

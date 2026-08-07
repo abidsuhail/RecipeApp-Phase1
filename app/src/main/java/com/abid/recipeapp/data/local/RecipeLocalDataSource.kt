@@ -16,16 +16,19 @@ class RecipeLocalDataSource(
         recipeDao.insert(recipeModel.toEntity())
     }
 
+    suspend fun saveCuisinesListToDb(cuisinesModels: List<RecipeCuisinesDataModel>) {
+        cuisinesDao.insertAll(cuisinesModels.map { it.toEntity() })
+    }
+
     suspend fun saveRecipeListToDb(recipeModels: List<RecipeModel>) {
         recipeDao.insertAll(recipeModels.map { it.toEntity() })
     }
 
     suspend fun getLocalAllRecipesList(): List<RecipeModel> {
-        return recipeDao.getAllRecipes().map { it.toModel() } ?: emptyList()
+        return recipeDao.getAllRecipes().map { it.toModel() }
     }
 
     suspend fun getLocalAllCuisinesList(): List<RecipeCuisinesDataModel> {
-        return cuisinesDao.getAllCuisines().value?.map { it.toModel() }
-            ?: emptyList()
+        return cuisinesDao.getAllCuisines().map { it.toModel() }
     }
 }
