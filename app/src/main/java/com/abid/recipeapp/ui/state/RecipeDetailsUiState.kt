@@ -4,10 +4,16 @@ import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeModel
 
 data class RecipeDetailsUiState(
-    var isLoading: Boolean = false,
-    var ingredientsTabList: List<IngredientsTabModel> = emptyList(),
-    var isFav: Boolean = false,
-    var recipe: RecipeModel? = null,
-    var errorMsg: String? = null
+    val isRecipeLoading: Boolean = false,
+    val recipe: RecipeModel? = null,
+    val recipeErrorMsg: String? = null,
+
+    val isIngredientsTabsLoading: Boolean = false,
+    val ingredientsTabList: List<IngredientsTabModel> = emptyList(),
+    val ingredientsTabsErrorMsg: String? = null,
+
+    val isFavLoading: Boolean = false,
+    val isFav: Boolean = false,
+    val favErrorMsg: String? = null
 )
 

@@ -95,7 +95,6 @@ class RecipeRepository @Inject constructor(
         return if (networkMonitor.isConnected()) {
             val remoteRecipe =
                 recipeRemoteDataSource.getRecipeById(id) ?: throw RecipeNotFoundException()
-            recipeLocalDataSource.saveRecipeToDb(remoteRecipe)
             remoteRecipe
         } else {
             recipeLocalDataSource.getLocalRecipeById(id)

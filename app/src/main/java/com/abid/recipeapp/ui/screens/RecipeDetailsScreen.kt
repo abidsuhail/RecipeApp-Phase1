@@ -1,5 +1,6 @@
 package com.abid.recipeapp.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,17 +72,21 @@ fun RecipeDetailsScreen(
         vm.loadIngredientsTabs()
         vm.fetchIsInFav(recipeId)
     }
-    LaunchedEffect(uiState?.errorMsg) {
-        if (uiState?.errorMsg != null) {
+    LaunchedEffect(uiState?.recipeErrorMsg) {
+        if (uiState?.recipeErrorMsg != null) {
             delay(1000)
             onClickBackBtn()
+            Log.e(
+                "RecipeDetailsScreen",
+                "${uiState?.recipeErrorMsg}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            )
         }
     }
-    if (uiState?.isLoading == true) {
+    if (uiState?.isRecipeLoading == true) {
         LoadingStateBox()
     }
-    if (uiState?.errorMsg != null) {
-        ErrorStateBox(uiState?.errorMsg!!)
+    if (uiState?.recipeErrorMsg != null) {
+        ErrorStateBox(uiState?.recipeErrorMsg!!)
     }
     if (uiState?.recipe != null) {
         var isFavorite by remember { mutableStateOf(false) }
