@@ -116,7 +116,7 @@ class RecipeRepository @Inject constructor(
 
     suspend fun toggleFav(recipeId: String) {
         if (!networkMonitor.isConnected()) {
-            throw NoInternetException()
+            throw NoInternetException() // it will only be updated first on cloud
         }
         remoteDataSource.toggleFav(recipeId) //updated on firestore
         val isFavOnRemote = remoteDataSource.isFav(recipeId) //checking if updated success
