@@ -51,7 +51,7 @@ class RecipeDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value?.copy(isLoading = true)
-                val data = repository.getIngredientsTabsItems()
+                val data = repository.getAndSaveIngredientsTabsItems()
                 if (data != null) {
                     _uiState.value =
                         _uiState.value?.copy(isLoading = false, ingredientsTabList = data)

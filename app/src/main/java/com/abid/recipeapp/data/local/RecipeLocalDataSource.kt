@@ -3,7 +3,9 @@ package com.abid.recipeapp.data.local
 import com.abid.recipeapp.data.local.dao.CategoriesDao
 import com.abid.recipeapp.data.local.dao.CuisinesDao
 import com.abid.recipeapp.data.local.dao.DiffLvlDao
+import com.abid.recipeapp.data.local.dao.IngredientsTabDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
+import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
@@ -15,7 +17,8 @@ class RecipeLocalDataSource(
     private val recipeDao: RecipeDao,
     private val cuisinesDao: CuisinesDao,
     private val categoriesDao: CategoriesDao,
-    private val diffLvlDao: DiffLvlDao
+    private val diffLvlDao: DiffLvlDao,
+    private val ingredientsTabDao: IngredientsTabDao
 ) {
 
     suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
@@ -52,6 +55,14 @@ class RecipeLocalDataSource(
 
     suspend fun getLocalAllDiffLvlsList(): List<RecipeDiffLvlDataModel> {
         return diffLvlDao.getAllDiffLvls().map { it.toModel() }
+    }
+
+    suspend fun saveIngredientsTabsListToDb(tabModels: List<IngredientsTabModel>) {
+        ingredientsTabDao.insertAll(tabModels.map { it.toEntity() })
+    }
+
+    suspend fun getLocalAllIngredientsTabsList(): List<IngredientsTabModel> {
+        return ingredientsTabDao.getAllIngredientsTabs().map { it.toModel() }
     }
 
 

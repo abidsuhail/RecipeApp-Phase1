@@ -75,8 +75,15 @@ class RecipeRepository @Inject constructor(
         }
     }
 
-    suspend fun getIngredientsTabsItems(): List<IngredientsTabModel> {
-        return recipeRemoteDataSource.getIngredientsTabsItems()
+
+    suspend fun getAndSaveIngredientsTabsItems(): List<IngredientsTabModel> {
+        return if (networkMonitor.isConnected()) {
+            val remoteTabs = recipeRemoteDataSource.getIngredientsTabsItems()
+            recipeLocalDataSource.saveIngredientsTabsListToDb(remoteTabs)
+            remoteTabs
+        } else {
+            recipeLocalDataSource.getLocalAllIngredientsTabsList()
+        }
     }
 
     suspend fun getRecipeById(id: String?): RecipeModel? {
