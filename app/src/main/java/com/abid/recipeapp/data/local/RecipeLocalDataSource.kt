@@ -2,9 +2,11 @@ package com.abid.recipeapp.data.local
 
 import com.abid.recipeapp.data.local.dao.CategoriesDao
 import com.abid.recipeapp.data.local.dao.CuisinesDao
+import com.abid.recipeapp.data.local.dao.DiffLvlDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
+import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.util.datamapper.toEntity
 import com.abid.recipeapp.util.datamapper.toModel
@@ -12,7 +14,8 @@ import com.abid.recipeapp.util.datamapper.toModel
 class RecipeLocalDataSource(
     private val recipeDao: RecipeDao,
     private val cuisinesDao: CuisinesDao,
-    private val categoriesDao: CategoriesDao
+    private val categoriesDao: CategoriesDao,
+    private val diffLvlDao: DiffLvlDao
 ) {
 
     suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
@@ -21,6 +24,10 @@ class RecipeLocalDataSource(
 
     suspend fun saveCuisinesListToDb(cuisinesModels: List<RecipeCuisinesDataModel>) {
         cuisinesDao.insertAll(cuisinesModels.map { it.toEntity() })
+    }
+
+    suspend fun getLocalAllCuisinesList(): List<RecipeCuisinesDataModel> {
+        return cuisinesDao.getAllCuisines().map { it.toModel() }
     }
 
     suspend fun saveCategoriesListToDb(categoriesModels: List<RecipeCategoriesDataModel>) {
@@ -39,7 +46,13 @@ class RecipeLocalDataSource(
         return recipeDao.getAllRecipes().map { it.toModel() }
     }
 
-    suspend fun getLocalAllCuisinesList(): List<RecipeCuisinesDataModel> {
-        return cuisinesDao.getAllCuisines().map { it.toModel() }
+    suspend fun saveDiffLvlsListToDb(diffLvlModels: List<RecipeDiffLvlDataModel>) {
+        diffLvlDao.insertAll(diffLvlModels.map { it.toEntity() })
     }
+
+    suspend fun getLocalAllDiffLvlsList(): List<RecipeDiffLvlDataModel> {
+        return diffLvlDao.getAllDiffLvls().map { it.toModel() }
+    }
+
+
 }

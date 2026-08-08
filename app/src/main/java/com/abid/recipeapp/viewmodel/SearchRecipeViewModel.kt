@@ -147,7 +147,7 @@ class SearchRecipeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _searchFilterState.value = _searchFilterState.value?.copy(isDiffLvlLoading = true)
-                val data = repository.getRecipeDifficulties()
+                val data = repository.getAndSaveRecipeDifficulties()
                 _searchFilterState.value =
                     _searchFilterState.value?.copy(
                         recipeDifficulties = data,

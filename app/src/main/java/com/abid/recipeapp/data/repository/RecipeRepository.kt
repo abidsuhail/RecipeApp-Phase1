@@ -64,12 +64,19 @@ class RecipeRepository @Inject constructor(
         }
     }
 
-    suspend fun getIngredientsTabsItems(): List<IngredientsTabModel> {
-        return recipeRemoteDataSource.getIngredientsTabsItems()
+
+    suspend fun getAndSaveRecipeDifficulties(): List<RecipeDiffLvlDataModel> {
+        return if (networkMonitor.isConnected()) {
+            val remoteDiffLvls = recipeRemoteDataSource.getRecipeDifficulties()
+            recipeLocalDataSource.saveDiffLvlsListToDb(remoteDiffLvls)
+            remoteDiffLvls
+        } else {
+            recipeLocalDataSource.getLocalAllDiffLvlsList()
+        }
     }
 
-    suspend fun getRecipeDifficulties(): List<RecipeDiffLvlDataModel> {
-        return recipeRemoteDataSource.getRecipeDifficulties()
+    suspend fun getIngredientsTabsItems(): List<IngredientsTabModel> {
+        return recipeRemoteDataSource.getIngredientsTabsItems()
     }
 
     suspend fun getRecipeById(id: String?): RecipeModel? {

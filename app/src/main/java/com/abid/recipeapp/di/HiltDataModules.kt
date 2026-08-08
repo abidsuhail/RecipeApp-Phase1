@@ -9,6 +9,7 @@ import androidx.room.Room
 import com.abid.recipeapp.data.local.RecipeLocalDataSource
 import com.abid.recipeapp.data.local.dao.CategoriesDao
 import com.abid.recipeapp.data.local.dao.CuisinesDao
+import com.abid.recipeapp.data.local.dao.DiffLvlDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
 import com.abid.recipeapp.data.local.db.RecipeDatabase
 import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
@@ -49,9 +50,10 @@ object RepositoryModule {
     fun providesRecipeLocalDataSource(
         recipeDao: RecipeDao,
         cuisinesDao: CuisinesDao,
-        categoriesDao: CategoriesDao
+        categoriesDao: CategoriesDao,
+        diffLvlDao: DiffLvlDao
     ): RecipeLocalDataSource {
-        return RecipeLocalDataSource(recipeDao, cuisinesDao, categoriesDao)
+        return RecipeLocalDataSource(recipeDao, cuisinesDao, categoriesDao, diffLvlDao)
     }
 
     @Provides
@@ -96,6 +98,9 @@ object RepositoryModule {
         return recipeDatabase.categoriesDao()
     }
 
+    @Provides
+    @Singleton
+    fun provideDiffLvlDao(database: RecipeDatabase): DiffLvlDao = database.diffLvlDao()
 
     @Provides
     @Singleton
