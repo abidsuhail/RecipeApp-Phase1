@@ -7,6 +7,7 @@ import com.abid.recipeapp.data.local.dao.FavRecipeDao
 import com.abid.recipeapp.data.local.dao.IngredientsTabDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
 import com.abid.recipeapp.data.local.entities.FavRecipeEntity
+import com.abid.recipeapp.data.model.FavRecipeModel
 import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
@@ -72,8 +73,8 @@ class RecipeLocalDataSource(
         return ingredientsTabDao.getAllIngredientsTabs().map { it.toModel() }
     }
 
-    suspend fun saveFavRecipesIdsToDb(recipes: List<FavRecipeEntity>) {
-        favRecipeDao.insertAll(recipes)
+    suspend fun saveFavRecipesIdsToDb(recipes: List<FavRecipeModel>) {
+        favRecipeDao.insertAll(recipes.map { it.toEntity() })
     }
 
     suspend fun getLocalAllFavRecipesList(): List<RecipeModel> {

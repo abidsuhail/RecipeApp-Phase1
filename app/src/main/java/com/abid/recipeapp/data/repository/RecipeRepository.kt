@@ -10,7 +10,6 @@ import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
-import com.abid.recipeapp.util.datamapper.toEntity
 import com.abid.recipeapp.util.exception.InvalidRecipeIdException
 import com.abid.recipeapp.util.exception.NoInternetException
 import com.abid.recipeapp.util.exception.RecipeNotFoundException
@@ -107,9 +106,8 @@ class RecipeRepository @Inject constructor(
     suspend fun getAndSaveAllFavRecipes(): List<RecipeModel> {
         return if (networkMonitor.isConnected()) {
             val remoteFavsRecipeList = remoteDataSource.getAllFavRecipesList()
-            val remoteFavRecipesIdsEntity =
-                remoteFavsRecipeList.map { FavRecipeModel(recipeId = it.id).toEntity() }
-            localDataSource.saveFavRecipesIdsToDb(remoteFavRecipesIdsEntity)
+            val remoteFavRecipesIds = remoteFavsRecipeList.map { FavRecipeModel(recipeId = it.id) }
+            localDataSource.saveFavRecipesIdsToDb(remoteFavRecipesIds)
             remoteFavsRecipeList
         } else {
             localDataSource.getLocalAllFavRecipesList()
