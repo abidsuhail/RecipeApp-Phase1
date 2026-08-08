@@ -19,7 +19,7 @@ interface RecipeDao {
     suspend fun getAllRecipes(): List<RecipeEntity>
 
     @Query("SELECT * FROM recipes WHERE id = :id")
-    suspend fun getRecipeById(id: Int): RecipeEntity?
+    suspend fun getRecipeById(id: String): RecipeEntity?
 
 
     @Query("DELETE FROM recipes")

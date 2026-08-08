@@ -9,6 +9,8 @@ import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
+import com.abid.recipeapp.util.exception.InvalidRecipeIdException
+import com.abid.recipeapp.util.exception.RecipeNotFoundException
 import com.abid.recipeapp.util.network.NetworkMonitor
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.Dispatchers
@@ -87,7 +89,17 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun getRecipeById(id: String?): RecipeModel? {
-        return recipeRemoteDataSource.getRecipeById(id)
+        if (id.isNullOrBlank()) {
+            throw InvalidRecipeIdException()
+        }
+        return if (networkMonitor.isConnected()) {
+            val remoteRecipe =
+                recipeRemoteDataSource.getRecipeById(id) ?: throw RecipeNotFoundException()
+            recipeLocalDataSource.saveRecipeToDb(remoteRecipe)
+            remoteRecipe
+        } else {
+            recipeLocalDataSource.getLocalRecipeById(id)
+        }
     }
 
     suspend fun saveRecipe(recipeModel: CreateRecipeFormStateModel): Task<Void> {

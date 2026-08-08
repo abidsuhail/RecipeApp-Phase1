@@ -49,6 +49,10 @@ class RecipeLocalDataSource(
         return recipeDao.getAllRecipes().map { it.toModel() }
     }
 
+    suspend fun getLocalRecipeById(id: String): RecipeModel? {
+        return recipeDao.getRecipeById(id)?.toModel()
+    }
+
     suspend fun saveDiffLvlsListToDb(diffLvlModels: List<RecipeDiffLvlDataModel>) {
         diffLvlDao.insertAll(diffLvlModels.map { it.toEntity() })
     }
