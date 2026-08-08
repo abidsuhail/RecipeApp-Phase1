@@ -3,13 +3,16 @@ package com.abid.recipeapp.data.repository
 import android.net.Uri
 import com.abid.recipeapp.data.local.RecipeLocalDataSource
 import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
+import com.abid.recipeapp.data.model.FavRecipeModel
 import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
+import com.abid.recipeapp.util.datamapper.toEntity
 import com.abid.recipeapp.util.exception.InvalidRecipeIdException
+import com.abid.recipeapp.util.exception.NoInternetException
 import com.abid.recipeapp.util.exception.RecipeNotFoundException
 import com.abid.recipeapp.util.network.NetworkMonitor
 import com.google.android.gms.tasks.Task
@@ -19,16 +22,16 @@ import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(
     private val networkMonitor: NetworkMonitor,
-    private val recipeLocalDataSource: RecipeLocalDataSource,
-    private val recipeRemoteDataSource: RecipeRemoteDataSource
+    private val localDataSource: RecipeLocalDataSource,
+    private val remoteDataSource: RecipeRemoteDataSource
 ) {
     suspend fun getAndSaveAllRecipes(): List<RecipeModel> = withContext(Dispatchers.IO) {
         if (networkMonitor.isConnected()) {
-            val allRecipes = recipeRemoteDataSource.getAllRecipes()
-            recipeLocalDataSource.saveRecipeListToDb(allRecipes)
+            val allRecipes = remoteDataSource.getAllRecipes()
+            localDataSource.saveRecipeListToDb(allRecipes)
             allRecipes
         } else {
-            recipeLocalDataSource.getLocalAllRecipesList()
+            localDataSource.getLocalAllRecipesList()
         }
     }
 
@@ -38,7 +41,7 @@ class RecipeRepository @Inject constructor(
         diffLvl: String? = null,
         title: String? = null
     ): List<RecipeModel> {
-        return recipeRemoteDataSource.getRecipesByFilters(
+        return remoteDataSource.getRecipesByFilters(
             categoryName,
             cuisineName,
             diffLvl,
@@ -48,43 +51,43 @@ class RecipeRepository @Inject constructor(
 
     suspend fun getAndSaveCuisines(): List<RecipeCuisinesDataModel> {
         return if (networkMonitor.isConnected()) {
-            val remoteCuisines = recipeRemoteDataSource.getCuisines()
-            recipeLocalDataSource.saveCuisinesListToDb(remoteCuisines)
+            val remoteCuisines = remoteDataSource.getCuisines()
+            localDataSource.saveCuisinesListToDb(remoteCuisines)
             remoteCuisines
         } else {
-            recipeLocalDataSource.getLocalAllCuisinesList()
+            localDataSource.getLocalAllCuisinesList()
         }
     }
 
     suspend fun getRecipeCategories(): List<RecipeCategoriesDataModel> {
         return if (networkMonitor.isConnected()) {
-            val remoteCategories = recipeRemoteDataSource.getRecipeCategories()
-            recipeLocalDataSource.saveCategoriesListToDb(remoteCategories)
+            val remoteCategories = remoteDataSource.getRecipeCategories()
+            localDataSource.saveCategoriesListToDb(remoteCategories)
             remoteCategories
         } else {
-            recipeLocalDataSource.getLocalAllCategoriesList()
+            localDataSource.getLocalAllCategoriesList()
         }
     }
 
 
     suspend fun getAndSaveRecipeDifficulties(): List<RecipeDiffLvlDataModel> {
         return if (networkMonitor.isConnected()) {
-            val remoteDiffLvls = recipeRemoteDataSource.getRecipeDifficulties()
-            recipeLocalDataSource.saveDiffLvlsListToDb(remoteDiffLvls)
+            val remoteDiffLvls = remoteDataSource.getRecipeDifficulties()
+            localDataSource.saveDiffLvlsListToDb(remoteDiffLvls)
             remoteDiffLvls
         } else {
-            recipeLocalDataSource.getLocalAllDiffLvlsList()
+            localDataSource.getLocalAllDiffLvlsList()
         }
     }
 
 
     suspend fun getAndSaveIngredientsTabsItems(): List<IngredientsTabModel> {
         return if (networkMonitor.isConnected()) {
-            val remoteTabs = recipeRemoteDataSource.getIngredientsTabsItems()
-            recipeLocalDataSource.saveIngredientsTabsListToDb(remoteTabs)
+            val remoteTabs = remoteDataSource.getIngredientsTabsItems()
+            localDataSource.saveIngredientsTabsListToDb(remoteTabs)
             remoteTabs
         } else {
-            recipeLocalDataSource.getLocalAllIngredientsTabsList()
+            localDataSource.getLocalAllIngredientsTabsList()
         }
     }
 
@@ -94,30 +97,50 @@ class RecipeRepository @Inject constructor(
         }
         return if (networkMonitor.isConnected()) {
             val remoteRecipe =
-                recipeRemoteDataSource.getRecipeById(id) ?: throw RecipeNotFoundException()
+                remoteDataSource.getRecipeById(id) ?: throw RecipeNotFoundException()
             remoteRecipe
         } else {
-            recipeLocalDataSource.getLocalRecipeById(id)
+            localDataSource.getLocalRecipeById(id)
+        }
+    }
+
+    suspend fun getAndSaveAllFavRecipes(): List<RecipeModel> {
+        return if (networkMonitor.isConnected()) {
+            val remoteFavsRecipeList = remoteDataSource.getAllFavRecipesList()
+            val remoteFavRecipesIdsEntity =
+                remoteFavsRecipeList.map { FavRecipeModel(recipeId = it.id).toEntity() }
+            localDataSource.saveFavRecipesIdsToDb(remoteFavRecipesIdsEntity)
+            remoteFavsRecipeList
+        } else {
+            localDataSource.getLocalAllFavRecipesList()
+        }
+    }
+
+    suspend fun toggleFav(recipeId: String) {
+        if (!networkMonitor.isConnected()) {
+            throw NoInternetException()
+        }
+        remoteDataSource.toggleFav(recipeId) //updated on firestore
+        val isFavOnRemote = remoteDataSource.isFav(recipeId) //checking if updated success
+        localDataSource.saveCurrentFavLocally(
+            recipeId,
+            isFavOnRemote
+        ) //saving isFavOnRemote as its updated
+    }
+
+    suspend fun isFav(recipeId: String): Boolean {
+        return if (networkMonitor.isConnected()) {
+            remoteDataSource.isFav(recipeId)
+        } else {
+            localDataSource.isFavLocally(recipeId)
         }
     }
 
     suspend fun saveRecipe(recipeModel: CreateRecipeFormStateModel): Task<Void> {
-        return recipeRemoteDataSource.saveRecipe(recipeModel)
-    }
-
-    suspend fun toggleFav(recipeId: String) {
-        recipeRemoteDataSource.toggleFav(recipeId)
-    }
-
-    suspend fun getAllFavRecipesList(): List<RecipeModel> {
-        return recipeRemoteDataSource.getAllFavRecipesList()
-    }
-
-    suspend fun isFav(recipeId: String): Boolean {
-        return recipeRemoteDataSource.isFav(recipeId)
+        return remoteDataSource.saveRecipe(recipeModel)
     }
 
     suspend fun uploadImage(imageUri: Uri): String {
-        return recipeRemoteDataSource.uploadImage(imageUri)
+        return remoteDataSource.uploadImage(imageUri)
     }
 }

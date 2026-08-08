@@ -10,6 +10,7 @@ import com.abid.recipeapp.data.local.RecipeLocalDataSource
 import com.abid.recipeapp.data.local.dao.CategoriesDao
 import com.abid.recipeapp.data.local.dao.CuisinesDao
 import com.abid.recipeapp.data.local.dao.DiffLvlDao
+import com.abid.recipeapp.data.local.dao.FavRecipeDao
 import com.abid.recipeapp.data.local.dao.IngredientsTabDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
 import com.abid.recipeapp.data.local.db.RecipeDatabase
@@ -53,14 +54,16 @@ object RepositoryModule {
         cuisinesDao: CuisinesDao,
         categoriesDao: CategoriesDao,
         diffLvlDao: DiffLvlDao,
-        ingredientsTabDao: IngredientsTabDao
+        ingredientsTabDao: IngredientsTabDao,
+        favRecipeDao: FavRecipeDao
     ): RecipeLocalDataSource {
         return RecipeLocalDataSource(
             recipeDao,
             cuisinesDao,
             categoriesDao,
             diffLvlDao,
-            ingredientsTabDao
+            ingredientsTabDao,
+            favRecipeDao
         )
     }
 
@@ -114,6 +117,10 @@ object RepositoryModule {
     @Singleton
     fun provideIngredientsTabDao(database: RecipeDatabase): IngredientsTabDao =
         database.ingredientsTabDao()
+
+    @Provides
+    @Singleton
+    fun provideFavRecipeDao(database: RecipeDatabase): FavRecipeDao = database.favRecipeDao()
 
     @Provides
     @Singleton

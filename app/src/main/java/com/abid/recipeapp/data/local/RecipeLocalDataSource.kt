@@ -3,8 +3,10 @@ package com.abid.recipeapp.data.local
 import com.abid.recipeapp.data.local.dao.CategoriesDao
 import com.abid.recipeapp.data.local.dao.CuisinesDao
 import com.abid.recipeapp.data.local.dao.DiffLvlDao
+import com.abid.recipeapp.data.local.dao.FavRecipeDao
 import com.abid.recipeapp.data.local.dao.IngredientsTabDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
+import com.abid.recipeapp.data.local.entities.FavRecipeEntity
 import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
@@ -18,12 +20,13 @@ class RecipeLocalDataSource(
     private val cuisinesDao: CuisinesDao,
     private val categoriesDao: CategoriesDao,
     private val diffLvlDao: DiffLvlDao,
-    private val ingredientsTabDao: IngredientsTabDao
+    private val ingredientsTabDao: IngredientsTabDao,
+    private val favRecipeDao: FavRecipeDao
 ) {
 
-    suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
-        recipeDao.insert(recipeModel.toEntity())
-    }
+    /*    suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
+            recipeDao.insert(recipeModel.toEntity())
+        }*/
 
     suspend fun saveCuisinesListToDb(cuisinesModels: List<RecipeCuisinesDataModel>) {
         cuisinesDao.insertAll(cuisinesModels.map { it.toEntity() })
@@ -69,5 +72,29 @@ class RecipeLocalDataSource(
         return ingredientsTabDao.getAllIngredientsTabs().map { it.toModel() }
     }
 
+    suspend fun saveFavRecipesIdsToDb(recipes: List<FavRecipeEntity>) {
+        favRecipeDao.insertAll(recipes)
+    }
+
+    suspend fun getLocalAllFavRecipesList(): List<RecipeModel> {
+        val favIds = favRecipeDao.getAllFavRecipeIds()
+        if (favIds.isEmpty()) return emptyList()
+
+        return recipeDao.getAllRecipes()
+            .filter { it.id in favIds }
+            .map { it.toModel() }
+    }
+
+    suspend fun saveCurrentFavLocally(recipeId: String, isFav: Boolean) {
+        if (isFav) {
+            favRecipeDao.insert(FavRecipeEntity(recipeId = recipeId))
+        } else {
+            favRecipeDao.delete(FavRecipeEntity(recipeId = recipeId))
+        }
+    }
+
+    suspend fun isFavLocally(recipeId: String): Boolean {
+        return favRecipeDao.isFav(recipeId) != null
+    }
 
 }

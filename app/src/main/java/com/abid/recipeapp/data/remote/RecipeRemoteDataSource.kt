@@ -119,15 +119,11 @@ class RecipeRemoteDataSource @Inject constructor(
 
     suspend fun toggleFav(recipeId: String) {
         withContext(Dispatchers.IO) {
-            // use recipeId as document ID directly
             val docRef = db.collection(FAV).document(recipeId)
             val existingDoc = docRef.get().await()
-
             if (existingDoc.exists()) {
-                // already fav → remove
                 docRef.delete().await()
             } else {
-                // not fav → add
                 docRef.set(FavRecipeModel(recipeId)).await()
             }
         }

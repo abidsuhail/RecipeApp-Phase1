@@ -23,7 +23,7 @@ class FavScreenViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _state.value = _state.value?.copy(isLoading = true)
-                val data = repository.getAllFavRecipesList()
+                val data = repository.getAndSaveAllFavRecipes()
                 _state.value = _state.value?.copy(favRecipeList = data, isLoading = false)
             } catch (e: Exception) {
                 _state.value = _state.value?.copy(errorMsg = e.message, isLoading = false)
