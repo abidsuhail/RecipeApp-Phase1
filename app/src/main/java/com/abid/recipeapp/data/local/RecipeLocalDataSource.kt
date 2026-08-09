@@ -86,16 +86,18 @@ class RecipeLocalDataSource(
             .map { it.toModel() }
     }
 
-    suspend fun saveCurrentFavLocally(recipeId: String, isFav: Boolean) {
-        if (isFav) {
-            favRecipeDao.insert(FavRecipeEntity(recipeId = recipeId))
-        } else {
-            favRecipeDao.delete(FavRecipeEntity(recipeId = recipeId))
-        }
+    suspend fun saveFavLocally(recipeId: String): Boolean {
+        val isInserted = favRecipeDao.insert(FavRecipeEntity(recipeId = recipeId))
+        return isInserted == -1L
     }
 
     suspend fun isFavLocally(recipeId: String): Boolean {
         return favRecipeDao.isFav(recipeId) != null
+    }
+
+    suspend fun removeFavLocally(recipeId: String): Boolean {
+        val rowsDeleted = favRecipeDao.delete(FavRecipeEntity(recipeId = recipeId))
+        return rowsDeleted > 0
     }
 
 }

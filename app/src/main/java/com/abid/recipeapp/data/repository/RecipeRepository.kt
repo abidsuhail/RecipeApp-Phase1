@@ -11,12 +11,12 @@ import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
 import com.abid.recipeapp.util.exception.InvalidRecipeIdException
-import com.abid.recipeapp.util.exception.NoInternetException
 import com.abid.recipeapp.util.exception.RecipeNotFoundException
 import com.abid.recipeapp.util.network.NetworkMonitor
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(
@@ -115,15 +115,17 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun toggleFav(recipeId: String) {
-        if (!networkMonitor.isConnected()) {
-            throw NoInternetException() // it will only be updated first on cloud
+        val currentlyFav = localDataSource.isFavLocally(recipeId)
+
+        if (currentlyFav) {
+            localDataSource.removeFavLocally(recipeId)
+        } else {
+            localDataSource.saveFavLocally(recipeId)
         }
-        remoteDataSource.toggleFav(recipeId) //updated on firestore
-        val isFavOnRemote = remoteDataSource.isFav(recipeId) //checking if updated success
-        localDataSource.saveCurrentFavLocally(
-            recipeId,
-            isFavOnRemote
-        ) //saving isFavOnRemote as its updated
+
+        trySyncToRemote {
+            remoteDataSource.toggleFav(recipeId)
+        }
     }
 
     suspend fun isFav(recipeId: String): Boolean {
@@ -140,5 +142,15 @@ class RecipeRepository @Inject constructor(
 
     suspend fun uploadImage(imageUri: Uri): String {
         return remoteDataSource.uploadImage(imageUri)
+    }
+
+    private suspend fun trySyncToRemote(action: suspend () -> Unit) {
+        if (networkMonitor.isConnected()) {
+            try {
+                action()
+            } catch (e: Exception) {
+                Timber.e(e)  // sync failed silently — local data is already correct, will retry later
+            }
+        }
     }
 }
