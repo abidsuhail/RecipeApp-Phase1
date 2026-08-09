@@ -24,6 +24,7 @@ firebaseFirestore = "26.1.1"
 firebaseStorage = "22.0.1"
 ksp = "1.9.0-1.0.13"
 gson = "2.11.0"
+timber = "5.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -56,6 +57,7 @@ androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtim
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

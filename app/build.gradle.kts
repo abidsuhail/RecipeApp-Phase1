@@ -91,5 +91,6 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     implementation(libs.gson)
+    implementation(libs.timber)
 
 }

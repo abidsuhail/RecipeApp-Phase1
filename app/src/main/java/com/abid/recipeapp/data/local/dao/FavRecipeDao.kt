@@ -10,7 +10,7 @@ import com.abid.recipeapp.data.local.entities.FavRecipeEntity
 @Dao
 interface FavRecipeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(fav: FavRecipeEntity)
+    suspend fun insert(fav: FavRecipeEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(favs: List<FavRecipeEntity>)
@@ -25,5 +25,5 @@ interface FavRecipeDao {
     suspend fun isFav(recipeId: String): FavRecipeEntity?
 
     @Delete
-    suspend fun delete(fav: FavRecipeEntity)
+    suspend fun delete(fav: FavRecipeEntity): Long
 }
