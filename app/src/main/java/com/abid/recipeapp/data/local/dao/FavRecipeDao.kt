@@ -6,6 +6,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.abid.recipeapp.data.local.entities.FavRecipeEntity
+import com.abid.recipeapp.data.local.entities.RecipeEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavRecipeDao {
@@ -18,12 +20,18 @@ interface FavRecipeDao {
     @Query("DELETE FROM fav_recipes")
     suspend fun deleteAll()
 
-    @Query("SELECT recipeId FROM fav_recipes")
-    suspend fun getAllFavRecipeIds(): List<String>
+    @Query(
+        """
+    SELECT * FROM recipes 
+    WHERE id IN (SELECT recipeId FROM fav_recipes)
+    ORDER BY id ASC
+        """
+    )
+    fun getAllFavRecipesFlow(): Flow<List<RecipeEntity>>
 
     @Query("SELECT * FROM fav_recipes WHERE recipeId = :recipeId LIMIT 1")
     suspend fun isFav(recipeId: String): FavRecipeEntity?
 
     @Delete
-    suspend fun delete(fav: FavRecipeEntity): Long
+    suspend fun delete(fav: FavRecipeEntity): Int
 }

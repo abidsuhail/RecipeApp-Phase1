@@ -21,6 +21,11 @@ class CreateRecipeViewModel @Inject constructor(
     private val repository: RecipeRepository
 ) : ViewModel() {
 
+    init {
+        observeCategories()
+        refreshCategories()
+    }
+
     private val _uiState = MutableLiveData(CreateRecipeUiState(isLoading = true))
     val uiState: LiveData<CreateRecipeUiState> = _uiState
 
@@ -87,20 +92,23 @@ class CreateRecipeViewModel @Inject constructor(
         })
     }
 
-    fun loadRecipeCategories() {
+    private fun refreshCategories() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value?.copy(isLoading = true, errorMsg = null)
             try {
-                _uiState.value = _uiState.value?.copy(isLoading = true)
-                val data = repository.getRecipeCategories()
-                if (data != null) {
-                    _uiState.value = _uiState.value?.copy(isLoading = false, categoriesList = data)
-                } else {
-                    _uiState.value =
-                        _uiState.value?.copy(isLoading = false, errorMsg = "Categories not found")
-                }
+                repository.refreshCategories()
+                _uiState.value = _uiState.value?.copy(isLoading = false)
             } catch (e: Exception) {
                 _uiState.value =
                     _uiState.value?.copy(isLoading = false, errorMsg = e.message)
+            }
+        }
+    }
+
+    private fun observeCategories() {
+        viewModelScope.launch {
+            repository.getRecipeCategories().collect { categories ->
+                _uiState.value = _uiState.value?.copy(categoriesList = categories)
             }
         }
     }

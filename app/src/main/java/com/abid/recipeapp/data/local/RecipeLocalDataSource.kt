@@ -15,6 +15,8 @@ import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.util.datamapper.toEntity
 import com.abid.recipeapp.util.datamapper.toModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class RecipeLocalDataSource(
     private val recipeDao: RecipeDao,
@@ -41,16 +43,20 @@ class RecipeLocalDataSource(
         categoriesDao.insertAll(categoriesModels.map { it.toEntity() })
     }
 
-    suspend fun getLocalAllCategoriesList(): List<RecipeCategoriesDataModel> {
-        return categoriesDao.getAllCategories().map { it.toModel() }
+    fun getLocalAllCategoriesList(): Flow<List<RecipeCategoriesDataModel>> {
+        return categoriesDao.getAllCategories().map { entityList ->
+            entityList.map { it.toModel() }
+        }
     }
 
     suspend fun saveRecipeListToDb(recipeModels: List<RecipeModel>) {
         recipeDao.insertAll(recipeModels.map { it.toEntity() })
     }
 
-    suspend fun getLocalAllRecipesList(): List<RecipeModel> {
-        return recipeDao.getAllRecipes().map { it.toModel() }
+    fun getLocalAllRecipesList(): Flow<List<RecipeModel>> {
+        return recipeDao.getAllRecipesFlow().map { entityList ->
+            entityList.map { it.toModel() }
+        }
     }
 
     suspend fun getLocalRecipeById(id: String): RecipeModel? {
@@ -73,17 +79,14 @@ class RecipeLocalDataSource(
         return ingredientsTabDao.getAllIngredientsTabs().map { it.toModel() }
     }
 
-    suspend fun saveFavRecipesIdsToDb(recipes: List<FavRecipeModel>) {
+    suspend fun saveFavRecipesListToDb(recipes: List<FavRecipeModel>) {
         favRecipeDao.insertAll(recipes.map { it.toEntity() })
     }
 
-    suspend fun getLocalAllFavRecipesList(): List<RecipeModel> {
-        val favIds = favRecipeDao.getAllFavRecipeIds()
-        if (favIds.isEmpty()) return emptyList()
-
-        return recipeDao.getAllRecipes()
-            .filter { it.id in favIds }
-            .map { it.toModel() }
+    fun getLocalAllFavRecipesList(): Flow<List<RecipeModel>> {
+        return favRecipeDao.getAllFavRecipesFlow().map { entityList ->
+            entityList.map { it.toModel() }
+        }
     }
 
     suspend fun saveFavLocally(recipeId: String): Boolean {

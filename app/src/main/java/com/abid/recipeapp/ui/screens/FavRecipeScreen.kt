@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -26,10 +25,6 @@ fun FavRecipeScreen(
     onClickRecipeItem: (RecipeModel) -> Unit
 ) {
     val state by vm.state.observeAsState()
-
-    LaunchedEffect(Unit) {
-        vm.loadAllFavList()
-    }
 
     Box(modifier = Modifier.padding(Dims.Dp10)) {
         Column {

@@ -21,6 +21,11 @@ import javax.inject.Inject
 class SearchRecipeViewModel @Inject constructor(
     private val repository: RecipeRepository
 ) : ViewModel() {
+
+    init {
+        observeCategories()
+    }
+
     private val _searchResultState = MutableLiveData(SearchResultUiState())
     val searchResultState: LiveData<SearchResultUiState> = _searchResultState
 
@@ -77,7 +82,7 @@ class SearchRecipeViewModel @Inject constructor(
     }
 
     fun loadBottomSheetChipsData() {
-        loadRecipeCategories()
+        refreshCategories()
         loadRecipeCuisines()
         loadRecipeDifficultyLvl()
     }
@@ -102,27 +107,36 @@ class SearchRecipeViewModel @Inject constructor(
     }
 
 
-    private fun loadRecipeCategories() {
+    private fun observeCategories() {
         viewModelScope.launch {
+            repository.getRecipeCategories().collect { categories ->
+                val finalData = listOf(RecipeCategoriesDataModel("-1", "All")) + categories
+                _searchFilterState.value =
+                    _searchFilterState.value?.copy(recipeCategories = finalData)
+            }
+        }
+    }
+
+    private fun refreshCategories() {
+        viewModelScope.launch {
+            _searchFilterState.value = _searchFilterState.value?.copy(
+                isCategoriesLoading = true,
+                categoriesErrorMsg = null
+            )
             try {
+                repository.refreshCategories()
                 _searchFilterState.value =
-                    _searchFilterState.value?.copy(isCategoriesLoading = true)
-                val data = repository.getRecipeCategories()
-                val finalData = listOf(RecipeCategoriesDataModel("-1", "All")) + data
-                _searchFilterState.value =
-                    _searchFilterState.value?.copy(
-                        recipeCategories = finalData,
-                        isCategoriesLoading = false
-                    )
+                    _searchFilterState.value?.copy(isCategoriesLoading = false)
             } catch (e: Exception) {
                 _searchFilterState.value =
                     _searchFilterState.value?.copy(
-                        categoriesErrorMsg = e.message,
-                        isCategoriesLoading = false
+                        isCategoriesLoading = false,
+                        categoriesErrorMsg = e.message
                     )
             }
         }
     }
+
 
     private fun loadRecipeCuisines() {
         viewModelScope.launch {

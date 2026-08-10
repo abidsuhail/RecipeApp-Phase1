@@ -19,16 +19,30 @@ class FavScreenViewModel @Inject constructor(
     val state: LiveData<FavUiState> = _state
 
 
-    fun loadAllFavList() {
+    init {
+        observeFavRecipes()
+        refreshFavRecipes()
+    }
+
+    private fun refreshFavRecipes() {
         viewModelScope.launch {
+            _state.value = _state.value?.copy(isLoading = true)
             try {
-                _state.value = _state.value?.copy(isLoading = true)
-                val data = repository.getAndSaveAllFavRecipes()
-                _state.value = _state.value?.copy(favRecipeList = data, isLoading = false)
+                repository.refreshFavRecipes()
+                _state.value = _state.value?.copy(isLoading = false)
             } catch (e: Exception) {
                 _state.value = _state.value?.copy(errorMsg = e.message, isLoading = false)
             }
         }
     }
+
+    private fun observeFavRecipes() {
+        viewModelScope.launch {
+            repository.getAllFavRecipes().collect { favs ->
+                _state.value = _state.value?.copy(favRecipeList = favs)
+            }
+        }
+    }
+
 
 }

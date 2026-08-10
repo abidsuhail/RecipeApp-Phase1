@@ -14,8 +14,7 @@ import com.abid.recipeapp.util.exception.InvalidRecipeIdException
 import com.abid.recipeapp.util.exception.RecipeNotFoundException
 import com.abid.recipeapp.util.network.NetworkMonitor
 import com.google.android.gms.tasks.Task
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -24,14 +23,28 @@ class RecipeRepository @Inject constructor(
     private val localDataSource: RecipeLocalDataSource,
     private val remoteDataSource: RecipeRemoteDataSource
 ) {
-    suspend fun getAndSaveAllRecipes(): List<RecipeModel> = withContext(Dispatchers.IO) {
-        if (networkMonitor.isConnected()) {
-            val allRecipes = remoteDataSource.getAllRecipes()
-            localDataSource.saveRecipeListToDb(allRecipes)
-            allRecipes
-        } else {
-            localDataSource.getLocalAllRecipesList()
+    suspend fun getAllRecipes(): Flow<List<RecipeModel>> {
+        return localDataSource.getLocalAllRecipesList()
+    }
+
+    suspend fun refreshAllRecipes() {
+        if (!networkMonitor.isConnected()) return
+        try {
+            val remote = remoteDataSource.getAllRecipes()
+            localDataSource.saveRecipeListToDb(remote)
+        } catch (e: Exception) {
+            Timber.e("RecipeRepository", "Refresh recipes failed", e)
         }
+    }
+
+    fun getRecipeCategories(): Flow<List<RecipeCategoriesDataModel>> {
+        return localDataSource.getLocalAllCategoriesList()
+    }
+
+    suspend fun refreshCategories() {
+        if (!networkMonitor.isConnected()) return
+        val remoteCategories = remoteDataSource.getRecipeCategories()
+        localDataSource.saveCategoriesListToDb(remoteCategories)
     }
 
     suspend fun getRecipesByFilters(
@@ -55,16 +68,6 @@ class RecipeRepository @Inject constructor(
             remoteCuisines
         } else {
             localDataSource.getLocalAllCuisinesList()
-        }
-    }
-
-    suspend fun getRecipeCategories(): List<RecipeCategoriesDataModel> {
-        return if (networkMonitor.isConnected()) {
-            val remoteCategories = remoteDataSource.getRecipeCategories()
-            localDataSource.saveCategoriesListToDb(remoteCategories)
-            remoteCategories
-        } else {
-            localDataSource.getLocalAllCategoriesList()
         }
     }
 
@@ -103,15 +106,15 @@ class RecipeRepository @Inject constructor(
         }
     }
 
-    suspend fun getAndSaveAllFavRecipes(): List<RecipeModel> {
-        return if (networkMonitor.isConnected()) {
-            val remoteFavsRecipeList = remoteDataSource.getAllFavRecipesList()
-            val remoteFavRecipesIds = remoteFavsRecipeList.map { FavRecipeModel(recipeId = it.id) }
-            localDataSource.saveFavRecipesIdsToDb(remoteFavRecipesIds)
-            remoteFavsRecipeList
-        } else {
-            localDataSource.getLocalAllFavRecipesList()
-        }
+    fun getAllFavRecipes(): Flow<List<RecipeModel>> {
+        return localDataSource.getLocalAllFavRecipesList()
+    }
+
+    suspend fun refreshFavRecipes() {
+        if (!networkMonitor.isConnected()) return
+        val remoteFavsRecipeList = remoteDataSource.getAllFavRecipesList()
+        val remoteFavRecipesIds = remoteFavsRecipeList.map { FavRecipeModel(recipeId = it.id) }
+        localDataSource.saveFavRecipesListToDb(remoteFavRecipesIds)
     }
 
     suspend fun toggleFav(recipeId: String) {

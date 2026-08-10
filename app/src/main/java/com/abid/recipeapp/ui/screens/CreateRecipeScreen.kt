@@ -99,7 +99,6 @@ fun CreateRecipeScreen(
 
     val uiState by vm.uiState.observeAsState()
     LaunchedEffect(Unit) {
-        vm.loadRecipeCategories()
         vm.loadCuisines()
         vm.loadRecipeDifficulties()
     }
