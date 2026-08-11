@@ -28,12 +28,9 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun refreshAllRecipes() {
-        if (!networkMonitor.isConnected()) return
-        try {
+        trySyncToRemote {
             val remote = remoteDataSource.getAllRecipes()
             localDataSource.saveRecipeListToDb(remote)
-        } catch (e: Exception) {
-            Timber.e("RecipeRepository", "Refresh recipes failed", e)
         }
     }
 
@@ -42,9 +39,10 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun refreshCategories() {
-        if (!networkMonitor.isConnected()) return
-        val remoteCategories = remoteDataSource.getRecipeCategories()
-        localDataSource.saveCategoriesListToDb(remoteCategories)
+        trySyncToRemote {
+            val remoteCategories = remoteDataSource.getRecipeCategories()
+            localDataSource.saveCategoriesListToDb(remoteCategories)
+        }
     }
 
     suspend fun getRecipesByFilters(
@@ -61,35 +59,38 @@ class RecipeRepository @Inject constructor(
         )
     }
 
-    suspend fun getAndSaveCuisines(): List<RecipeCuisinesDataModel> {
-        return if (networkMonitor.isConnected()) {
+    fun getAllCuisines(): Flow<List<RecipeCuisinesDataModel>> {
+        return localDataSource.getLocalAllCuisinesList()
+    }
+
+    fun getAllRecipeDifficulties(): Flow<List<RecipeDiffLvlDataModel>> {
+        return localDataSource.getLocalAllDiffLvlsList()
+    }
+
+    fun getIngredientsTabsItems(): Flow<List<IngredientsTabModel>> {
+        return localDataSource.getLocalAllIngredientsTabsList()
+    }
+
+    suspend fun refreshAllCuisines() {
+        trySyncToRemote {
             val remoteCuisines = remoteDataSource.getCuisines()
             localDataSource.saveCuisinesListToDb(remoteCuisines)
-            remoteCuisines
-        } else {
-            localDataSource.getLocalAllCuisinesList()
         }
     }
 
 
-    suspend fun getAndSaveRecipeDifficulties(): List<RecipeDiffLvlDataModel> {
-        return if (networkMonitor.isConnected()) {
+    suspend fun refreshRecipeDifficulties() {
+        trySyncToRemote {
             val remoteDiffLvls = remoteDataSource.getRecipeDifficulties()
             localDataSource.saveDiffLvlsListToDb(remoteDiffLvls)
-            remoteDiffLvls
-        } else {
-            localDataSource.getLocalAllDiffLvlsList()
         }
     }
 
 
-    suspend fun getAndSaveIngredientsTabsItems(): List<IngredientsTabModel> {
-        return if (networkMonitor.isConnected()) {
+    suspend fun refreshIngredientsTabsItems() {
+        trySyncToRemote {
             val remoteTabs = remoteDataSource.getIngredientsTabsItems()
             localDataSource.saveIngredientsTabsListToDb(remoteTabs)
-            remoteTabs
-        } else {
-            localDataSource.getLocalAllIngredientsTabsList()
         }
     }
 

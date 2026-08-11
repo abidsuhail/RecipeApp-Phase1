@@ -52,7 +52,7 @@ class RecipeDetailsViewModel @Inject constructor(
                 ingredientsTabsErrorMsg = null
             )
             try {
-                val data = repository.getAndSaveIngredientsTabsItems()
+                val data = repository.refreshIngredientsTabsItems()
                 _uiState.value = _uiState.value?.copy(
                     isIngredientsTabsLoading = false,
                     ingredientsTabList = data

@@ -35,8 +35,10 @@ class RecipeLocalDataSource(
         cuisinesDao.insertAll(cuisinesModels.map { it.toEntity() })
     }
 
-    suspend fun getLocalAllCuisinesList(): List<RecipeCuisinesDataModel> {
-        return cuisinesDao.getAllCuisines().map { it.toModel() }
+    fun getLocalAllCuisinesList(): Flow<List<RecipeCuisinesDataModel>> {
+        return cuisinesDao.getAllCuisines().map { list ->
+            list.map { it.toModel() }
+        }
     }
 
     suspend fun saveCategoriesListToDb(categoriesModels: List<RecipeCategoriesDataModel>) {
@@ -67,16 +69,24 @@ class RecipeLocalDataSource(
         diffLvlDao.insertAll(diffLvlModels.map { it.toEntity() })
     }
 
-    suspend fun getLocalAllDiffLvlsList(): List<RecipeDiffLvlDataModel> {
-        return diffLvlDao.getAllDiffLvls().map { it.toModel() }
+    fun getLocalAllDiffLvlsList(): Flow<List<RecipeDiffLvlDataModel>> {
+        return diffLvlDao.getAllDiffLvls().map { list ->
+            list.map {
+                it.toModel()
+            }
+        }
     }
 
     suspend fun saveIngredientsTabsListToDb(tabModels: List<IngredientsTabModel>) {
         ingredientsTabDao.insertAll(tabModels.map { it.toEntity() })
     }
 
-    suspend fun getLocalAllIngredientsTabsList(): List<IngredientsTabModel> {
-        return ingredientsTabDao.getAllIngredientsTabs().map { it.toModel() }
+    fun getLocalAllIngredientsTabsList(): Flow<List<IngredientsTabModel>> {
+        return ingredientsTabDao.getAllIngredientsTabs().map { list ->
+            list.map {
+                it.toModel()
+            }
+        }
     }
 
     suspend fun saveFavRecipesListToDb(recipes: List<FavRecipeModel>) {
