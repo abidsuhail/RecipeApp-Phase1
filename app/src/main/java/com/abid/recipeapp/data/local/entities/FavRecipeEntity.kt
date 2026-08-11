@@ -5,5 +5,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "fav_recipes")
 data class FavRecipeEntity(
-    @PrimaryKey val recipeId: String = ""
+    @PrimaryKey val recipeId: String = "",
+    val isSynced: Boolean = false
 )

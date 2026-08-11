@@ -123,6 +123,23 @@ class RecipeRepository @Inject constructor(
 
         trySyncToRemote {
             remoteDataSource.toggleFav(recipeId)
+            val isFavOnRemote = remoteDataSource.isFav(recipeId)
+            if (isFavOnRemote) {
+                localDataSource.markFavSynced(recipeId)
+            }
+        }
+    }
+
+    suspend fun syncPendingFavs() {
+        trySyncToRemote {
+            val unsyncedIds = localDataSource.getUnsyncedFavIds()
+            unsyncedIds.forEach { recipeId ->
+                remoteDataSource.toggleFav(recipeId)
+                val isFavOnRemote = remoteDataSource.isFav(recipeId)
+                if (isFavOnRemote) {
+                    localDataSource.markFavSynced(recipeId)
+                }
+            }
         }
     }
 

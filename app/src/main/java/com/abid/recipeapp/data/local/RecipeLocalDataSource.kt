@@ -113,4 +113,12 @@ class RecipeLocalDataSource(
         return rowsDeleted > 0
     }
 
+    suspend fun getUnsyncedFavIds(): List<String> {
+        return favRecipeDao.getUnsyncedFavIds()
+    }
+
+    suspend fun markFavSynced(recipeId: String) {
+        favRecipeDao.markFavSynced(recipeId)
+    }
+
 }

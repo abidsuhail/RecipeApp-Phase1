@@ -34,4 +34,10 @@ interface FavRecipeDao {
 
     @Delete
     suspend fun delete(fav: FavRecipeEntity): Int
+
+    @Query("SELECT recipeId FROM fav_recipes WHERE isSynced = 0")
+    suspend fun getUnsyncedFavIds(): List<String>
+
+    @Query("UPDATE fav_recipes SET isSynced = 1 WHERE recipeId = :recipeId")
+    suspend fun markFavSynced(recipeId: String)
 }
