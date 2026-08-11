@@ -18,6 +18,10 @@ class RecipeDetailsViewModel @Inject constructor(
     private val _uiState = MutableLiveData(RecipeDetailsUiState())
     val uiState: LiveData<RecipeDetailsUiState> = _uiState
 
+    init {
+        observeIngredientsTabs()
+    }
+
     fun toggleFav(recipeId: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value?.copy(isFavLoading = true, favErrorMsg = null)
@@ -45,7 +49,7 @@ class RecipeDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun observeCategories() {
+    private fun observeIngredientsTabs() {
         viewModelScope.launch {
             repository.getIngredientsTabsItems().collect { tabItems ->
                 _uiState.value =
