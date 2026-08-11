@@ -22,10 +22,10 @@ interface FavRecipeDao {
 
     @Query(
         """
-    SELECT * FROM recipes 
-    WHERE id IN (SELECT recipeId FROM fav_recipes)
-    ORDER BY id ASC
-        """
+        SELECT recipes.* FROM recipes
+        INNER JOIN fav_recipes ON recipes.id = fav_recipes.recipeId
+        ORDER BY recipes.id ASC
+    """
     )
     fun getAllFavRecipesFlow(): Flow<List<RecipeEntity>>
 

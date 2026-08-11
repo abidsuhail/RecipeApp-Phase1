@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.abid.recipeapp.data.local.entities.IngredientsTabEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface IngredientsTabDao {
@@ -15,5 +16,5 @@ interface IngredientsTabDao {
     suspend fun insertAll(tabs: List<IngredientsTabEntity>)
 
     @Query("SELECT * FROM ingredients_tabs ORDER BY id ASC")
-    suspend fun getAllIngredientsTabs(): List<IngredientsTabEntity>
+    fun getAllIngredientsTabs(): Flow<List<IngredientsTabEntity>>
 }

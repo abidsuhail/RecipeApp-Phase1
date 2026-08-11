@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.abid.recipeapp.data.local.entities.RecipeCuisinesEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CuisinesDao {
@@ -15,7 +16,7 @@ interface CuisinesDao {
     suspend fun insertAll(recipes: List<RecipeCuisinesEntity>)
 
     @Query("SELECT * FROM cuisines ORDER BY id ASC")
-    suspend fun getAllCuisines(): List<RecipeCuisinesEntity>
+    fun getAllCuisines(): Flow<List<RecipeCuisinesEntity>>
 
 
     /*

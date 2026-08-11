@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.abid.recipeapp.data.local.entities.RecipeDiffLvlEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DiffLvlDao {
@@ -15,5 +16,5 @@ interface DiffLvlDao {
     suspend fun insertAll(diffLvls: List<RecipeDiffLvlEntity>)
 
     @Query("SELECT * FROM difficulty_levels ORDER BY id ASC")
-    suspend fun getAllDiffLvls(): List<RecipeDiffLvlEntity>
+    fun getAllDiffLvls(): Flow<List<RecipeDiffLvlEntity>>
 }
