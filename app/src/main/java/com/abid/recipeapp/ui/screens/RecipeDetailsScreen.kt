@@ -66,11 +66,7 @@ fun RecipeDetailsScreen(
     vm: RecipeDetailsViewModel = hiltViewModel()
 ) {
     val uiState by vm.uiState.observeAsState()
-    LaunchedEffect(recipeId) {
-        vm.loadRecipeById(recipeId)
-        vm.refreshIngredientsTabs()
-        vm.fetchIsInFav(recipeId)
-    }
+
     LaunchedEffect(uiState?.recipeErrorMsg) {
         if (uiState?.recipeErrorMsg != null) {
             delay(1000)

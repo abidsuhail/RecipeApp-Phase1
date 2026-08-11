@@ -2,9 +2,11 @@ package com.abid.recipeapp.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abid.recipeapp.data.repository.RecipeRepository
+import com.abid.recipeapp.ui.navigation.NavHelper
 import com.abid.recipeapp.ui.state.RecipeDetailsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -12,14 +14,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecipeDetailsViewModel @Inject constructor(
-    private val repository: RecipeRepository
+    private val repository: RecipeRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    private val recipeId: String? = savedStateHandle[NavHelper.NAV_ARGS_RECIPE_ID_KEY]
     private val _uiState = MutableLiveData(RecipeDetailsUiState())
     val uiState: LiveData<RecipeDetailsUiState> = _uiState
 
     init {
         observeIngredientsTabs()
+
+        loadRecipeById(recipeId)
+        refreshIngredientsTabs()
+        fetchIsInFav(recipeId)
     }
 
     fun toggleFav(recipeId: String) {
