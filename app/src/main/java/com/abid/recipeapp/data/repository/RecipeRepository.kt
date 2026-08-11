@@ -37,6 +37,7 @@ class RecipeRepository @Inject constructor(
         return localDataSource.getLocalAllCategoriesList()
     }
 
+
     suspend fun refreshCategories() {
         trySyncToRemote {
             val remoteCategories = remoteDataSource.getRecipeCategories()
@@ -153,6 +154,10 @@ class RecipeRepository @Inject constructor(
 
     suspend fun uploadImage(imageUri: Uri): String {
         return remoteDataSource.uploadImage(imageUri)
+    }
+
+    fun observeConnectivity(): Flow<Boolean> {
+        return networkMonitor.observeConnectivity()
     }
 
     private suspend fun trySyncToRemote(action: suspend () -> Unit) {

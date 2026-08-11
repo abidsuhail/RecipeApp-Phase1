@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.ui.navigation.AppNavHost
+import com.abid.recipeapp.viewmodel.SyncViewModel
 import com.abid.recipeapp.viewmodel.ThemeViewModel
 
 val LocalIsDarkTheme = compositionLocalOf { false }
@@ -66,6 +67,7 @@ fun String?.toAppTheme(): AppThemeMode {
 @Composable
 fun RecipeMainApp(
     themeViewModel: ThemeViewModel = hiltViewModel(),
+    syncViewModel: SyncViewModel = hiltViewModel()
 ) {
     val appThemeMode by themeViewModel.state.observeAsState(initial = AppThemeMode.SYSTEM)
 
