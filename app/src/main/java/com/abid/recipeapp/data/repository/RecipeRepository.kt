@@ -23,7 +23,7 @@ class RecipeRepository @Inject constructor(
     private val localDataSource: RecipeLocalDataSource,
     private val remoteDataSource: RecipeRemoteDataSource
 ) {
-    suspend fun getAllRecipes(): Flow<List<RecipeModel>> {
+    fun getAllRecipes(): Flow<List<RecipeModel>> {
         return localDataSource.getLocalAllRecipesList()
     }
 
