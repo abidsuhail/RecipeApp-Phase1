@@ -68,7 +68,7 @@ fun RecipeDetailsScreen(
     val uiState by vm.uiState.observeAsState()
     LaunchedEffect(recipeId) {
         vm.loadRecipeById(recipeId)
-        vm.loadIngredientsTabs()
+        vm.refreshIngredientsTabs()
         vm.fetchIsInFav(recipeId)
     }
     LaunchedEffect(uiState?.recipeErrorMsg) {

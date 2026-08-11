@@ -45,18 +45,24 @@ class RecipeDetailsViewModel @Inject constructor(
         }
     }
 
-    fun loadIngredientsTabs() {
+    private fun observeCategories() {
+        viewModelScope.launch {
+            repository.getIngredientsTabsItems().collect { tabItems ->
+                _uiState.value =
+                    _uiState.value?.copy(ingredientsTabList = tabItems)
+            }
+        }
+    }
+
+    fun refreshIngredientsTabs() {
         viewModelScope.launch {
             _uiState.value = _uiState.value?.copy(
                 isIngredientsTabsLoading = true,
                 ingredientsTabsErrorMsg = null
             )
             try {
-                val data = repository.refreshIngredientsTabsItems()
-                _uiState.value = _uiState.value?.copy(
-                    isIngredientsTabsLoading = false,
-                    ingredientsTabList = data
-                )
+                repository.refreshIngredientsTabsItems()
+                _uiState.value = _uiState.value?.copy(isIngredientsTabsLoading = false)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value?.copy(
                     isIngredientsTabsLoading = false,

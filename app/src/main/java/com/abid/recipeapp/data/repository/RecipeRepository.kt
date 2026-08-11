@@ -11,7 +11,6 @@ import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
 import com.abid.recipeapp.util.exception.InvalidRecipeIdException
-import com.abid.recipeapp.util.exception.RecipeNotFoundException
 import com.abid.recipeapp.util.network.NetworkMonitor
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.flow.Flow
@@ -98,13 +97,7 @@ class RecipeRepository @Inject constructor(
         if (id.isNullOrBlank()) {
             throw InvalidRecipeIdException()
         }
-        return if (networkMonitor.isConnected()) {
-            val remoteRecipe =
-                remoteDataSource.getRecipeById(id) ?: throw RecipeNotFoundException()
-            remoteRecipe
-        } else {
-            localDataSource.getLocalRecipeById(id)
-        }
+        return localDataSource.getLocalRecipeById(id)
     }
 
     fun getAllFavRecipes(): Flow<List<RecipeModel>> {
@@ -112,10 +105,11 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun refreshFavRecipes() {
-        if (!networkMonitor.isConnected()) return
-        val remoteFavsRecipeList = remoteDataSource.getAllFavRecipesList()
-        val remoteFavRecipesIds = remoteFavsRecipeList.map { FavRecipeModel(recipeId = it.id) }
-        localDataSource.saveFavRecipesListToDb(remoteFavRecipesIds)
+        trySyncToRemote {
+            val remoteFavsRecipeList = remoteDataSource.getAllFavRecipesList()
+            val remoteFavRecipesIds = remoteFavsRecipeList.map { FavRecipeModel(recipeId = it.id) }
+            localDataSource.saveFavRecipesListToDb(remoteFavRecipesIds)
+        }
     }
 
     suspend fun toggleFav(recipeId: String) {
@@ -133,11 +127,7 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun isFav(recipeId: String): Boolean {
-        return if (networkMonitor.isConnected()) {
-            remoteDataSource.isFav(recipeId)
-        } else {
-            localDataSource.isFavLocally(recipeId)
-        }
+        return localDataSource.isFavLocally(recipeId)
     }
 
     suspend fun saveRecipe(recipeModel: CreateRecipeFormStateModel): Task<Void> {
