@@ -21,6 +21,9 @@ class CreateRecipeViewModel @Inject constructor(
     private val repository: RecipeRepository
 ) : ViewModel() {
 
+    private val _uiState = MutableLiveData(CreateRecipeUiState(isLoading = true))
+    val uiState: LiveData<CreateRecipeUiState> = _uiState
+
     init {
         observeCategories()
         refreshCategories()
@@ -32,8 +35,6 @@ class CreateRecipeViewModel @Inject constructor(
         refreshDifficulties()
     }
 
-    private val _uiState = MutableLiveData(CreateRecipeUiState(isLoading = true))
-    val uiState: LiveData<CreateRecipeUiState> = _uiState
 
     private fun updateRecipe(update: CreateRecipeFormStateModel.() -> CreateRecipeFormStateModel) {
         _uiState.value = _uiState.value?.let { state ->
@@ -100,8 +101,8 @@ class CreateRecipeViewModel @Inject constructor(
 
     private fun refreshCategories() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value?.copy(isLoading = true, errorMsg = null)
             try {
+                _uiState.value = _uiState.value?.copy(isLoading = true, errorMsg = null)
                 repository.refreshCategories()
                 _uiState.value = _uiState.value?.copy(isLoading = false)
             } catch (e: Exception) {
