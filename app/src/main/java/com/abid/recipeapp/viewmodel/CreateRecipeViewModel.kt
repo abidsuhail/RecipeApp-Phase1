@@ -23,10 +23,12 @@ class CreateRecipeViewModel @Inject constructor(
 
     init {
         observeCategories()
-        observeCuisines()
-        observeDiffLvls()
-        refreshCuisines()
         refreshCategories()
+
+        observeCuisines()
+        refreshCuisines()
+
+        observeDiffLvls()
         refreshDifficulties()
     }
 
@@ -133,7 +135,7 @@ class CreateRecipeViewModel @Inject constructor(
         }
     }
 
-    fun refreshCuisines() {
+    private fun refreshCuisines() {
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value?.copy(isLoading = true)
@@ -146,7 +148,7 @@ class CreateRecipeViewModel @Inject constructor(
         }
     }
 
-    fun refreshDifficulties() {
+    private fun refreshDifficulties() {
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value?.copy(isLoading = true)
