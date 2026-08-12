@@ -43,7 +43,7 @@ class RecipeDetailsViewModel @Inject constructor(
         }
     }
 
-    fun fetchIsInFav(recipeId: String?) {
+    private fun fetchIsInFav(recipeId: String?) {
         if (recipeId == null) return
 
         viewModelScope.launch {
