@@ -22,13 +22,6 @@ class SearchRecipeViewModel @Inject constructor(
     private val repository: RecipeRepository
 ) : ViewModel() {
 
-    init {
-        observeCategories()
-        observeDiffLvls()
-        observeCuisines()
-        loadBottomSheetChipsData()
-        loadInitialRecipes()
-    }
 
     private val _searchResultState = MutableLiveData(SearchResultUiState())
     val searchResultState: LiveData<SearchResultUiState> = _searchResultState
@@ -49,6 +42,14 @@ class SearchRecipeViewModel @Inject constructor(
 
     var selectedDiffLvlName by mutableStateOf<String?>(null)
         private set
+
+    init {
+        observeCategories()
+        observeDiffLvls()
+        observeCuisines()
+        loadBottomSheetChipsData()
+        loadInitialRecipes()
+    }
 
     fun onSearchQueryChanged(query: String) {
         searchQueryRecipeTitle = query

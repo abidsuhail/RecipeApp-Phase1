@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.ui.navigation.NavHelper
 import com.abid.recipeapp.ui.state.RecipeDetailsUiState
+import com.abid.recipeapp.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,6 +25,7 @@ class RecipeDetailsViewModel @Inject constructor(
 
     init {
         observeIngredientsTabs()
+        observeFavStatus(recipeId)
 
         loadRecipeById(recipeId)
         refreshIngredientsTabs()
@@ -35,8 +37,7 @@ class RecipeDetailsViewModel @Inject constructor(
             _uiState.value = _uiState.value?.copy(isFavLoading = true, favErrorMsg = null)
             try {
                 repository.toggleFav(recipeId)
-                val isInFav = repository.isFav(recipeId)
-                _uiState.value = _uiState.value?.copy(isFavLoading = false, isFav = isInFav)
+                _uiState.value = _uiState.value?.copy(isFavLoading = false)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value?.copy(isFavLoading = false, favErrorMsg = e.message)
             }
@@ -49,8 +50,8 @@ class RecipeDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value?.copy(isFavLoading = true, favErrorMsg = null)
             try {
-                val isInFav = repository.isFav(recipeId)
-                _uiState.value = _uiState.value?.copy(isFavLoading = false, isFav = isInFav)
+                repository.isFavLocally(recipeId)
+                _uiState.value = _uiState.value?.copy(isFavLoading = false)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value?.copy(isFavLoading = false, favErrorMsg = e.message)
             }
@@ -62,6 +63,20 @@ class RecipeDetailsViewModel @Inject constructor(
             repository.getIngredientsTabsItems().collect { tabItems ->
                 _uiState.value =
                     _uiState.value?.copy(ingredientsTabList = tabItems)
+            }
+        }
+    }
+
+    private fun observeFavStatus(recipeId: String?) {
+        viewModelScope.launch {
+            if (recipeId.isNullOrBlank()) {
+                _uiState.value =
+                    _uiState.value?.copy(favErrorMsg = Constants.RECIPE_NOT_FOUND_ERROR_MSG)
+                return@launch
+            }
+            repository.isFavLocally(recipeId).collect { isFav ->
+                _uiState.value =
+                    _uiState.value?.copy(isFav = isFav)
             }
         }
     }

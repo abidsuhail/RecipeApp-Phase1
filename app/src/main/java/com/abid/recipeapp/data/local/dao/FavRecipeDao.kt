@@ -31,7 +31,7 @@ interface FavRecipeDao {
     fun getAllFavRecipesFlow(): Flow<List<RecipeEntity>>
 
     @Query("SELECT * FROM fav_recipes WHERE recipeId = :recipeId LIMIT 1")
-    suspend fun isFav(recipeId: String): FavRecipeEntity?
+    fun isFav(recipeId: String): Flow<FavRecipeEntity?>
 
     @Delete
     suspend fun delete(fav: FavRecipeEntity): Int

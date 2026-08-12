@@ -14,7 +14,7 @@ import com.abid.recipeapp.util.exception.InvalidRecipeIdException
 import com.abid.recipeapp.util.network.NetworkMonitor
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.flow.Flow
-import timber.log.Timber
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(
@@ -27,10 +27,8 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun refreshAllRecipes() {
-        trySyncToRemote {
-            val remote = remoteDataSource.getAllRecipes()
-            localDataSource.saveRecipeListToDb(remote)
-        }
+        val remote = remoteDataSource.getAllRecipes()
+        localDataSource.saveRecipeListToDb(remote)
     }
 
     fun getRecipeCategories(): Flow<List<RecipeCategoriesDataModel>> {
@@ -39,10 +37,8 @@ class RecipeRepository @Inject constructor(
 
 
     suspend fun refreshCategories() {
-        trySyncToRemote {
-            val remoteCategories = remoteDataSource.getRecipeCategories()
-            localDataSource.saveCategoriesListToDb(remoteCategories)
-        }
+        val remoteCategories = remoteDataSource.getRecipeCategories()
+        localDataSource.saveCategoriesListToDb(remoteCategories)
     }
 
     suspend fun getRecipesByFilters(
@@ -72,26 +68,20 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun refreshAllCuisines() {
-        trySyncToRemote {
-            val remoteCuisines = remoteDataSource.getCuisines()
-            localDataSource.saveCuisinesListToDb(remoteCuisines)
-        }
+        val remoteCuisines = remoteDataSource.getCuisines()
+        localDataSource.saveCuisinesListToDb(remoteCuisines)
     }
 
 
     suspend fun refreshRecipeDifficulties() {
-        trySyncToRemote {
-            val remoteDiffLvls = remoteDataSource.getRecipeDifficulties()
-            localDataSource.saveDiffLvlsListToDb(remoteDiffLvls)
-        }
+        val remoteDiffLvls = remoteDataSource.getRecipeDifficulties()
+        localDataSource.saveDiffLvlsListToDb(remoteDiffLvls)
     }
 
 
     suspend fun refreshIngredientsTabsItems() {
-        trySyncToRemote {
-            val remoteTabs = remoteDataSource.getIngredientsTabsItems()
-            localDataSource.saveIngredientsTabsListToDb(remoteTabs)
-        }
+        val remoteTabs = remoteDataSource.getIngredientsTabsItems()
+        localDataSource.saveIngredientsTabsListToDb(remoteTabs)
     }
 
     suspend fun getRecipeById(id: String?): RecipeModel? {
@@ -106,26 +96,25 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun refreshFavRecipes() {
-        trySyncToRemote {
-            val remoteFavsRecipeList = remoteDataSource.getAllFavRecipesList()
-            val remoteFavRecipesIds =
-                remoteFavsRecipeList.map { FavRecipeModel(recipeId = it.id) }
-            localDataSource.saveFavRecipesListToDb(remoteFavRecipesIds)
-        }
+        val remoteFavsRecipeList = remoteDataSource.getAllFavRecipesList()
+        val remoteFavRecipesIds =
+            remoteFavsRecipeList.map { FavRecipeModel(recipeId = it.id) }
+        localDataSource.saveFavRecipesListToDb(remoteFavRecipesIds)
     }
 
     suspend fun toggleFav(recipeId: String) {
-        val currentlyFav = localDataSource.isFavLocally(recipeId)
-
+        val currentlyFav = isFavLocally(recipeId).first()
         if (currentlyFav) {
             localDataSource.removeFavLocally(recipeId)
         } else {
             localDataSource.saveFavLocally(recipeId)
         }
+        toggleAndSyncFav(recipeId)
+    }
 
-        trySyncToRemote {
-            toggleAndSyncFav(recipeId)
-        }
+    private suspend fun toggleAndSyncFav(recipeId: String) {
+        remoteDataSource.toggleFav(recipeId)
+        localDataSource.markFavSynced(recipeId)
     }
 
     suspend fun syncPendingFavs() {
@@ -135,12 +124,8 @@ class RecipeRepository @Inject constructor(
         }
     }
 
-    private suspend fun toggleAndSyncFav(recipeId: String) {
-        remoteDataSource.toggleFav(recipeId)
-        localDataSource.markFavSynced(recipeId)
-    }
 
-    suspend fun isFav(recipeId: String): Boolean {
+    fun isFavLocally(recipeId: String): Flow<Boolean> {
         return localDataSource.isFavLocally(recipeId)
     }
 
@@ -153,13 +138,13 @@ class RecipeRepository @Inject constructor(
     }
 
 
-    private suspend fun trySyncToRemote(action: suspend () -> Unit) {
-        if (networkMonitor.isConnected()) {
-            try {
-                action()
-            } catch (e: Exception) {
-                Timber.e(e)  // sync failed silently — local data is already correct, will retry later
-            }
-        }
-    }
+    /*   private suspend fun trySyncToRemote(action: suspend () -> Unit) {
+              if (networkMonitor.isConnected()) {
+                  try {
+                      action()
+                  } catch (e: Exception) {
+                      Timber.e(e)  // sync failed silently — local data is already correct, will retry later
+                  }
+              }
+       }*/
 }

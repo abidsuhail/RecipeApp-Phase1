@@ -111,8 +111,8 @@ class RecipeLocalDataSource(
             return rowsDeleted > 0*/
     }
 
-    suspend fun isFavLocally(recipeId: String): Boolean {
-        return favRecipeDao.isFav(recipeId)?.isFav == true
+    fun isFavLocally(recipeId: String): Flow<Boolean> {
+        return favRecipeDao.isFav(recipeId).map { it?.isFav == true }
     }
 
 

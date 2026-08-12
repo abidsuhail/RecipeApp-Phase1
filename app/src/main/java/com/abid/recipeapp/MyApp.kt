@@ -5,6 +5,7 @@ import com.cloudinary.android.MediaManager
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.MemoryCacheSettings
+import com.google.firebase.firestore.MemoryEagerGcSettings
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
@@ -23,7 +24,11 @@ class MyApp : Application() {
 
     private fun disableFirebaseCache() {
         val settings = FirebaseFirestoreSettings.Builder()
-            .setLocalCacheSettings(MemoryCacheSettings.newBuilder().build())
+            .setLocalCacheSettings(
+                MemoryCacheSettings.newBuilder()
+                    .setGcSettings(MemoryEagerGcSettings.newBuilder().build())
+                    .build()
+            )
             .build()
 
         FirebaseFirestore.getInstance().firestoreSettings = settings
