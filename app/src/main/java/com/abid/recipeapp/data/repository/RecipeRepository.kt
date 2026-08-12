@@ -108,7 +108,8 @@ class RecipeRepository @Inject constructor(
     suspend fun refreshFavRecipes() {
         trySyncToRemote {
             val remoteFavsRecipeList = remoteDataSource.getAllFavRecipesList()
-            val remoteFavRecipesIds = remoteFavsRecipeList.map { FavRecipeModel(recipeId = it.id) }
+            val remoteFavRecipesIds =
+                remoteFavsRecipeList.map { FavRecipeModel(recipeId = it.id) }
             localDataSource.saveFavRecipesListToDb(remoteFavRecipesIds)
         }
     }
@@ -123,25 +124,20 @@ class RecipeRepository @Inject constructor(
         }
 
         trySyncToRemote {
-            remoteDataSource.toggleFav(recipeId)
-            val isFavOnRemote = remoteDataSource.isFav(recipeId)
-            if (isFavOnRemote) {
-                localDataSource.markFavSynced(recipeId)
-            }
+            toggleAndSyncFav(recipeId)
         }
     }
 
     suspend fun syncPendingFavs() {
-        trySyncToRemote {
-            val unsyncedIds = localDataSource.getUnsyncedFavIds()
-            unsyncedIds.forEach { recipeId ->
-                remoteDataSource.toggleFav(recipeId)
-                val isFavOnRemote = remoteDataSource.isFav(recipeId)
-                if (isFavOnRemote) {
-                    localDataSource.markFavSynced(recipeId)
-                }
-            }
+        val unsyncedIds = localDataSource.getUnsyncedFavIds()
+        unsyncedIds.forEach { recipeId ->
+            toggleAndSyncFav(recipeId)
         }
+    }
+
+    private suspend fun toggleAndSyncFav(recipeId: String) {
+        remoteDataSource.toggleFav(recipeId)
+        localDataSource.markFavSynced(recipeId)
     }
 
     suspend fun isFav(recipeId: String): Boolean {
@@ -156,9 +152,6 @@ class RecipeRepository @Inject constructor(
         return remoteDataSource.uploadImage(imageUri)
     }
 
-    fun observeConnectivity(): Flow<Boolean> {
-        return networkMonitor.observeConnectivity()
-    }
 
     private suspend fun trySyncToRemote(action: suspend () -> Unit) {
         if (networkMonitor.isConnected()) {

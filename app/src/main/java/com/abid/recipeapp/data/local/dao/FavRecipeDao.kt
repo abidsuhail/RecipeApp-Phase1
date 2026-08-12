@@ -24,6 +24,7 @@ interface FavRecipeDao {
         """
         SELECT recipes.* FROM recipes
         INNER JOIN fav_recipes ON recipes.id = fav_recipes.recipeId
+        WHERE fav_recipes.isFav = 1
         ORDER BY recipes.id ASC
     """
     )
@@ -40,4 +41,7 @@ interface FavRecipeDao {
 
     @Query("UPDATE fav_recipes SET isSynced = 1 WHERE recipeId = :recipeId")
     suspend fun markFavSynced(recipeId: String)
+
+    /*    @Query("DELETE FROM fav_recipes WHERE recipeId = :recipeId AND isFav = 0 AND isSynced = 1")
+        suspend fun cleanupSyncedRemovals(recipeId: String)*/
 }

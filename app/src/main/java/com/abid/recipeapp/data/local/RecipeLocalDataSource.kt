@@ -100,18 +100,21 @@ class RecipeLocalDataSource(
     }
 
     suspend fun saveFavLocally(recipeId: String): Boolean {
-        val isInserted = favRecipeDao.insert(FavRecipeEntity(recipeId = recipeId))
-        return isInserted == -1L
-    }
-
-    suspend fun isFavLocally(recipeId: String): Boolean {
-        return favRecipeDao.isFav(recipeId) != null
+        val isInserted = favRecipeDao.insert(FavRecipeEntity(recipeId = recipeId, isFav = true))
+        return isInserted != -1L
     }
 
     suspend fun removeFavLocally(recipeId: String): Boolean {
-        val rowsDeleted = favRecipeDao.delete(FavRecipeEntity(recipeId = recipeId))
-        return rowsDeleted > 0
+        val isInserted = favRecipeDao.insert(FavRecipeEntity(recipeId = recipeId, isFav = false))
+        return isInserted != -1L
+        /*    val rowsDeleted = favRecipeDao.delete(FavRecipeEntity(recipeId = recipeId, isFav = false))
+            return rowsDeleted > 0*/
     }
+
+    suspend fun isFavLocally(recipeId: String): Boolean {
+        return favRecipeDao.isFav(recipeId)?.isFav == true
+    }
+
 
     suspend fun getUnsyncedFavIds(): List<String> {
         return favRecipeDao.getUnsyncedFavIds()

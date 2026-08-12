@@ -7,6 +7,7 @@ import com.abid.recipeapp.util.network.NetworkMonitor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,6 +25,7 @@ class SyncViewModel @Inject constructor(
             networkMonitor.observeConnectivity()
                 .filter { it }
                 .collect {
+                    Timber.e("Doing sync")
                     repository.syncPendingFavs()
                 }
         }
