@@ -11,14 +11,12 @@ import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
 import com.abid.recipeapp.util.exception.InvalidRecipeIdException
-import com.abid.recipeapp.util.network.NetworkMonitor
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(
-    private val networkMonitor: NetworkMonitor,
     private val localDataSource: RecipeLocalDataSource,
     private val remoteDataSource: RecipeRemoteDataSource
 ) {
