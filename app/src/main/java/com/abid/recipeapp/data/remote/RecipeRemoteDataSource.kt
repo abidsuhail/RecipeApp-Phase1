@@ -117,15 +117,26 @@ class RecipeRemoteDataSource @Inject constructor(
         }
     }
 
-    suspend fun toggleFav(recipeId: String) {
-        withContext(Dispatchers.IO) {
-            val docRef = db.collection(FAV).document(recipeId)
-            val existingDoc = docRef.get().await()
-            if (existingDoc.exists()) {
-                docRef.delete().await()
-            } else {
-                docRef.set(FavRecipeModel(recipeId)).await()
+    /*    suspend fun toggleFav(recipeId: String) {
+            withContext(Dispatchers.IO) {
+                val docRef = db.collection(FAV).document(recipeId)
+                val existingDoc = docRef.get().await()
+                if (existingDoc.exists()) {
+                    docRef.delete().await()
+                } else {
+                    docRef.set(FavRecipeModel(recipeId)).await()
+                }
             }
+        }*/
+    suspend fun saveFavRemote(recipeId: String) {
+        withContext(Dispatchers.IO) {
+            db.collection(FAV).document(recipeId).set(FavRecipeModel(recipeId)).await()
+        }
+    }
+
+    suspend fun removeFavRemote(recipeId: String) {
+        withContext(Dispatchers.IO) {
+            db.collection(FAV).document(recipeId).delete().await()
         }
     }
 

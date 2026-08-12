@@ -16,6 +16,7 @@ import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.util.datamapper.toEntity
 import com.abid.recipeapp.util.datamapper.toModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 class RecipeLocalDataSource(
@@ -122,7 +123,11 @@ class RecipeLocalDataSource(
     }
 
     fun isFavLocally(recipeId: String): Flow<Boolean> {
-        return favRecipeDao.isFav(recipeId).map { it?.isFav == true }
+        return favRecipeDao.getFavByRecipeId(recipeId).map { it?.isFav == true }
+    }
+
+    suspend fun getLocalFavByRecipeId(recipeId: String): FavRecipeEntity? {
+        return favRecipeDao.getFavByRecipeId(recipeId).firstOrNull()
     }
 
 

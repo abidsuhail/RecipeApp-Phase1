@@ -107,19 +107,24 @@ class RecipeRepository @Inject constructor(
         } else {
             localDataSource.saveFavLocally(recipeId)
         }
-        toggleAndSyncFav(recipeId)
-    }
-
-    private suspend fun toggleAndSyncFav(recipeId: String) {
-        remoteDataSource.toggleFav(recipeId)
-        localDataSource.markFavSynced(recipeId)
+        syncFavToRemoteAndLocal(recipeId)
     }
 
     suspend fun syncPendingFavs() {
         val unsyncedIds = localDataSource.getUnsyncedFavIds()
         unsyncedIds.forEach { recipeId ->
-            toggleAndSyncFav(recipeId)
+            syncFavToRemoteAndLocal(recipeId)
         }
+    }
+
+    private suspend fun syncFavToRemoteAndLocal(recipeId: String) {
+        val fav = localDataSource.getLocalFavByRecipeId(recipeId)
+        if (fav?.isFav == true) {
+            remoteDataSource.saveFavRemote(recipeId)
+        } else {
+            remoteDataSource.removeFavRemote(recipeId)
+        }
+        localDataSource.markFavSynced(recipeId)
     }
 
 
