@@ -24,6 +24,12 @@ object Constants {
         const val RECIPE_DIFFICULTY_LEVELS = "difficulty_levels"
     }
 
+    object ExceptionMessages {
+        const val INVALID_RECIPE_ID = "Recipe id is blank"
+        const val RECIPE_NOT_FOUND = "Recipe not found"
+        const val NO_INTERNET = "No internet connection"
+    }
+
     const val SETTINGS = "Settings"
 
     const val RECIPE_NOT_FOUND_ERROR_MSG = "Recipe not found"
