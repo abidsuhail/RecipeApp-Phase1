@@ -25,6 +25,22 @@ interface RecipeDao {
     @Query("SELECT * FROM recipes WHERE id = :id")
     suspend fun getRecipeById(id: String): RecipeEntity?
 
+    @Query(
+        """
+    SELECT * FROM recipes
+    WHERE (:categoryName IS NULL OR category = :categoryName)
+    AND (:cuisineName IS NULL OR cuisine = :cuisineName)
+    AND (:diffLvl IS NULL OR difficulty = :diffLvl)
+    AND (:title IS NULL OR title LIKE '%' || :title || '%')
+    ORDER BY id ASC
+    """
+    )
+    fun getRecipesByFilters(
+        categoryName: String?,
+        cuisineName: String?,
+        diffLvl: String?,
+        title: String?
+    ): Flow<List<RecipeEntity>>
 
     @Query("DELETE FROM recipes")
     suspend fun deleteAll()

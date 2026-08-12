@@ -65,6 +65,16 @@ class RecipeLocalDataSource(
         return recipeDao.getRecipeById(id)?.toModel()
     }
 
+    fun getRecipesByFiltersLocal(
+        categoryName: String? = null,
+        cuisineName: String? = null,
+        diffLvl: String? = null,
+        title: String? = null
+    ): Flow<List<RecipeModel>> {
+        return recipeDao.getRecipesByFilters(categoryName, cuisineName, diffLvl, title)
+            .map { entityList -> entityList.map { it.toModel() } }
+    }
+
     suspend fun saveDiffLvlsListToDb(diffLvlModels: List<RecipeDiffLvlDataModel>) {
         diffLvlDao.insertAll(diffLvlModels.map { it.toEntity() })
     }
