@@ -1,5 +1,6 @@
 package com.abid.recipeapp.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.IngredientsTabModel
@@ -65,6 +67,7 @@ fun RecipeDetailsScreen(
     onClickBackBtn: () -> Unit,
     vm: RecipeDetailsViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState by vm.uiState.observeAsState()
 
     LaunchedEffect(uiState?.recipeErrorMsg) {
@@ -73,12 +76,18 @@ fun RecipeDetailsScreen(
             onClickBackBtn()
         }
     }
+    LaunchedEffect(uiState?.favErrorMsg) {
+        if (uiState?.favErrorMsg != null) {
+            Toast.makeText(context, uiState?.favErrorMsg, Toast.LENGTH_SHORT).show()
+        }
+    }
     if (uiState?.isRecipeLoading == true) {
         LoadingStateBox()
     }
     if (uiState?.recipeErrorMsg != null) {
         ErrorStateBox(uiState?.recipeErrorMsg!!)
     }
+
     if (uiState?.recipe != null) {
         var isFavorite by remember { mutableStateOf(false) }
         Scaffold(
