@@ -14,6 +14,7 @@ import com.abid.recipeapp.ui.state.SearchResultUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -103,7 +104,7 @@ class SearchRecipeViewModel @Inject constructor(
                     title = searchQueryRecipeTitle
                 )
                 _searchResultState.value =
-                    _searchResultState.value?.copy(recipeList = data, isLoading = false)
+                    _searchResultState.value?.copy(recipeList = data.first(), isLoading = false)
             } catch (e: Exception) {
                 _searchResultState.value =
                     _searchResultState.value?.copy(errorMsg = e.message, isLoading = false)

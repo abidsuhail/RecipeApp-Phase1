@@ -43,13 +43,13 @@ class RecipeRepository @Inject constructor(
         localDataSource.saveCategoriesListToDb(remoteCategories)
     }
 
-    suspend fun getRecipesByFilters(
+    fun getRecipesByFilters(
         categoryName: String? = null,
         cuisineName: String? = null,
         diffLvl: String? = null,
         title: String? = null
-    ): List<RecipeModel> {
-        return remoteDataSource.getRecipesByFilters(
+    ): Flow<List<RecipeModel>> {
+        return localDataSource.getRecipesByFiltersLocal(
             categoryName,
             cuisineName,
             diffLvl,

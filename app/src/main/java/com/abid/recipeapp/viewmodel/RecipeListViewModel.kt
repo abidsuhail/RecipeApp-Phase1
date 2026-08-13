@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.ui.state.RecipeListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -74,7 +75,8 @@ class RecipeListViewModel @Inject constructor(
             try {
                 _state.value = _state.value?.copy(isRecipesLoading = true)
                 val data = repository.getRecipesByFilters(categoryName)
-                _state.value = _state.value?.copy(recipeList = data, isRecipesLoading = false)
+                _state.value =
+                    _state.value?.copy(recipeList = data.first(), isRecipesLoading = false)
             } catch (e: Exception) {
                 _state.value = _state.value?.copy(recipesErrorMsg = e.message)
             }
