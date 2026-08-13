@@ -14,6 +14,7 @@ import com.abid.recipeapp.util.exception.InvalidRecipeIdException
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(
@@ -30,7 +31,10 @@ class RecipeRepository @Inject constructor(
     }
 
     fun getRecipeCategories(): Flow<List<RecipeCategoriesDataModel>> {
-        return localDataSource.getLocalAllCategoriesList()
+        val allCategoryItem = RecipeCategoriesDataModel("-1", "All")
+        return localDataSource.getLocalAllCategoriesList().map { categories ->
+            listOf(allCategoryItem) + categories
+        }
     }
 
 
