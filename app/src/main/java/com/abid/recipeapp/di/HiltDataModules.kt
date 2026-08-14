@@ -12,6 +12,7 @@ import com.abid.recipeapp.data.local.dao.CuisinesDao
 import com.abid.recipeapp.data.local.dao.DiffLvlDao
 import com.abid.recipeapp.data.local.dao.FavRecipeDao
 import com.abid.recipeapp.data.local.dao.IngredientsTabDao
+import com.abid.recipeapp.data.local.dao.PendingRecipeDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
 import com.abid.recipeapp.data.local.db.RecipeDatabase
 import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
@@ -111,6 +112,12 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun providePendingRecipeDao(database: RecipeDatabase): PendingRecipeDao =
+        database.pendingRecipeDao()
+
+
+    @Provides
+    @Singleton
     fun provideDiffLvlDao(database: RecipeDatabase): DiffLvlDao = database.diffLvlDao()
 
     @Provides
@@ -125,4 +132,6 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideNetworkMonitor(impl: NetworkMonitorImpl): NetworkMonitor = impl
+
+
 }
