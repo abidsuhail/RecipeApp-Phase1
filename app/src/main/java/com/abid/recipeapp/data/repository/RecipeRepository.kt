@@ -12,6 +12,7 @@ import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
 import com.abid.recipeapp.util.datamapper.toRecipeModel
 import com.abid.recipeapp.util.exception.InvalidRecipeIdException
+import com.abid.recipeapp.util.isLocalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -154,11 +155,29 @@ class RecipeRepository @Inject constructor(
         }
     }
 
+
+    suspend fun syncAllRecipeImages() {
+        val recipes = localDataSource.getLocalAllRecipesList()
+            .first()
+            .filter { it.image.isLocalUri() }
+        for (recipe in recipes) {
+            try {
+                uploadImgToCloudAndSyncDb(Uri.parse(recipe.image), recipe.id)
+            } catch (e: Exception) {
+                Timber.e("Image sync failed, using local path : $e")
+            }
+        }
+    }
+
+    private suspend fun uploadImgToCloudAndSyncDb(imageUri: Uri, recipeId: String) {
+        val remoteImageUrl = remoteDataSource.uploadImage(imageUri)
+        localDataSource.updateRecipeImage(recipeId, remoteImageUrl)
+    }
+
     suspend fun uploadImage(recipeId: String, imageUri: Uri): String {
         val localImagePath = localDataSource.copyImageToInternalStorage(recipeId, imageUri)
         try {
-            val remoteImageUrl = remoteDataSource.uploadImage(imageUri)
-            localDataSource.updateRecipeImage(recipeId, remoteImageUrl)
+            uploadImgToCloudAndSyncDb(imageUri, recipeId)
         } catch (e: Exception) {
             Timber.e("Image upload failed, using local path : $e")
         }

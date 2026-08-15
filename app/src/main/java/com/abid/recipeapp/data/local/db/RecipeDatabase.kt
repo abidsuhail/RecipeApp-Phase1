@@ -8,7 +8,6 @@ import com.abid.recipeapp.data.local.dao.DiffLvlDao
 import com.abid.recipeapp.data.local.dao.FavRecipeDao
 import com.abid.recipeapp.data.local.dao.IngredientsTabDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
-import com.abid.recipeapp.data.local.entities.CreateRecipeFormStateEntity
 import com.abid.recipeapp.data.local.entities.FavRecipeEntity
 import com.abid.recipeapp.data.local.entities.IngredientsTabEntity
 import com.abid.recipeapp.data.local.entities.RecipeCategoriesEntity
@@ -24,7 +23,6 @@ import com.abid.recipeapp.data.local.entities.RecipeEntity
         RecipeDiffLvlEntity::class,
         IngredientsTabEntity::class,
         FavRecipeEntity::class,
-        CreateRecipeFormStateEntity::class
     ],
     version = 4,
     exportSchema = false

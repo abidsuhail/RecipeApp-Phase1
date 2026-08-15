@@ -1,10 +1,10 @@
 package com.abid.recipeapp.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.util.network.NetworkMonitor
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -21,12 +21,13 @@ class SyncViewModel @Inject constructor(
     }
 
     private fun observeConnectivityAndSync() {
-        viewModelScope.launch {
+        GlobalScope.launch {
             networkMonitor.observeConnectivity()
                 .filter { it }
                 .collect {
                     Timber.e("Doing sync")
                     repository.syncPendingFavs()
+                    repository.syncAllRecipeImages()
                 }
         }
     }

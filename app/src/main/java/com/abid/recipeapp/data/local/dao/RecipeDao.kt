@@ -39,10 +39,10 @@ interface RecipeDao {
         title: String?
     ): Flow<List<RecipeEntity>>
 
-    @Query("UPDATE recipes SET isSynced = 1 WHERE id = :recipeId")
+    @Query("UPDATE recipes SET isDataSynced = 1 WHERE id = :recipeId")
     suspend fun markAsSynced(recipeId: String)
 
-    @Query("SELECT * FROM recipes WHERE isSynced = 0")
+    @Query("SELECT * FROM recipes WHERE isDataSynced = 0")
     suspend fun getUnsyncedRecipes(): List<RecipeEntity>
 
 
