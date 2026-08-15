@@ -145,10 +145,29 @@ class RecipeRepository @Inject constructor(
         return UUID.randomUUID().toString().replace("-", "")
     }
 
-    suspend fun saveRecipe(recipeModel: CreateRecipeFormStateModel) {
-        val tempLocalRecipeId = recipeModel.id.ifBlank { generateNewRecipeId() }
+    private suspend fun uploadImgToCloudAndSyncDb(imageUri: Uri, recipeId: String) {
+        val remoteImageUrl = remoteDataSource.uploadImage(imageUri)
+        localDataSource.updateRecipeImage(recipeId, remoteImageUrl)
+    }
+
+    private suspend fun uploadImage(recipeId: String, imageUri: Uri): String {
+        val localImagePath = localDataSource.copyImageToInternalStorage(recipeId, imageUri)
+        try {
+            if (networkMonitor.isConnected()) {
+                uploadImgToCloudAndSyncDb(imageUri, recipeId)
+            }
+        } catch (e: Exception) {
+            Timber.e("Image upload failed, using local path : $e")
+        }
+        return localImagePath
+    }
+
+    suspend fun saveRecipe(recipeModel: CreateRecipeFormStateModel, imageUri: Uri) {
+        val recipeId = recipeModel.id.ifBlank { generateNewRecipeId() }
+        val localImagePath = uploadImage(recipeId, imageUri)
+        val finalRecipe = recipeModel.copy(id = recipeId, image = localImagePath).toRecipeModel()
         localDataSource.saveRecipeToDb(
-            recipeModel.copy(id = tempLocalRecipeId).toRecipeModel(),
+            finalRecipe,
             false
         )
         if (networkMonitor.isConnected()) {
@@ -183,23 +202,6 @@ class RecipeRepository @Inject constructor(
                 Timber.e("Image sync failed, using local path : $e")
             }
         }
-    }
-
-    private suspend fun uploadImgToCloudAndSyncDb(imageUri: Uri, recipeId: String) {
-        val remoteImageUrl = remoteDataSource.uploadImage(imageUri)
-        localDataSource.updateRecipeImage(recipeId, remoteImageUrl)
-    }
-
-    suspend fun uploadImage(recipeId: String, imageUri: Uri): String {
-        val localImagePath = localDataSource.copyImageToInternalStorage(recipeId, imageUri)
-        try {
-            if (networkMonitor.isConnected()) {
-                uploadImgToCloudAndSyncDb(imageUri, recipeId)
-            }
-        } catch (e: Exception) {
-            Timber.e("Image upload failed, using local path : $e")
-        }
-        return localImagePath
     }
 
 

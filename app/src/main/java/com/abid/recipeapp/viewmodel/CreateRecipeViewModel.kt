@@ -174,18 +174,10 @@ class CreateRecipeViewModel @Inject constructor(
                         )
                     return@launch
                 }
-                val uploadedImageUrl = repository.uploadImage(recipeModel.id, imageUri)
-                val updatedRecipeModel = recipeModel.copy(
-                    image = uploadedImageUrl.ifBlank { "" }
-                )
-                _uiState.value =
-                    _uiState.value?.copy(
-                        uploadedImageUrl = uploadedImageUrl.ifBlank { null }
-                    )
-                repository.saveRecipe(updatedRecipeModel)
+                repository.saveRecipe(recipeModel, imageUri)
                 _uiState.value = _uiState.value?.copy(
                     isLoading = false,
-                    recipeSaveState = RecipeSaveState.Success(updatedRecipeModel)
+                    recipeSaveState = RecipeSaveState.Success(recipeModel)
                 )
             } catch (e: Exception) {
                 _uiState.value =
