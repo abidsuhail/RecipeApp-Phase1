@@ -176,9 +176,9 @@ class RecipeRepository @Inject constructor(
             false
         )
         if (networkMonitor.isConnected()) {
-            val isSuccess = remoteDataSource.saveRecipe(recipeModel.toRecipeModel())
+            val isSuccess = remoteDataSource.saveRecipe(finalRecipe)
             if (isSuccess) {
-                localDataSource.markRecipeAsSynced(recipeModel.id)
+                localDataSource.markRecipeAsSynced(finalRecipe.id)
             }
         }
     }
