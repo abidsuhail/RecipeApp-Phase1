@@ -149,7 +149,7 @@ class RecipeRepository @Inject constructor(
     private suspend fun uploadImgToCloudAndSyncDb(imageUri: Uri, recipeId: String) {
         val remoteImageUrl = remoteDataSource.uploadImage(imageUri)
         if (remoteImageUrl.isNotBlank()) {
-            localDataSource.updateRecipeImage(recipeId, remoteImageUrl)
+            localDataSource.updateRecipeImageUrl(recipeId, remoteImageUrl)
             remoteDataSource.updateRecipeImageUrl(recipeId, remoteImageUrl)
             localDataSource.deleteRecipeImageLocal(recipeId)
         }

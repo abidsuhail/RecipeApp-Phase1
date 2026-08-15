@@ -71,7 +71,7 @@ class RecipeLocalDataSource(
         }
     }
 
-    suspend fun updateRecipeImage(recipeId: String, imageUrl: String) {
+    suspend fun updateRecipeImageUrl(recipeId: String, imageUrl: String) {
         recipeDao.updateRecipeImage(recipeId, imageUrl)
     }
 
