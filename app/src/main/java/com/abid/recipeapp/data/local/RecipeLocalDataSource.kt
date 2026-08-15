@@ -66,9 +66,13 @@ class RecipeLocalDataSource(
     }
 
     fun getLocalAllRecipesList(): Flow<List<RecipeModel>> {
-        return recipeDao.getAllRecipesFlow().map { entityList ->
+        return recipeDao.getAllRecipes().map { entityList ->
             entityList.map { it.toModel() }
         }
+    }
+
+    suspend fun updateRecipeImage(recipeId: String, imageUrl: String) {
+        recipeDao.updateRecipeImage(recipeId, imageUrl)
     }
 
     suspend fun getLocalRecipeById(id: String): RecipeModel? {

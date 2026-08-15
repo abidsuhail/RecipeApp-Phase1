@@ -10,6 +10,7 @@ import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
+import com.abid.recipeapp.util.datamapper.toRecipeModel
 import com.abid.recipeapp.util.exception.InvalidRecipeIdException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -139,8 +140,8 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun saveRecipe(recipeModel: CreateRecipeFormStateModel) {
-        localDataSource.saveRecipeToDb(recipeModel, false)
-        val listener = remoteDataSource.saveRecipe(recipeModel)
+        localDataSource.saveRecipeToDb(recipeModel.toRecipeModel(), false)
+        val listener = remoteDataSource.saveRecipe(recipeModel.toRecipeModel())
         val isSuccess = suspendCancellableCoroutine<Boolean> { continuation ->
             listener.addOnSuccessListener {
                 continuation.resume(true)
@@ -157,7 +158,7 @@ class RecipeRepository @Inject constructor(
         val localImagePath = localDataSource.copyImageToInternalStorage(recipeId, imageUri)
         try {
             val remoteImageUrl = remoteDataSource.uploadImage(imageUri)
-            localDataSource.saveRemoteImageUrl(recipeId, remoteImageUrl)
+            localDataSource.updateRecipeImage(recipeId, remoteImageUrl)
         } catch (e: Exception) {
             Timber.e("Image upload failed, using local path : $e")
         }

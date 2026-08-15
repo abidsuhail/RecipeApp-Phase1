@@ -1,7 +1,6 @@
 package com.abid.recipeapp.data.remote
 
 import android.net.Uri
-import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
 import com.abid.recipeapp.data.model.FavRecipeModel
 import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
@@ -109,7 +108,7 @@ class RecipeRemoteDataSource @Inject constructor(
         }
     }
 
-    suspend fun saveRecipe(recipeModel: CreateRecipeFormStateModel): Task<Void> {
+    suspend fun saveRecipe(recipeModel: RecipeModel): Task<Void> {
         return withContext(Dispatchers.IO) {
             val docRef = db.collection(RECIPES).document()
             val recipe = recipeModel.copy(id = docRef.id)

@@ -16,11 +16,8 @@ interface RecipeDao {
     suspend fun insertAll(recipes: List<RecipeEntity>)
 
 
-    /*    @Query("SELECT * FROM recipes ORDER BY id ASC")
-        suspend fun getAllRecipes(): List<RecipeEntity>*/
-
     @Query("SELECT * FROM recipes ORDER BY id ASC")
-    fun getAllRecipesFlow(): Flow<List<RecipeEntity>>
+    fun getAllRecipes(): Flow<List<RecipeEntity>>
 
     @Query("SELECT * FROM recipes WHERE id = :id")
     suspend fun getRecipeById(id: String): RecipeEntity?
@@ -47,6 +44,11 @@ interface RecipeDao {
 
     @Query("SELECT * FROM recipes WHERE isSynced = 0")
     suspend fun getUnsyncedRecipes(): List<RecipeEntity>
+
+
+    @Query("UPDATE recipes SET image = :imageUrl WHERE id = :recipeId")
+    suspend fun updateRecipeImage(recipeId: String, imageUrl: String)
+
 
     @Query("DELETE FROM recipes")
     suspend fun deleteAll()
