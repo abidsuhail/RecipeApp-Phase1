@@ -109,7 +109,7 @@ class RecipeRemoteDataSource @Inject constructor(
 
     suspend fun saveRecipe(recipeModel: RecipeModel): Boolean {
         return withContext(Dispatchers.IO) {
-            val docRef = db.collection(RECIPES).document()
+            val docRef = db.collection(RECIPES).document(recipeModel.id)
             //val recipe = recipeModel.copy(id = docRef.id)
             val listener = docRef.set(recipeModel)
             val isSuccess = suspendCancellableCoroutine { continuation ->
