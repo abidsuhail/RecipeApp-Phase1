@@ -16,7 +16,6 @@ import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_INGREDIENTS_
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
-import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
@@ -108,11 +107,19 @@ class RecipeRemoteDataSource @Inject constructor(
         }
     }
 
-    suspend fun saveRecipe(recipeModel: RecipeModel): Task<Void> {
+    suspend fun saveRecipe(recipeModel: RecipeModel): Boolean {
         return withContext(Dispatchers.IO) {
             val docRef = db.collection(RECIPES).document()
-            val recipe = recipeModel.copy(id = docRef.id)
-            docRef.set(recipe)
+            //val recipe = recipeModel.copy(id = docRef.id)
+            val listener = docRef.set(recipeModel)
+            val isSuccess = suspendCancellableCoroutine { continuation ->
+                listener.addOnSuccessListener {
+                    continuation.resume(true)
+                }.addOnFailureListener {
+                    continuation.resume(false)
+                }
+            }
+            isSuccess
         }
     }
 

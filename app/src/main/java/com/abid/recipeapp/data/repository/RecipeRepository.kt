@@ -13,17 +13,18 @@ import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
 import com.abid.recipeapp.util.datamapper.toRecipeModel
 import com.abid.recipeapp.util.exception.InvalidRecipeIdException
 import com.abid.recipeapp.util.isLocalUri
+import com.abid.recipeapp.util.network.NetworkMonitor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
+import java.util.UUID
 import javax.inject.Inject
-import kotlin.coroutines.resume
 
 class RecipeRepository @Inject constructor(
     private val localDataSource: RecipeLocalDataSource,
     private val remoteDataSource: RecipeRemoteDataSource,
+    private val networkMonitor: NetworkMonitor
 ) {
     fun getAllRecipes(): Flow<List<RecipeModel>> {
         return localDataSource.getLocalAllRecipesList()
@@ -140,18 +141,21 @@ class RecipeRepository @Inject constructor(
         return localDataSource.isFavLocally(recipeId)
     }
 
+    private fun generateNewRecipeId(): String {
+        return UUID.randomUUID().toString().replace("-", "")
+    }
+
     suspend fun saveRecipe(recipeModel: CreateRecipeFormStateModel) {
-        localDataSource.saveRecipeToDb(recipeModel.toRecipeModel(), false)
-        val listener = remoteDataSource.saveRecipe(recipeModel.toRecipeModel())
-        val isSuccess = suspendCancellableCoroutine<Boolean> { continuation ->
-            listener.addOnSuccessListener {
-                continuation.resume(true)
-            }.addOnFailureListener {
-                continuation.resume(false)
+        val tempLocalRecipeId = recipeModel.id.ifBlank { generateNewRecipeId() }
+        localDataSource.saveRecipeToDb(
+            recipeModel.copy(id = tempLocalRecipeId).toRecipeModel(),
+            false
+        )
+        if (networkMonitor.isConnected()) {
+            val isSuccess = remoteDataSource.saveRecipe(recipeModel.toRecipeModel())
+            if (isSuccess) {
+                localDataSource.markRecipeAsSynced(recipeModel.id)
             }
-        }
-        if (isSuccess) {
-            localDataSource.markRecipeAsSynced(recipeModel.id)
         }
     }
 
@@ -189,7 +193,9 @@ class RecipeRepository @Inject constructor(
     suspend fun uploadImage(recipeId: String, imageUri: Uri): String {
         val localImagePath = localDataSource.copyImageToInternalStorage(recipeId, imageUri)
         try {
-            uploadImgToCloudAndSyncDb(imageUri, recipeId)
+            if (networkMonitor.isConnected()) {
+                uploadImgToCloudAndSyncDb(imageUri, recipeId)
+            }
         } catch (e: Exception) {
             Timber.e("Image upload failed, using local path : $e")
         }
