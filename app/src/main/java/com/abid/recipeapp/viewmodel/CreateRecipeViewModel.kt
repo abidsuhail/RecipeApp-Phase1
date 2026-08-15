@@ -174,7 +174,7 @@ class CreateRecipeViewModel @Inject constructor(
                         )
                     return@launch
                 }
-                val uploadedImageUrl = repository.uploadImage(imageUri)
+                val uploadedImageUrl = repository.uploadImage(recipeModel.id, imageUri)
                 val updatedRecipeModel = recipeModel.copy(
                     image = uploadedImageUrl.ifBlank { "" }
                 )
@@ -182,20 +182,11 @@ class CreateRecipeViewModel @Inject constructor(
                     _uiState.value?.copy(
                         uploadedImageUrl = uploadedImageUrl.ifBlank { null }
                     )
-                val listener = repository.saveRecipe(updatedRecipeModel)
-                listener.addOnSuccessListener {
-                    _uiState.value =
-                        _uiState.value?.copy(
-                            isLoading = false,
-                            recipeSaveState = RecipeSaveState.Success(updatedRecipeModel),
-                        )
-                }.addOnFailureListener {
-                    _uiState.value =
-                        _uiState.value?.copy(
-                            isLoading = false,
-                            errorMsg = "Unable to save recipe"
-                        )
-                }
+                repository.saveRecipe(updatedRecipeModel)
+                _uiState.value = _uiState.value?.copy(
+                    isLoading = false,
+                    recipeSaveState = RecipeSaveState.Success(updatedRecipeModel)
+                )
             } catch (e: Exception) {
                 _uiState.value =
                     _uiState.value?.copy(isLoading = false, errorMsg = e.message)

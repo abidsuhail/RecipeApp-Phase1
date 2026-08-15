@@ -16,4 +16,10 @@ interface PendingRecipeDao {
 
     @Query("DELETE FROM pending_recipes WHERE id = :id")
     suspend fun delete(id: String)
+
+    @Query("UPDATE pending_recipes SET image = :url, isImageUploaded = 1 WHERE id = :id")
+    suspend fun markImageUploaded(id: String, url: String)
+
+    @Query("UPDATE pending_recipes SET image = :remoteUrl WHERE id = :recipeId")
+    suspend fun updateRemoteImageUrl(recipeId: String, remoteUrl: String)
 }

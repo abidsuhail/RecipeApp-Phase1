@@ -26,7 +26,9 @@ data class CreateRecipeFormStateEntity(
     val ingredients: List<IngredientFormStateEntity> = emptyList(),
     val instructions: List<String> = emptyList(),
     @Embedded(prefix = "nutrition_") val nutrition: NutritionFormStateEntity = NutritionFormStateEntity(),
-    val isSynced: Boolean = false
+    val isSynced: Boolean = false,
+    val isImageUploaded: Boolean = false,
+    val localImagePath: String = "",
 )
 
 data class IngredientFormStateEntity(

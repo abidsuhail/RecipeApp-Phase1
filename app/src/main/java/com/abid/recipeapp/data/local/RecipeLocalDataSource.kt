@@ -1,12 +1,16 @@
 package com.abid.recipeapp.data.local
 
+import android.content.Context
+import android.net.Uri
 import com.abid.recipeapp.data.local.dao.CategoriesDao
 import com.abid.recipeapp.data.local.dao.CuisinesDao
 import com.abid.recipeapp.data.local.dao.DiffLvlDao
 import com.abid.recipeapp.data.local.dao.FavRecipeDao
 import com.abid.recipeapp.data.local.dao.IngredientsTabDao
+import com.abid.recipeapp.data.local.dao.PendingRecipeDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
 import com.abid.recipeapp.data.local.entities.FavRecipeEntity
+import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
 import com.abid.recipeapp.data.model.FavRecipeModel
 import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
@@ -18,6 +22,8 @@ import com.abid.recipeapp.util.datamapper.toModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import toEntity
+import java.io.File
 
 class RecipeLocalDataSource(
     private val recipeDao: RecipeDao,
@@ -25,7 +31,9 @@ class RecipeLocalDataSource(
     private val categoriesDao: CategoriesDao,
     private val diffLvlDao: DiffLvlDao,
     private val ingredientsTabDao: IngredientsTabDao,
-    private val favRecipeDao: FavRecipeDao
+    private val favRecipeDao: FavRecipeDao,
+    private val pendingRecipeDao: PendingRecipeDao,
+    private val context: Context
 ) {
 
     /*    suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
@@ -100,6 +108,14 @@ class RecipeLocalDataSource(
         }
     }
 
+    suspend fun saveRecipeToLocal(formData: CreateRecipeFormStateModel) {
+        pendingRecipeDao.insert(formData.toEntity())
+    }
+
+    suspend fun deletePendingRecipe(recipeId: String) {
+        pendingRecipeDao.delete(recipeId)
+    }
+
     suspend fun saveFavRecipesListToDb(recipes: List<FavRecipeModel>) {
         favRecipeDao.insertAll(recipes.map { it.toEntity() })
     }
@@ -137,6 +153,20 @@ class RecipeLocalDataSource(
 
     suspend fun markFavSynced(recipeId: String) {
         favRecipeDao.markFavSynced(recipeId)
+    }
+
+    suspend fun saveRemoteImageUrl(recipeId: String, remoteUrl: String) {
+        pendingRecipeDao.updateRemoteImageUrl(recipeId, remoteUrl)
+    }
+
+    fun copyImageToInternalStorage(recipeId: String, uri: Uri): String {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val file = File(context.filesDir, "pending_images/$recipeId.jpg")
+        file.parentFile?.mkdirs()
+        inputStream?.use { input ->
+            file.outputStream().use { output -> input.copyTo(output) }
+        }
+        return file.absolutePath
     }
 
 }

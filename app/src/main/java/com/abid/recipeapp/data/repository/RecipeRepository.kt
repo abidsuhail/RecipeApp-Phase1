@@ -11,15 +11,17 @@ import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
 import com.abid.recipeapp.util.exception.InvalidRecipeIdException
-import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.suspendCancellableCoroutine
+import timber.log.Timber
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 class RecipeRepository @Inject constructor(
     private val localDataSource: RecipeLocalDataSource,
-    private val remoteDataSource: RecipeRemoteDataSource
+    private val remoteDataSource: RecipeRemoteDataSource,
 ) {
     fun getAllRecipes(): Flow<List<RecipeModel>> {
         return localDataSource.getLocalAllRecipesList()
@@ -136,12 +138,30 @@ class RecipeRepository @Inject constructor(
         return localDataSource.isFavLocally(recipeId)
     }
 
-    suspend fun saveRecipe(recipeModel: CreateRecipeFormStateModel): Task<Void> {
-        return remoteDataSource.saveRecipe(recipeModel)
+    suspend fun saveRecipe(recipeModel: CreateRecipeFormStateModel) {
+        localDataSource.saveRecipeToLocal(recipeModel)
+        val listener = remoteDataSource.saveRecipe(recipeModel)
+        val isSuccess = suspendCancellableCoroutine<Boolean> { continuation ->
+            listener.addOnSuccessListener {
+                continuation.resume(true)
+            }.addOnFailureListener {
+                continuation.resume(false)
+            }
+        }
+        if (isSuccess) {
+            localDataSource.deletePendingRecipe(recipeModel.id)
+        }
     }
 
-    suspend fun uploadImage(imageUri: Uri): String {
-        return remoteDataSource.uploadImage(imageUri)
+    suspend fun uploadImage(recipeId: String, imageUri: Uri): String {
+        val localImagePath = localDataSource.copyImageToInternalStorage(recipeId, imageUri)
+        try {
+            val remoteImageUrl = remoteDataSource.uploadImage(imageUri)
+            localDataSource.saveRemoteImageUrl(recipeId, remoteImageUrl)
+        } catch (e: Exception) {
+            Timber.e("Image upload failed, using local path", e)
+        }
+        return localImagePath
     }
 
 
