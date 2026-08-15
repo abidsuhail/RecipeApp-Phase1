@@ -155,8 +155,20 @@ class RecipeRepository @Inject constructor(
         }
     }
 
+    suspend fun syncAllPendingRecipesData() {
+        val unsyncedRecipes = localDataSource.getUnsyncedRecipes()
+        for (recipe in unsyncedRecipes) {
+            try {
+                remoteDataSource.saveRecipe(recipe)
+                localDataSource.markRecipeAsSynced(recipe.id)
+            } catch (e: Exception) {
+                Timber.e("Recipe data sync failed for ${recipe.id}: $e")
+            }
+        }
+    }
 
-    suspend fun syncAllRecipeImages() {
+
+    suspend fun syncAllPendingRecipeImages() {
         val recipes = localDataSource.getLocalAllRecipesList()
             .first()
             .filter { it.image.isLocalUri() }

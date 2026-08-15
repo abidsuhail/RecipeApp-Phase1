@@ -27,7 +27,8 @@ class SyncViewModel @Inject constructor(
                 .collect {
                     Timber.e("Doing sync")
                     repository.syncPendingFavs()
-                    repository.syncAllRecipeImages()
+                    repository.syncAllPendingRecipesData()
+                    repository.syncAllPendingRecipeImages()
                 }
         }
     }
