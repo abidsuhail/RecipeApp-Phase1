@@ -7,7 +7,6 @@ import com.abid.recipeapp.data.local.dao.CuisinesDao
 import com.abid.recipeapp.data.local.dao.DiffLvlDao
 import com.abid.recipeapp.data.local.dao.FavRecipeDao
 import com.abid.recipeapp.data.local.dao.IngredientsTabDao
-import com.abid.recipeapp.data.local.dao.PendingRecipeDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
 import com.abid.recipeapp.data.local.entities.CreateRecipeFormStateEntity
 import com.abid.recipeapp.data.local.entities.FavRecipeEntity
@@ -37,5 +36,4 @@ abstract class RecipeDatabase : RoomDatabase() {
     abstract fun diffLvlDao(): DiffLvlDao
     abstract fun ingredientsTabDao(): IngredientsTabDao
     abstract fun favRecipeDao(): FavRecipeDao
-    abstract fun pendingRecipeDao(): PendingRecipeDao
 }

@@ -2,7 +2,6 @@ package com.abid.recipeapp.data.local.converters
 
 import androidx.room.TypeConverter
 import com.abid.recipeapp.data.local.entities.IngredientEntity
-import com.abid.recipeapp.data.local.entities.IngredientFormStateEntity
 import com.abid.recipeapp.data.model.RecipeDiffLvl
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -32,15 +31,6 @@ class RecipeConverters {
         return gson.fromJson(json, type) ?: emptyList()
     }
 
-    @TypeConverter
-    fun fromIngredientFormStateEntityList(list: List<IngredientFormStateEntity>?): String =
-        gson.toJson(list ?: emptyList<IngredientFormStateEntity>())
-
-    @TypeConverter
-    fun toIngredientFormStateEntityList(json: String): List<IngredientFormStateEntity> {
-        val type = object : TypeToken<List<IngredientFormStateEntity>>() {}.type
-        return gson.fromJson(json, type) ?: emptyList()
-    }
 
     // ---- Enum ----
     @TypeConverter

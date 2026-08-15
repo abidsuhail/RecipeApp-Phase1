@@ -25,6 +25,7 @@ data class RecipeEntity(
     val tags: List<String> = emptyList(),
     val ingredients: List<IngredientEntity> = emptyList(),
     val instructions: List<String> = emptyList(),
+    val isSynced: Boolean = true,
     @Embedded(prefix = "nutrition_") val nutrition: NutritionEntity = NutritionEntity()
 )
 

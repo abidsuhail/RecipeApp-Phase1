@@ -7,10 +7,8 @@ import com.abid.recipeapp.data.local.dao.CuisinesDao
 import com.abid.recipeapp.data.local.dao.DiffLvlDao
 import com.abid.recipeapp.data.local.dao.FavRecipeDao
 import com.abid.recipeapp.data.local.dao.IngredientsTabDao
-import com.abid.recipeapp.data.local.dao.PendingRecipeDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
 import com.abid.recipeapp.data.local.entities.FavRecipeEntity
-import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
 import com.abid.recipeapp.data.model.FavRecipeModel
 import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
@@ -19,10 +17,10 @@ import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.util.datamapper.toEntity
 import com.abid.recipeapp.util.datamapper.toModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import toEntity
 import java.io.File
 
 class RecipeLocalDataSource(
@@ -32,12 +30,11 @@ class RecipeLocalDataSource(
     private val diffLvlDao: DiffLvlDao,
     private val ingredientsTabDao: IngredientsTabDao,
     private val favRecipeDao: FavRecipeDao,
-    private val pendingRecipeDao: PendingRecipeDao,
-    private val context: Context
+    @ApplicationContext private val context: Context
 ) {
 
     /*    suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
-            recipeDao.insert(recipeModel.toEntity())
+            recipeDao.insert(recipeModel.com.abid.recipeapp.util.datamapper.toEntity())
         }*/
 
     suspend fun saveCuisinesListToDb(cuisinesModels: List<RecipeCuisinesDataModel>) {
@@ -60,8 +57,12 @@ class RecipeLocalDataSource(
         }
     }
 
-    suspend fun saveRecipeListToDb(recipeModels: List<RecipeModel>) {
-        recipeDao.insertAll(recipeModels.map { it.toEntity() })
+    suspend fun saveRecipeListToDb(recipeModels: List<RecipeModel>, isSynced: Boolean) {
+        recipeDao.insertAll(recipeModels.map { it.toEntity(isSynced) })
+    }
+
+    suspend fun saveRecipeToDb(recipeModel: RecipeModel, isSynced: Boolean) {
+        recipeDao.insert(recipeModel.toEntity(isSynced))
     }
 
     fun getLocalAllRecipesList(): Flow<List<RecipeModel>> {
@@ -72,6 +73,14 @@ class RecipeLocalDataSource(
 
     suspend fun getLocalRecipeById(id: String): RecipeModel? {
         return recipeDao.getRecipeById(id)?.toModel()
+    }
+
+    suspend fun markRecipeAsSynced(recipeId: String) {
+        recipeDao.markAsSynced(recipeId)
+    }
+
+    suspend fun getUnsyncedRecipes(): List<RecipeModel> {
+        return recipeDao.getUnsyncedRecipes().map { it.toModel() }
     }
 
     fun getRecipesByFiltersLocal(
@@ -108,13 +117,6 @@ class RecipeLocalDataSource(
         }
     }
 
-    suspend fun saveRecipeToLocal(formData: CreateRecipeFormStateModel) {
-        pendingRecipeDao.insert(formData.toEntity())
-    }
-
-    suspend fun deletePendingRecipe(recipeId: String) {
-        pendingRecipeDao.delete(recipeId)
-    }
 
     suspend fun saveFavRecipesListToDb(recipes: List<FavRecipeModel>) {
         favRecipeDao.insertAll(recipes.map { it.toEntity() })
@@ -155,9 +157,6 @@ class RecipeLocalDataSource(
         favRecipeDao.markFavSynced(recipeId)
     }
 
-    suspend fun saveRemoteImageUrl(recipeId: String, remoteUrl: String) {
-        pendingRecipeDao.updateRemoteImageUrl(recipeId, remoteUrl)
-    }
 
     fun copyImageToInternalStorage(recipeId: String, uri: Uri): String {
         val inputStream = context.contentResolver.openInputStream(uri)

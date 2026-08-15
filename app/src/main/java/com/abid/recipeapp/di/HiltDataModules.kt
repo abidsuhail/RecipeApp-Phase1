@@ -6,13 +6,11 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
-import com.abid.recipeapp.data.local.RecipeLocalDataSource
 import com.abid.recipeapp.data.local.dao.CategoriesDao
 import com.abid.recipeapp.data.local.dao.CuisinesDao
 import com.abid.recipeapp.data.local.dao.DiffLvlDao
 import com.abid.recipeapp.data.local.dao.FavRecipeDao
 import com.abid.recipeapp.data.local.dao.IngredientsTabDao
-import com.abid.recipeapp.data.local.dao.PendingRecipeDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
 import com.abid.recipeapp.data.local.db.RecipeDatabase
 import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
@@ -48,25 +46,26 @@ object RepositoryModule {
         return RecipeRemoteDataSource(db)
     }
 
-    @Singleton
-    @Provides
-    fun providesRecipeLocalDataSource(
-        recipeDao: RecipeDao,
-        cuisinesDao: CuisinesDao,
-        categoriesDao: CategoriesDao,
-        diffLvlDao: DiffLvlDao,
-        ingredientsTabDao: IngredientsTabDao,
-        favRecipeDao: FavRecipeDao
-    ): RecipeLocalDataSource {
-        return RecipeLocalDataSource(
-            recipeDao,
-            cuisinesDao,
-            categoriesDao,
-            diffLvlDao,
-            ingredientsTabDao,
-            favRecipeDao
-        )
-    }
+    /*    @Singleton
+        @Provides
+        fun providesRecipeLocalDataSource(
+            recipeDao: RecipeDao,
+            cuisinesDao: CuisinesDao,
+            categoriesDao: CategoriesDao,
+            diffLvlDao: DiffLvlDao,
+            ingredientsTabDao: IngredientsTabDao,
+            favRecipeDao: FavRecipeDao,
+            context: Context
+        ): RecipeLocalDataSource {
+            return RecipeLocalDataSource(
+                recipeDao,
+                cuisinesDao,
+                categoriesDao,
+                diffLvlDao,
+                ingredientsTabDao,
+                favRecipeDao
+            )
+        }*/
 
     @Provides
     @Singleton
@@ -109,11 +108,6 @@ object RepositoryModule {
     fun provideCategoriesDao(recipeDatabase: RecipeDatabase): CategoriesDao {
         return recipeDatabase.categoriesDao()
     }
-
-    @Provides
-    @Singleton
-    fun providePendingRecipeDao(database: RecipeDatabase): PendingRecipeDao =
-        database.pendingRecipeDao()
 
 
     @Provides

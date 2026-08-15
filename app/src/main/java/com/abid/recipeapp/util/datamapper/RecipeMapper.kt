@@ -8,7 +8,7 @@ import com.abid.recipeapp.data.model.IngredientModel
 import com.abid.recipeapp.data.model.NutritionModel
 import com.abid.recipeapp.data.model.RecipeModel
 
-fun RecipeModel.toEntity(): RecipeEntity = RecipeEntity(
+fun RecipeModel.toEntity(isSynced: Boolean): RecipeEntity = RecipeEntity(
     id = id,
     title = title,
     description = description,

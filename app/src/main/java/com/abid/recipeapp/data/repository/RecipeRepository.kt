@@ -29,7 +29,7 @@ class RecipeRepository @Inject constructor(
 
     suspend fun refreshAllRecipes() {
         val remote = remoteDataSource.getAllRecipes()
-        localDataSource.saveRecipeListToDb(remote)
+        localDataSource.saveRecipeListToDb(remote, true)
     }
 
     fun getRecipeCategories(): Flow<List<RecipeCategoriesDataModel>> {
@@ -139,7 +139,7 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun saveRecipe(recipeModel: CreateRecipeFormStateModel) {
-        localDataSource.saveRecipeToLocal(recipeModel)
+        localDataSource.saveRecipeToDb(recipeModel, false)
         val listener = remoteDataSource.saveRecipe(recipeModel)
         val isSuccess = suspendCancellableCoroutine<Boolean> { continuation ->
             listener.addOnSuccessListener {
@@ -149,7 +149,7 @@ class RecipeRepository @Inject constructor(
             }
         }
         if (isSuccess) {
-            localDataSource.deletePendingRecipe(recipeModel.id)
+            localDataSource.markRecipeAsSynced(recipeModel.id)
         }
     }
 
@@ -159,7 +159,7 @@ class RecipeRepository @Inject constructor(
             val remoteImageUrl = remoteDataSource.uploadImage(imageUri)
             localDataSource.saveRemoteImageUrl(recipeId, remoteImageUrl)
         } catch (e: Exception) {
-            Timber.e("Image upload failed, using local path", e)
+            Timber.e("Image upload failed, using local path : $e")
         }
         return localImagePath
     }
