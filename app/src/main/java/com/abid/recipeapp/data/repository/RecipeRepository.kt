@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
+import java.io.File
 import java.util.UUID
 import javax.inject.Inject
 
@@ -147,7 +148,11 @@ class RecipeRepository @Inject constructor(
 
     private suspend fun uploadImgToCloudAndSyncDb(imageUri: Uri, recipeId: String) {
         val remoteImageUrl = remoteDataSource.uploadImage(imageUri)
-        localDataSource.updateRecipeImage(recipeId, remoteImageUrl)
+        if (remoteImageUrl.isNotBlank()) {
+            localDataSource.updateRecipeImage(recipeId, remoteImageUrl)
+            remoteDataSource.updateRecipeImageUrl(recipeId, remoteImageUrl)
+            localDataSource.deleteRecipeImageLocal(recipeId)
+        }
     }
 
     private suspend fun uploadImage(recipeId: String, imageUri: Uri): String {
@@ -197,7 +202,7 @@ class RecipeRepository @Inject constructor(
             .filter { it.image.isLocalUri() }
         for (recipe in recipes) {
             try {
-                uploadImgToCloudAndSyncDb(Uri.parse(recipe.image), recipe.id)
+                uploadImgToCloudAndSyncDb(Uri.fromFile(File(recipe.image)), recipe.id)
             } catch (e: Exception) {
                 Timber.e("Image sync failed, using local path : $e")
             }

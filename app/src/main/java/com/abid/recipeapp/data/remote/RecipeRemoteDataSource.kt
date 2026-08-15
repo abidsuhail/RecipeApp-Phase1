@@ -197,4 +197,10 @@ class RecipeRemoteDataSource @Inject constructor(
                 .dispatch()
         }
     }
+
+    suspend fun updateRecipeImageUrl(recipeId: String, imageUrl: String) {
+        db.collection(RECIPES).document(recipeId)
+            .update("image", imageUrl)
+            .await()
+    }
 }

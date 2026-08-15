@@ -172,4 +172,11 @@ class RecipeLocalDataSource(
         return file.absolutePath
     }
 
+    fun deleteRecipeImageLocal(recipeId: String) {
+        val file = File(context.filesDir, "pending_images/$recipeId.jpg")
+        if (file.exists()) {
+            file.delete()
+        }
+    }
+
 }
