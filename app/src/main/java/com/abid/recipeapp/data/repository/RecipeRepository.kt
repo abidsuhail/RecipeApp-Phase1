@@ -146,20 +146,32 @@ class RecipeRepository @Inject constructor(
         return UUID.randomUUID().toString().replace("-", "")
     }
 
-    private suspend fun uploadImgToCloudAndSyncDb(imageUri: Uri, recipeId: String) {
+    /*    private suspend fun uploadImgToCloudAndSyncDb(imageUri: Uri, recipeId: String): String {
+            val remoteImageUrl = remoteDataSource.uploadImage(imageUri)
+            if (remoteImageUrl.isNotBlank()) {
+                localDataSource.updateRecipeImageUrl(
+                    recipeId,
+                    remoteImageUrl
+                ) //this doesnt work before saving,i think it not needed here it needed in recipesaving func
+                remoteDataSource.updateRecipeImageUrl(
+                    recipeId,
+                    remoteImageUrl
+                ) //this doesnt work before saving,i think it not needed here it needed in recipesaving func
+                localDataSource.deleteRecipeImageLocal(recipeId)
+            }
+            return remoteImageUrl
+        }*/
+
+    private suspend fun uploadImageToCloud(imageUri: Uri): String {
         val remoteImageUrl = remoteDataSource.uploadImage(imageUri)
-        if (remoteImageUrl.isNotBlank()) {
-            localDataSource.updateRecipeImageUrl(recipeId, remoteImageUrl)
-            remoteDataSource.updateRecipeImageUrl(recipeId, remoteImageUrl)
-            localDataSource.deleteRecipeImageLocal(recipeId)
-        }
+        return remoteImageUrl
     }
 
     private suspend fun uploadImage(recipeId: String, imageUri: Uri): String {
         val localImagePath = localDataSource.copyImageToInternalStorage(recipeId, imageUri)
         try {
             if (networkMonitor.isConnected()) {
-                uploadImgToCloudAndSyncDb(imageUri, recipeId)
+                return uploadImageToCloud(imageUri)
             }
         } catch (e: Exception) {
             Timber.e("Image upload failed, using local path : $e")
@@ -169,8 +181,9 @@ class RecipeRepository @Inject constructor(
 
     suspend fun saveRecipe(recipeModel: CreateRecipeFormStateModel, imageUri: Uri) {
         val recipeId = recipeModel.id.ifBlank { generateNewRecipeId() }
-        val localImagePath = uploadImage(recipeId, imageUri)
-        val finalRecipe = recipeModel.copy(id = recipeId, image = localImagePath).toRecipeModel()
+        val remoteUrlOrLocalPath = uploadImage(recipeId, imageUri)
+        val finalRecipe =
+            recipeModel.copy(id = recipeId, image = remoteUrlOrLocalPath).toRecipeModel()
         localDataSource.saveRecipeToDb(
             finalRecipe,
             false
@@ -202,7 +215,20 @@ class RecipeRepository @Inject constructor(
             .filter { it.image.isLocalUri() }
         for (recipe in recipes) {
             try {
-                uploadImgToCloudAndSyncDb(Uri.fromFile(File(recipe.image)), recipe.id)
+                if (networkMonitor.isConnected()) {
+                    val remoteImageUrl = uploadImageToCloud(Uri.fromFile(File(recipe.image)))
+                    if (remoteImageUrl.isNotBlank()) {
+                        localDataSource.updateRecipeImageUrl(
+                            recipe.id,
+                            remoteImageUrl
+                        )
+                        remoteDataSource.updateRecipeImageUrl(
+                            recipe.id,
+                            remoteImageUrl
+                        )
+                        localDataSource.deleteRecipeImageLocal(recipe.id)
+                    }
+                }
             } catch (e: Exception) {
                 Timber.e("Image sync failed, using local path : $e")
             }
