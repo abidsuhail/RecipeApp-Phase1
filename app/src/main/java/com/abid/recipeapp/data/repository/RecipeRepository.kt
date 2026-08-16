@@ -222,12 +222,14 @@ class RecipeRepository @Inject constructor(
             try {
                 val remoteImageUrl = uploadImageToCloud(Uri.fromFile(File(recipe.image)))
                 if (remoteImageUrl.isNotBlank()) {
-                    localDataSource.updateRecipeImageUrl(
-                        recipe.id,
-                        remoteImageUrl
-                    )
-                    localDataSource.markRecipeAsUnSynced(recipe.id) //marking un-sync because url is changed in db,so that it will re-sync in next func
-                    localDataSource.deleteRecipeImageLocal(recipe.id) //deleting temp img because now using remote url
+                    with(localDataSource) {
+                        updateRecipeImageUrl(
+                            recipe.id,
+                            remoteImageUrl
+                        )
+                        markRecipeAsUnSynced(recipe.id) //marking un-sync because url is changed in db,so that it will re-sync in next func
+                        deleteRecipeImageLocal(recipe.id) //deleting temp img because now using remote url
+                    }
                 }
             } catch (e: Exception) {
                 Timber.e("Image sync failed, using local path : $e")
