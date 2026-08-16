@@ -17,7 +17,6 @@ import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
@@ -35,40 +34,6 @@ class RecipeRemoteDataSource @Inject constructor(
         db.collection(RECIPES).get().await().toObjects(RecipeModel::class.java)
     }
 
-    suspend fun getRecipesByFilters(
-        categoryName: String? = null,
-        cuisineName: String? = null,
-        diffLvl: String? = null,
-        title: String? = null
-    ): List<RecipeModel> {
-        return withContext(Dispatchers.IO) {
-            var query: Query = db.collection(RECIPES)
-
-            if (!categoryName.isNullOrBlank()) {
-                query = query.whereEqualTo("category", categoryName)
-            }
-
-            if (!cuisineName.isNullOrBlank()) {
-                query = query.whereEqualTo("cuisine", cuisineName)
-            }
-
-            if (!diffLvl.isNullOrBlank()) {
-                query = query.whereEqualTo("difficulty", diffLvl)
-            }
-
-            val results = query.get().await().toObjects(RecipeModel::class.java)
-
-            //don't save filtered recipes
-            val finalData = if (!title.isNullOrBlank()) {
-                results.filter { recipe ->
-                    recipe.title.contains(title, ignoreCase = true)
-                }
-            } else {
-                results
-            }
-            return@withContext finalData
-        }
-    }
 
     suspend fun getIngredientsTabsItems(): List<IngredientsTabModel> {
         return withContext(Dispatchers.IO) {
@@ -99,13 +64,6 @@ class RecipeRemoteDataSource @Inject constructor(
         }
     }
 
-    suspend fun getRecipeById(id: String?): RecipeModel? {
-        if (id == null) return null
-        return withContext(Dispatchers.IO) {
-            val recipe = db.collection(RECIPES).document(id).get().await()
-            recipe.toObject(RecipeModel::class.java)
-        }
-    }
 
     suspend fun saveRecipe(recipeModel: RecipeModel): Boolean {
         return withContext(Dispatchers.IO) {
@@ -122,17 +80,6 @@ class RecipeRemoteDataSource @Inject constructor(
         }
     }
 
-    /*    suspend fun toggleFav(recipeId: String) {
-            withContext(Dispatchers.IO) {
-                val docRef = db.collection(FAV).document(recipeId)
-                val existingDoc = docRef.get().await()
-                if (existingDoc.exists()) {
-                    docRef.delete().await()
-                } else {
-                    docRef.set(FavRecipeModel(recipeId)).await()
-                }
-            }
-        }*/
     suspend fun saveFavRemote(recipeId: String) {
         withContext(Dispatchers.IO) {
             db.collection(FAV).document(recipeId).set(FavRecipeModel(recipeId)).await()
