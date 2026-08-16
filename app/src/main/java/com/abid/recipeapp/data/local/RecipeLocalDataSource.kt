@@ -83,6 +83,10 @@ class RecipeLocalDataSource(
         recipeDao.markAsSynced(recipeId)
     }
 
+    suspend fun markRecipeAsUnSynced(recipeId: String) {
+        recipeDao.markAsUnsynced(recipeId)
+    }
+
     suspend fun getUnsyncedRecipes(): List<RecipeModel> {
         return recipeDao.getUnsyncedRecipes().map { it.toModel() }
     }

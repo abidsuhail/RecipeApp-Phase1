@@ -197,7 +197,7 @@ class RecipeRepository @Inject constructor(
     }
 
     suspend fun syncAllPendingRecipes() {
-        syncAllPendingRecipeImages()
+        syncUploadPendingRecipeImages()
         syncAllPendingRecipesInfoData()
     }
 
@@ -214,7 +214,7 @@ class RecipeRepository @Inject constructor(
     }
 
 
-    private suspend fun syncAllPendingRecipeImages() {
+    private suspend fun syncUploadPendingRecipeImages() {
         val recipes = localDataSource.getLocalAllRecipesList()
             .first()
             .filter { it.image.isLocalUri() }
@@ -226,11 +226,8 @@ class RecipeRepository @Inject constructor(
                         recipe.id,
                         remoteImageUrl
                     )
-                    remoteDataSource.updateRecipeImageUrl(
-                        recipe.id,
-                        remoteImageUrl
-                    )
-                    localDataSource.deleteRecipeImageLocal(recipe.id)
+                    localDataSource.markRecipeAsUnSynced(recipe.id) //marking un-sync because url is changed in db,so that it will re-sync in next func
+                    localDataSource.deleteRecipeImageLocal(recipe.id) //deleting temp img because now using remote url
                 }
             } catch (e: Exception) {
                 Timber.e("Image sync failed, using local path : $e")

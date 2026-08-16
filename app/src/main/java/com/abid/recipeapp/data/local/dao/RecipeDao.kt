@@ -45,6 +45,8 @@ interface RecipeDao {
     @Query("SELECT * FROM recipes WHERE isDataSynced = 0")
     suspend fun getUnsyncedRecipes(): List<RecipeEntity>
 
+    @Query("UPDATE recipes SET isDataSynced = 0 WHERE id = :recipeId")
+    suspend fun markAsUnsynced(recipeId: String)
 
     @Query("UPDATE recipes SET image = :imageUrl WHERE id = :recipeId")
     suspend fun updateRecipeImage(recipeId: String, imageUrl: String)
