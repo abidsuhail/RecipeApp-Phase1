@@ -196,7 +196,12 @@ class RecipeRepository @Inject constructor(
         }
     }
 
-    suspend fun syncAllPendingRecipesData() {
+    suspend fun syncAllPendingRecipes() {
+        syncAllPendingRecipeImages()
+        syncAllPendingRecipesInfoData()
+    }
+
+    private suspend fun syncAllPendingRecipesInfoData() {
         val unsyncedRecipes = localDataSource.getUnsyncedRecipes()
         for (recipe in unsyncedRecipes) {
             try {
@@ -209,25 +214,23 @@ class RecipeRepository @Inject constructor(
     }
 
 
-    suspend fun syncAllPendingRecipeImages() {
+    private suspend fun syncAllPendingRecipeImages() {
         val recipes = localDataSource.getLocalAllRecipesList()
             .first()
             .filter { it.image.isLocalUri() }
         for (recipe in recipes) {
             try {
-                if (networkMonitor.isConnected()) {
-                    val remoteImageUrl = uploadImageToCloud(Uri.fromFile(File(recipe.image)))
-                    if (remoteImageUrl.isNotBlank()) {
-                        localDataSource.updateRecipeImageUrl(
-                            recipe.id,
-                            remoteImageUrl
-                        )
-                        remoteDataSource.updateRecipeImageUrl(
-                            recipe.id,
-                            remoteImageUrl
-                        )
-                        localDataSource.deleteRecipeImageLocal(recipe.id)
-                    }
+                val remoteImageUrl = uploadImageToCloud(Uri.fromFile(File(recipe.image)))
+                if (remoteImageUrl.isNotBlank()) {
+                    localDataSource.updateRecipeImageUrl(
+                        recipe.id,
+                        remoteImageUrl
+                    )
+                    remoteDataSource.updateRecipeImageUrl(
+                        recipe.id,
+                        remoteImageUrl
+                    )
+                    localDataSource.deleteRecipeImageLocal(recipe.id)
                 }
             } catch (e: Exception) {
                 Timber.e("Image sync failed, using local path : $e")
