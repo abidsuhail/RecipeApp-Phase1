@@ -33,9 +33,9 @@ class RecipeLocalDataSource(
     @ApplicationContext private val context: Context
 ) {
 
-    /*    suspend fun saveRecipeToDb(recipeModel: RecipeModel) {
-            recipeDao.insert(recipeModel.com.abid.recipeapp.util.datamapper.toEntity())
-        }*/
+    suspend fun deleteStaleSyncedRecipes(remoteIds: List<String>) {
+        recipeDao.deleteStaleSyncedRecipes(remoteIds)
+    }
 
     suspend fun saveCuisinesListToDb(cuisinesModels: List<RecipeCuisinesDataModel>) {
         cuisinesDao.insertAll(cuisinesModels.map { it.toEntity() })

@@ -31,9 +31,16 @@ class RecipeRepository @Inject constructor(
         return localDataSource.getLocalAllRecipesList()
     }
 
+    /*    suspend fun deleteStaleSyncedRecipes() {
+            if (networkMonitor.isConnected()) {
+                val remote = remoteDataSource.getAllRecipes()
+                localDataSource.deleteStaleSyncedRecipes(remote.map { it.id })
+            }
+        }*/
+
     suspend fun refreshAllRecipes() {
-        val remote = remoteDataSource.getAllRecipes()
-        localDataSource.saveRecipeListToDb(remote, true)
+        val recipesListRemote = remoteDataSource.getAllRecipes()
+        localDataSource.saveRecipeListToDb(recipesListRemote, true)
     }
 
     fun getRecipeCategories(): Flow<List<RecipeCategoriesDataModel>> {

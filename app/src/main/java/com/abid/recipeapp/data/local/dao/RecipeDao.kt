@@ -51,7 +51,7 @@ interface RecipeDao {
     @Query("UPDATE recipes SET image = :imageUrl WHERE id = :recipeId")
     suspend fun updateRecipeImage(recipeId: String, imageUrl: String)
 
+    @Query("DELETE FROM recipes WHERE isDataSynced = 1 AND id NOT IN (:remoteIds)")
+    suspend fun deleteStaleSyncedRecipes(remoteIds: List<String>)
 
-    @Query("DELETE FROM recipes")
-    suspend fun deleteAll()
 }
