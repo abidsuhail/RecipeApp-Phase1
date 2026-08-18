@@ -7,7 +7,10 @@ import com.abid.recipeapp.util.network.NetworkMonitor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import timber.log.Timber
@@ -23,6 +26,12 @@ class SyncViewModel @Inject constructor(
         Timber.e("Sync failed: $e")
     }
 
+    val isConnected: StateFlow<Boolean> = networkMonitor.observeConnectivity()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = networkMonitor.isConnected()
+        )
     
     init {
         observeConnectivityAndSync()
