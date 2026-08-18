@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import com.abid.recipeapp.util.Constants
 import com.abid.recipeapp.util.Dims
 
 @Composable
@@ -37,7 +38,7 @@ fun NoInternetBanner(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.width(Dims.Dp8))
         Text(
-            text = "No internet connection",
+            text = Constants.NO_INTERNET_CONNECTION,
             color = Color.White,
             fontSize = Dims.Sp13,
             fontWeight = FontWeight.Medium

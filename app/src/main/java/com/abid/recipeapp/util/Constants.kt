@@ -98,6 +98,7 @@ object Constants {
     const val UNABLE_TO_LOAD_CUISINES = "Unable to load cuisines"
     const val UNABLE_TO_LOAD_DIFFICULTY_LEVELS = "Unable to load difficulty levels"
     const val RECIPE_DB_NAME = "recipe_database"
+    const val NO_INTERNET_CONNECTION = "No internet connection"
 
     fun searchedRecipeNotFoundMsg(enteredSearchTitle: String?): String {
         if (enteredSearchTitle.isNullOrBlank()) {
