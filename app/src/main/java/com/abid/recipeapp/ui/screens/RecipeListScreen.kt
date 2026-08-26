@@ -18,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -47,20 +46,19 @@ fun RecipeListScreen(
 ) {
     val recipeListState by recipeListViewModel.state.observeAsState()
 
-    LaunchedEffect(Unit) {
-        recipeListViewModel.loadAllRecipes()
-        recipeListViewModel.loadRecipeCategories()
-    }
     Box() {
         Column(modifier = Modifier.padding(top = Dims.Dp10)) {
             RecipeListHeader(onClickAddRecipe)
             RecipeCategoriesList(recipeListState) { category ->
-                recipeListViewModel.loadAllRecipes(category)
+                recipeListViewModel.loadRecipesByFilter(categoryName = category)
             }
-            if (recipeListState?.isLoading == true) {
+            if (recipeListState?.isRecipesLoading == true || recipeListState?.isCategoriesLoading == true) {
                 LoadingStateBox()
-            } else if (!recipeListState?.errorMsg.isNullOrBlank()) {
-                ErrorStateBox(recipeListState!!.errorMsg!!)
+            } else if (!recipeListState?.recipesErrorMsg.isNullOrBlank()) {
+                ErrorStateBox(recipeListState!!.recipesErrorMsg!!)
+            } else if (!recipeListState?.categoriesErrorMsg.isNullOrBlank()) {
+                ErrorStateBox(recipeListState!!.categoriesErrorMsg!!)
+
             } else if (recipeListState?.recipeList?.isNotEmpty() == true) {
                 RecipeList(
                     recipeList = recipeListState?.recipeList,

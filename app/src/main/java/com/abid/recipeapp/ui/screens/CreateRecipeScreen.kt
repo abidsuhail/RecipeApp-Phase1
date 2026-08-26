@@ -98,11 +98,7 @@ fun CreateRecipeScreen(
     var uploadedImageUri by remember { mutableStateOf<Uri?>(null) }
 
     val uiState by vm.uiState.observeAsState()
-    LaunchedEffect(Unit) {
-        vm.loadRecipeCategories()
-        vm.loadCuisines()
-        vm.loadRecipeDifficulties()
-    }
+
     LaunchedEffect(uiState!!.recipeModel.instructions.size + uiState!!.recipeModel.ingredients.size) {
         if (isFirstRender) {
             isFirstRender = false

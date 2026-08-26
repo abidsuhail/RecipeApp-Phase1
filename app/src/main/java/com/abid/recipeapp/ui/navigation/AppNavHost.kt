@@ -1,8 +1,12 @@
 package com.abid.recipeapp.ui.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.abid.recipeapp.ui.components.NoInternetBanner
 import com.abid.recipeapp.ui.navigation.NavHelper.getScreenByRoute
 import com.abid.recipeapp.ui.navigation.NavHelper.goToCreateHomeScreen
 import com.abid.recipeapp.ui.navigation.NavHelper.goToCreateRecipeScreen
@@ -29,25 +34,40 @@ import com.abid.recipeapp.util.Dims
 
 @Composable
 fun AppNavHost(
+    isInternetConnected: Boolean,
     onThemeSelected: (AppThemeMode) -> Unit
 ) {
+
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val screen = getScreenByRoute(currentRoute)
     val isShowBottomBar = screen.showBottomBar
-    if (isShowBottomBar) {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            bottomBar = {
-                BottomNavBar(currentRoute) { route ->
-                    navController.navigate(route!!)
-                }
-            }) { innerPadding ->
-            AppNavGraph(navController, innerPadding, onThemeSelected)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+    ) {
+        AnimatedVisibility(visible = !isInternetConnected) {
+            NoInternetBanner()
         }
-    } else {
-        AppNavGraph(navController, onThemeSelected = onThemeSelected)
+        Box(modifier = Modifier.weight(1f)) {
+            if (isShowBottomBar) {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        BottomNavBar(currentRoute) { route ->
+                            navController.navigate(route!!)
+                        }
+                    }
+                ) { innerPadding ->
+                    AppNavGraph(navController, innerPadding, onThemeSelected)
+                }
+            } else {
+                AppNavGraph(navController, onThemeSelected = onThemeSelected)
+            }
+        }
     }
 
 }

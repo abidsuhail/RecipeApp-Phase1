@@ -24,6 +24,18 @@ class CreateRecipeViewModel @Inject constructor(
     private val _uiState = MutableLiveData(CreateRecipeUiState(isLoading = true))
     val uiState: LiveData<CreateRecipeUiState> = _uiState
 
+    init {
+        observeCategories()
+        refreshCategories()
+
+        observeCuisines()
+        refreshCuisines()
+
+        observeDiffLvls()
+        refreshDifficulties()
+    }
+
+
     private fun updateRecipe(update: CreateRecipeFormStateModel.() -> CreateRecipeFormStateModel) {
         _uiState.value = _uiState.value?.let { state ->
             state.copy(recipeModel = state.recipeModel.update())
@@ -87,17 +99,12 @@ class CreateRecipeViewModel @Inject constructor(
         })
     }
 
-    fun loadRecipeCategories() {
+    private fun refreshCategories() {
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value?.copy(isLoading = true)
-                val data = repository.getRecipeCategories()
-                if (data != null) {
-                    _uiState.value = _uiState.value?.copy(isLoading = false, categoriesList = data)
-                } else {
-                    _uiState.value =
-                        _uiState.value?.copy(isLoading = false, errorMsg = "Categories not found")
-                }
+                _uiState.value = _uiState.value?.copy(isLoading = true, errorMsg = null)
+                repository.refreshCategories()
+                _uiState.value = _uiState.value?.copy(isLoading = false)
             } catch (e: Exception) {
                 _uiState.value =
                     _uiState.value?.copy(isLoading = false, errorMsg = e.message)
@@ -105,17 +112,36 @@ class CreateRecipeViewModel @Inject constructor(
         }
     }
 
-    fun loadCuisines() {
+    private fun observeCategories() {
+        viewModelScope.launch {
+            repository.getRecipeCategories().collect { categories ->
+                _uiState.value = _uiState.value?.copy(categoriesList = categories)
+            }
+        }
+    }
+
+    private fun observeCuisines() {
+        viewModelScope.launch {
+            repository.getAllCuisines().collect { categories ->
+                _uiState.value = _uiState.value?.copy(cuisinesList = categories)
+            }
+        }
+    }
+
+    private fun observeDiffLvls() {
+        viewModelScope.launch {
+            repository.getAllRecipeDifficulties().collect { categories ->
+                _uiState.value = _uiState.value?.copy(difficultiesList = categories)
+            }
+        }
+    }
+
+    private fun refreshCuisines() {
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value?.copy(isLoading = true)
-                val data = repository.getCuisines()
-                if (data != null) {
-                    _uiState.value = _uiState.value?.copy(isLoading = false, cuisinesList = data)
-                } else {
-                    _uiState.value =
-                        _uiState.value?.copy(isLoading = false, errorMsg = "Cuisines not found")
-                }
+                repository.refreshAllCuisines()
+                _uiState.value = _uiState.value?.copy(isLoading = false)
             } catch (e: Exception) {
                 _uiState.value =
                     _uiState.value?.copy(isLoading = false, errorMsg = e.message)
@@ -123,21 +149,12 @@ class CreateRecipeViewModel @Inject constructor(
         }
     }
 
-    fun loadRecipeDifficulties() {
+    private fun refreshDifficulties() {
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value?.copy(isLoading = true)
-                val data = repository.getRecipeDifficulties()
-                if (data != null) {
-                    _uiState.value =
-                        _uiState.value?.copy(isLoading = false, difficultiesList = data)
-                } else {
-                    _uiState.value =
-                        _uiState.value?.copy(
-                            isLoading = false,
-                            errorMsg = "Difficulty level not found"
-                        )
-                }
+                repository.refreshRecipeDifficulties()
+                _uiState.value = _uiState.value?.copy(isLoading = false)
             } catch (e: Exception) {
                 _uiState.value =
                     _uiState.value?.copy(isLoading = false, errorMsg = e.message)
@@ -157,28 +174,11 @@ class CreateRecipeViewModel @Inject constructor(
                         )
                     return@launch
                 }
-                val uploadedImageUrl = repository.uploadImage(imageUri)
-                val updatedRecipeModel = recipeModel.copy(
-                    image = uploadedImageUrl.ifBlank { "" }
+                repository.saveRecipe(recipeModel, imageUri)
+                _uiState.value = _uiState.value?.copy(
+                    isLoading = false,
+                    recipeSaveState = RecipeSaveState.Success(recipeModel)
                 )
-                _uiState.value =
-                    _uiState.value?.copy(
-                        uploadedImageUrl = uploadedImageUrl.ifBlank { null }
-                    )
-                val listener = repository.saveRecipe(updatedRecipeModel)
-                listener.addOnSuccessListener {
-                    _uiState.value =
-                        _uiState.value?.copy(
-                            isLoading = false,
-                            recipeSaveState = RecipeSaveState.Success(updatedRecipeModel),
-                        )
-                }.addOnFailureListener {
-                    _uiState.value =
-                        _uiState.value?.copy(
-                            isLoading = false,
-                            errorMsg = "Unable to save recipe"
-                        )
-                }
             } catch (e: Exception) {
                 _uiState.value =
                     _uiState.value?.copy(isLoading = false, errorMsg = e.message)

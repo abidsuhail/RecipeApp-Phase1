@@ -2,89 +2,119 @@ package com.abid.recipeapp.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abid.recipeapp.data.repository.RecipeRepository
+import com.abid.recipeapp.ui.navigation.NavHelper
 import com.abid.recipeapp.ui.state.RecipeDetailsUiState
+import com.abid.recipeapp.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RecipeDetailsViewModel @Inject constructor(
-    private val repository: RecipeRepository
+    private val repository: RecipeRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _uiState = MutableLiveData(RecipeDetailsUiState(isLoading = true))
+    private val recipeId: String? = savedStateHandle[NavHelper.NAV_ARGS_RECIPE_ID_KEY]
+    private val _uiState = MutableLiveData(RecipeDetailsUiState())
     val uiState: LiveData<RecipeDetailsUiState> = _uiState
+
+    init {
+        observeIngredientsTabs()
+        observeFavStatus(recipeId)
+
+        loadRecipeById(recipeId)
+        refreshIngredientsTabs()
+        fetchIsInFav(recipeId)
+    }
 
     fun toggleFav(recipeId: String) {
         viewModelScope.launch {
+            _uiState.value = _uiState.value?.copy(isFavLoading = true, favErrorMsg = null)
             try {
-                _uiState.value = _uiState.value?.copy(isLoading = true)
                 repository.toggleFav(recipeId)
-                val isInFav = repository.isFav(recipeId)
-                _uiState.value = _uiState.value?.copy(isLoading = false, isFav = isInFav)
+                _uiState.value = _uiState.value?.copy(isFavLoading = false)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value?.copy(errorMsg = e.message, isLoading = false)
+                _uiState.value = _uiState.value?.copy(isFavLoading = false, favErrorMsg = e.message)
             }
         }
     }
 
-    fun fetchIsInFav(recipeId: String?) {
+    private fun fetchIsInFav(recipeId: String?) {
+        if (recipeId == null) return
+
         viewModelScope.launch {
+            _uiState.value = _uiState.value?.copy(isFavLoading = true, favErrorMsg = null)
             try {
-                if (recipeId == null) {
-                    return@launch
-                }
-                _uiState.value = _uiState.value?.copy(isLoading = true)
-                val isInFav = repository.isFav(recipeId)
-                _uiState.value = _uiState.value?.copy(isFav = isInFav)
-                _uiState.value = _uiState.value?.copy(isLoading = false)
+                repository.isFavLocally(recipeId)
+                _uiState.value = _uiState.value?.copy(isFavLoading = false)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value?.copy(errorMsg = e.message, isLoading = false)
+                _uiState.value = _uiState.value?.copy(isFavLoading = false, favErrorMsg = e.message)
             }
         }
     }
 
-    fun loadIngredientsTabs() {
+    private fun observeIngredientsTabs() {
         viewModelScope.launch {
-            try {
-                _uiState.value = _uiState.value?.copy(isLoading = true)
-                val data = repository.getIngredientsTabsItems()
-                if (data != null) {
-                    _uiState.value =
-                        _uiState.value?.copy(isLoading = false, ingredientsTabList = data)
-                } else {
-                    _uiState.value =
-                        _uiState.value?.copy(isLoading = false, errorMsg = "Ingredients not found")
-                }
-            } catch (e: Exception) {
+            repository.getIngredientsTabsItems().collect { tabItems ->
                 _uiState.value =
-                    _uiState.value?.copy(isLoading = false, errorMsg = e.message)
+                    _uiState.value?.copy(ingredientsTabList = tabItems)
+            }
+        }
+    }
+
+    private fun observeFavStatus(recipeId: String?) {
+        viewModelScope.launch {
+            if (recipeId.isNullOrBlank()) {
+                _uiState.value =
+                    _uiState.value?.copy(favErrorMsg = Constants.RECIPE_NOT_FOUND_ERROR_MSG)
+                return@launch
+            }
+            repository.isFavLocally(recipeId).collect { isFav ->
+                _uiState.value =
+                    _uiState.value?.copy(isFav = isFav)
+            }
+        }
+    }
+
+    fun refreshIngredientsTabs() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value?.copy(
+                isIngredientsTabsLoading = true,
+                ingredientsTabsErrorMsg = null
+            )
+            try {
+                repository.refreshIngredientsTabsItems()
+                _uiState.value = _uiState.value?.copy(isIngredientsTabsLoading = false)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value?.copy(
+                    isIngredientsTabsLoading = false,
+                    ingredientsTabsErrorMsg = e.message
+                )
             }
         }
     }
 
     fun loadRecipeById(recipeId: String?) {
         viewModelScope.launch {
+            _uiState.value = _uiState.value?.copy(isRecipeLoading = true, recipeErrorMsg = null)
             try {
-                _uiState.value = _uiState.value?.copy(isLoading = true)
                 val data = repository.getRecipeById(recipeId)
                 if (data != null) {
-                    _uiState.value =
-                        _uiState.value?.copy(isLoading = false, recipe = data)
+                    _uiState.value = _uiState.value?.copy(isRecipeLoading = false, recipe = data)
                 } else {
-                    _uiState.value =
-                        _uiState.value?.copy(
-                            isLoading = false,
-                            errorMsg = "Recipe not found, going back..."
-                        )
-
+                    _uiState.value = _uiState.value?.copy(
+                        isRecipeLoading = false,
+                        recipeErrorMsg = "Recipe not found, going back..."
+                    )
                 }
             } catch (e: Exception) {
                 _uiState.value =
-                    _uiState.value?.copy(isLoading = false, errorMsg = e.message)
+                    _uiState.value?.copy(isRecipeLoading = false, recipeErrorMsg = e.message)
             }
         }
     }

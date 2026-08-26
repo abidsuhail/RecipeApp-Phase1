@@ -10,7 +10,9 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abid.recipeapp.ui.navigation.AppNavHost
+import com.abid.recipeapp.viewmodel.SyncViewModel
 import com.abid.recipeapp.viewmodel.ThemeViewModel
 
 val LocalIsDarkTheme = compositionLocalOf { false }
@@ -66,8 +68,10 @@ fun String?.toAppTheme(): AppThemeMode {
 @Composable
 fun RecipeMainApp(
     themeViewModel: ThemeViewModel = hiltViewModel(),
+    syncViewModel: SyncViewModel = hiltViewModel()
 ) {
     val appThemeMode by themeViewModel.state.observeAsState(initial = AppThemeMode.SYSTEM)
+    val isInternetConnected by syncViewModel.isConnected.collectAsStateWithLifecycle()
 
     val isDark = when (appThemeMode) {
         AppThemeMode.DARK -> true
@@ -82,7 +86,8 @@ fun RecipeMainApp(
             colorScheme = colorScheme,
             typography = Typography,
             content = {
-                AppNavHost {
+
+                AppNavHost(isInternetConnected) {
                     themeViewModel.setTheme(it)
                 }
             }
