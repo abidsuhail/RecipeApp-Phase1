@@ -5,7 +5,7 @@ plugins {
     kotlin("kapt")
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.google.gms.google.services)
-    id("com.apollographql.apollo") version "5.0.1"
+    id("com.apollographql.apollo") version "4.4.3"
     //alias(libs.plugins.ksp)
 }
 apollo {
@@ -98,5 +98,5 @@ dependencies {
 
     implementation(libs.gson)
     implementation(libs.timber)
-    implementation("com.apollographql.apollo:apollo-runtime:5.0.1")
+    implementation("com.apollographql.apollo:apollo-runtime:4.4.3")
 }
