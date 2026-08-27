@@ -1,0 +1,9 @@
+query GetLanguages {
+    languages {
+        code
+        name
+    }
+    continents {
+        code
+    }
+}

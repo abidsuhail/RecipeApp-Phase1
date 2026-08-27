@@ -5,9 +5,14 @@ plugins {
     kotlin("kapt")
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.google.gms.google.services)
+    id("com.apollographql.apollo") version "5.0.1"
     //alias(libs.plugins.ksp)
 }
-
+apollo {
+    service("service") {
+        packageName.set("com.yourapp.graphql")
+    }
+}
 android {
     namespace = "com.abid.recipeapp"
     compileSdk = 36
@@ -53,6 +58,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
@@ -92,5 +98,5 @@ dependencies {
 
     implementation(libs.gson)
     implementation(libs.timber)
-
+    implementation("com.apollographql.apollo:apollo-runtime:5.0.1")
 }
