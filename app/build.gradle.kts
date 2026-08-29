@@ -32,11 +32,19 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "GRAPHQL_ENDPOINT", "\"http://10.0.2.2:4000/graphql\"")
+            buildConfigField(
+                "String",
+                "GRAPHQL_ENDPOINT",
+                "\"https://recipe-graphql.onrender.com/graphql\""
+            )
         }
         release {
             isMinifyEnabled = false
-            buildConfigField("String", "GRAPHQL_ENDPOINT", "\"http://10.0.2.2:4000/graphql\"")
+            buildConfigField(
+                "String",
+                "GRAPHQL_ENDPOINT",
+                "\"https://recipe-graphql.onrender.com/graphql\""
+            )
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
