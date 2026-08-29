@@ -16,6 +16,7 @@ query Favorites {
       servings
       tags
       instructions
+      createdAt
       ingredients {
         item
         amount

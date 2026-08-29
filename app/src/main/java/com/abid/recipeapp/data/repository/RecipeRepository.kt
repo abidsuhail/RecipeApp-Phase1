@@ -9,7 +9,7 @@ import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
-import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
+import com.abid.recipeapp.data.remote.RecipeGraphQLDataSource
 import com.abid.recipeapp.util.datamapper.toRecipeModel
 import com.abid.recipeapp.util.exception.InvalidRecipeIdException
 import com.abid.recipeapp.util.isLocalUri
@@ -24,19 +24,13 @@ import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(
     private val localDataSource: RecipeLocalDataSource,
-    private val remoteDataSource: RecipeRemoteDataSource,
+    private val remoteDataSource: RecipeGraphQLDataSource,
     private val networkMonitor: NetworkMonitor
 ) {
     fun getAllRecipes(): Flow<List<RecipeModel>> {
         return localDataSource.getLocalAllRecipesList()
     }
 
-    /*    suspend fun deleteStaleSyncedRecipes() {
-            if (networkMonitor.isConnected()) {
-                val remote = remoteDataSource.getAllRecipes()
-                localDataSource.deleteStaleSyncedRecipes(remote.map { it.id })
-            }
-        }*/
 
     suspend fun refreshAllRecipes() {
         val recipesListRemote = remoteDataSource.getAllRecipes()
@@ -152,22 +146,6 @@ class RecipeRepository @Inject constructor(
     private fun generateNewRecipeId(): String {
         return UUID.randomUUID().toString().replace("-", "")
     }
-
-    /*    private suspend fun uploadImgToCloudAndSyncDb(imageUri: Uri, recipeId: String): String {
-            val remoteImageUrl = remoteDataSource.uploadImage(imageUri)
-            if (remoteImageUrl.isNotBlank()) {
-                localDataSource.updateRecipeImageUrl(
-                    recipeId,
-                    remoteImageUrl
-                ) //this doesnt work before saving,i think it not needed here it needed in recipesaving func
-                remoteDataSource.updateRecipeImageUrl(
-                    recipeId,
-                    remoteImageUrl
-                ) //this doesnt work before saving,i think it not needed here it needed in recipesaving func
-                localDataSource.deleteRecipeImageLocal(recipeId)
-            }
-            return remoteImageUrl
-        }*/
 
     private suspend fun uploadImageToCloud(imageUri: Uri): String {
         val remoteImageUrl = remoteDataSource.uploadImage(imageUri)

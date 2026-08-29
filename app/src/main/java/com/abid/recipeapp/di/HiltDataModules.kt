@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import com.abid.recipeapp.BuildConfig
 import com.abid.recipeapp.data.local.RecipeLocalDataSource
 import com.abid.recipeapp.data.local.dao.CategoriesDao
 import com.abid.recipeapp.data.local.dao.CuisinesDao
@@ -14,7 +15,8 @@ import com.abid.recipeapp.data.local.dao.FavRecipeDao
 import com.abid.recipeapp.data.local.dao.IngredientsTabDao
 import com.abid.recipeapp.data.local.dao.RecipeDao
 import com.abid.recipeapp.data.local.db.RecipeDatabase
-import com.abid.recipeapp.data.remote.RecipeRemoteDataSource
+import com.abid.recipeapp.data.remote.CloudinaryImageUploader
+import com.abid.recipeapp.data.remote.RecipeFirebaseDataSource
 import com.abid.recipeapp.util.Constants
 import com.abid.recipeapp.util.Constants.SETTINGS_DATASTORE_NAME
 import com.abid.recipeapp.util.network.NetworkMonitor
@@ -37,8 +39,6 @@ import javax.inject.Singleton
 object RepositoryModule {
 
 
-    private const val GRAPHQL_ENDPOINT = "http://10.0.2.2:4000/graphql"
-
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
@@ -60,7 +60,7 @@ object RepositoryModule {
     @Singleton
     fun provideApolloClient(okHttpClient: OkHttpClient): ApolloClient {
         return ApolloClient.Builder()
-            .serverUrl(GRAPHQL_ENDPOINT)
+            .serverUrl(BuildConfig.GRAPHQL_ENDPOINT)
             .okHttpClient(okHttpClient)
             .build()
     }
@@ -76,8 +76,9 @@ object RepositoryModule {
     @Provides
     fun providesRecipeRemoteDataSource(
         db: FirebaseFirestore,
-    ): RecipeRemoteDataSource {
-        return RecipeRemoteDataSource(db)
+        imageUploader: CloudinaryImageUploader
+    ): RecipeFirebaseDataSource {
+        return RecipeFirebaseDataSource(db, imageUploader)
     }
 
     @Singleton

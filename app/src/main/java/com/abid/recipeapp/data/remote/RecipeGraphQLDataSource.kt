@@ -1,6 +1,7 @@
 package com.abid.recipeapp.data.remote
 
 
+import android.net.Uri
 import com.abid.recipeapp.AddFavoriteMutation
 import com.abid.recipeapp.CreateRecipeMutation
 import com.abid.recipeapp.FavoritesQuery
@@ -8,7 +9,6 @@ import com.abid.recipeapp.IsFavoriteQuery
 import com.abid.recipeapp.RecipeLookupsQuery
 import com.abid.recipeapp.RecipesQuery
 import com.abid.recipeapp.RemoveFavoriteMutation
-import com.abid.recipeapp.UpdateRecipeMutation
 import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
@@ -17,6 +17,7 @@ import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.type.IngredientInput
 import com.abid.recipeapp.type.NutritionInput
 import com.abid.recipeapp.type.RecipeInput
+import com.abid.recipeapp.util.datamapper.graphql.toRecipeModel
 import com.abid.recipeapp.util.toRecipeDiffLvl
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
@@ -25,16 +26,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-/**
- * Same public API as the Firestore-based RecipeRemoteDataSource, now backed
- * by Apollo Kotlin's generated, type-safe query/mutation classes instead of
- * direct Firestore calls. Requires the .graphql operation files (Recipes,
- * Recipe, RecipeLookups, Favorites, IsFavorite, CreateRecipe, UpdateRecipe,
- * AddFavorite, RemoveFavorite) + schema.graphqls to be present so Apollo's
- * Gradle plugin can generate RecipesQuery, AddFavoriteMutation, etc.
- */
-class RecipeGraphQLDatasource @Inject constructor(
+
+class RecipeGraphQLDataSource @Inject constructor(
     private val apolloClient: ApolloClient,
+    private val imageUploader: CloudinaryImageUploader
 ) {
 
     suspend fun getAllRecipes(): List<RecipeModel> = withContext(Dispatchers.IO) {
@@ -145,39 +140,16 @@ class RecipeGraphQLDatasource @Inject constructor(
             ?: emptyList()
     }
 
+    suspend fun uploadImage(imageUri: Uri): String {
+        return imageUploader.uploadImage(imageUri)
+    }
+
     suspend fun isFav(recipeId: String): Boolean = withContext(Dispatchers.IO) {
         val response = apolloClient.query(IsFavoriteQuery(recipeId)).execute()
         response.data?.isFavorite ?: false
     }
 
-    // Image upload stays exactly as-is — Cloudinary upload has nothing to do
-    // with Firestore or GraphQL, so keep your existing implementation here.
-    suspend fun uploadImage(imageUri: android.net.Uri): String {
-        throw NotImplementedError("Keep your existing Cloudinary upload code here")
-    }
-
-    suspend fun updateRecipeImageUrl(recipeId: String, imageUrl: String) =
-        withContext(Dispatchers.IO) {
-            // updateRecipe merges fields server-side, so sending just `image`
-            // inside input won't wipe out the recipe's other fields.
-            val input = RecipeInput(
-                title = "", // required by RecipeInput's title: String! — see note below
-                image = Optional.present(imageUrl),
-            )
-            apolloClient.mutation(UpdateRecipeMutation(recipeId, input)).execute()
-            Unit
-        }
 }
 
 class GraphQLApiException(message: String) : Exception(message)
 
-// Helper to map the generated `RecipesQuery.Recipe` (or `Recipe.Recipe` from
-// the single-recipe query) shape onto your existing RecipeModel. Field names
-// will differ slightly depending on which generated class you're mapping
-// from — adjust to match whatever Apollo actually generates for your project.
-private fun Any.toRecipeModel(): RecipeModel {
-    throw NotImplementedError(
-        "Map the generated Recipe fragment's fields onto RecipeModel here " +
-                "— exact type depends on what Apollo's codegen names it in your project."
-    )
-}
