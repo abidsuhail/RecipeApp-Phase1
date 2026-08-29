@@ -34,11 +34,7 @@ class RecipeGraphQLDataSource @Inject constructor(
 
     suspend fun getAllRecipes(): List<RecipeModel> = withContext(Dispatchers.IO) {
         val response = apolloClient.query(
-            RecipesQuery(
-                category = Optional.absent(),
-                cuisine = Optional.absent(),
-                difficulty = Optional.absent(),
-            )
+            RecipesQuery()
         ).execute()
 
         if (response.hasErrors()) {
