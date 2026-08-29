@@ -1,0 +1,28 @@
+query Recipes($category: String, $cuisine: String, $difficulty: String) {
+  recipes(category: $category, cuisine: $cuisine, difficulty: $difficulty) {
+    id
+    title
+    description
+    category
+    cuisine
+    difficulty
+    author
+    image
+    prepTime
+    cookTime
+    servings
+    tags
+    instructions
+    ingredients {
+      item
+      amount
+    }
+    nutrition {
+      calories
+      protein
+      fat
+      carbs
+    }
+    createdAt
+  }
+}

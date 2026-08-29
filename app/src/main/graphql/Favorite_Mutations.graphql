@@ -1,0 +1,10 @@
+mutation AddFavorite($recipeId: ID!) {
+  addFavorite(recipeId: $recipeId) {
+    id
+    recipeId
+  }
+}
+
+mutation RemoveFavorite($recipeId: ID!) {
+  removeFavorite(recipeId: $recipeId)
+}

@@ -1,0 +1,18 @@
+query RecipeLookups {
+  difficultyLevels {
+    id
+    label
+  }
+  recipeCategories {
+    id
+    label
+  }
+  recipeCuisines {
+    id
+    label
+  }
+  ingredientInstructionTabs {
+    id
+    label
+  }
+}

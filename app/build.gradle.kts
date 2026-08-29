@@ -10,7 +10,7 @@ plugins {
 }
 apollo {
     service("service") {
-        packageName.set("com.yourapp.graphql")
+        packageName.set("com.abid.recipeapp")
     }
 }
 android {
@@ -99,4 +99,6 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.timber)
     implementation("com.apollographql.apollo:apollo-runtime:4.4.3")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }

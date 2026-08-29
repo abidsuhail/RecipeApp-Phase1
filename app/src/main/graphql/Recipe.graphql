@@ -1,0 +1,28 @@
+query Recipe($id: ID!) {
+  recipe(id: $id) {
+    id
+    title
+    description
+    category
+    cuisine
+    difficulty
+    author
+    image
+    prepTime
+    cookTime
+    servings
+    tags
+    instructions
+    ingredients {
+      item
+      amount
+    }
+    nutrition {
+      calories
+      protein
+      fat
+      carbs
+    }
+    createdAt
+  }
+}
