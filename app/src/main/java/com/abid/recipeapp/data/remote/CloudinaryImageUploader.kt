@@ -14,7 +14,7 @@ import kotlin.coroutines.resumeWithException
 class CloudinaryImageUploader @Inject constructor() {
     suspend fun uploadImage(imageUri: Uri): String {
         return suspendCancellableCoroutine { continuation ->
-            MediaManager.get()
+            val reqId = MediaManager.get()
                 .upload(imageUri)
                 .unsigned("Abid_android")
                 .callback(object : UploadCallback {
@@ -39,6 +39,10 @@ class CloudinaryImageUploader @Inject constructor() {
                     override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
                 })
                 .dispatch()
+
+            continuation.invokeOnCancellation {
+                MediaManager.get().cancelRequest(reqId)
+            }
         }
     }
 }
