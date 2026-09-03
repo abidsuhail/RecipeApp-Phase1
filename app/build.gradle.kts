@@ -5,9 +5,14 @@ plugins {
     kotlin("kapt")
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.google.gms.google.services)
+    id("com.apollographql.apollo") version "4.4.3"
     //alias(libs.plugins.ksp)
 }
-
+apollo {
+    service("service") {
+        packageName.set("com.abid.recipeapp")
+    }
+}
 android {
     namespace = "com.abid.recipeapp"
     compileSdk = 36
@@ -26,8 +31,20 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField(
+                "String",
+                "GRAPHQL_ENDPOINT",
+                "\"https://recipe-graphql.onrender.com/graphql\""
+            )
+        }
         release {
             isMinifyEnabled = false
+            buildConfigField(
+                "String",
+                "GRAPHQL_ENDPOINT",
+                "\"https://recipe-graphql.onrender.com/graphql\""
+            )
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -53,6 +70,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
 
 dependencies {
@@ -92,5 +110,7 @@ dependencies {
 
     implementation(libs.gson)
     implementation(libs.timber)
-
+    implementation("com.apollographql.apollo:apollo-runtime:4.4.3")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }

@@ -1,0 +1,32 @@
+query Favorites {
+  favorites {
+    id
+    recipeId
+    recipe {
+      id
+      title
+      description
+      category
+      cuisine
+      difficulty
+      author
+      image
+      prepTime
+      cookTime
+      servings
+      tags
+      instructions
+      createdAt
+      ingredients {
+        item
+        amount
+      }
+      nutrition {
+        calories
+        protein
+        fat
+        carbs
+      }
+    }
+  }
+}

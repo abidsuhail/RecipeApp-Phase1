@@ -1,0 +1,3 @@
+query IsFavorite($recipeId: ID!) {
+  isFavorite(recipeId: $recipeId)
+}

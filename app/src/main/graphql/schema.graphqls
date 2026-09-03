@@ -1,0 +1,107 @@
+type NutritionInfo {
+  calories: Int
+  protein: Int
+  fat: Int
+  carbs: Int
+}
+
+type Ingredient {
+  item: String!
+  amount: String
+}
+
+type Recipe {
+  id: ID!
+  title: String!
+  description: String
+  category: String
+  cuisine: String
+  difficulty: String
+  author: String
+  image: String
+  prepTime: Int
+  cookTime: Int
+  servings: Int
+  tags: [String!]!
+  instructions: [String!]!
+  ingredients: [Ingredient!]!
+  nutrition: NutritionInfo
+  createdAt: String
+}
+
+type DifficultyLevel {
+  id: ID!
+  label: String!
+}
+
+type RecipeCategory {
+  id: ID!
+  label: String!
+}
+
+type RecipeCuisine {
+  id: ID!
+  label: String!
+}
+
+type IngredientInstructionTab {
+  id: ID!
+  label: String!
+}
+
+type Favorite {
+  id: ID!
+  recipeId: String!
+  recipe: Recipe
+}
+
+input RecipeInput {
+  title: String!
+  description: String
+  category: String
+  cuisine: String
+  difficulty: String
+  author: String
+  image: String
+  prepTime: Int
+  cookTime: Int
+  servings: Int
+  tags: [String!]
+  instructions: [String!]
+  ingredients: [IngredientInput!]
+  nutrition: NutritionInput
+}
+
+input IngredientInput {
+  item: String!
+  amount: String
+}
+
+input NutritionInput {
+  calories: Int
+  protein: Int
+  fat: Int
+  carbs: Int
+}
+
+type Query {
+  recipes(category: String, cuisine: String, difficulty: String): [Recipe!]!
+  recipe(id: ID!): Recipe
+
+  difficultyLevels: [DifficultyLevel!]!
+  recipeCategories: [RecipeCategory!]!
+  recipeCuisines: [RecipeCuisine!]!
+  ingredientInstructionTabs: [IngredientInstructionTab!]!
+
+  favorites: [Favorite!]!
+  isFavorite(recipeId: ID!): Boolean!
+}
+
+type Mutation {
+  createRecipe(input: RecipeInput!): Recipe!
+  updateRecipe(id: ID!, input: RecipeInput!): Recipe!
+  deleteRecipe(id: ID!): Boolean!
+
+  addFavorite(recipeId: ID!): Favorite!
+  removeFavorite(recipeId: ID!): Boolean!
+}

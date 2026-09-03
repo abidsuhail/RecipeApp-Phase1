@@ -13,9 +13,6 @@ import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CATEGORIES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_CUISINES
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_DIFFICULTY_LEVELS
 import com.abid.recipeapp.util.Constants.FirebaseCollections.RECIPE_INGREDIENTS_INST_TAB
-import com.cloudinary.android.MediaManager
-import com.cloudinary.android.callback.ErrorInfo
-import com.cloudinary.android.callback.UploadCallback
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -23,11 +20,11 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 
-class RecipeRemoteDataSource @Inject constructor(
+class RecipeFirebaseDataSource @Inject constructor(
     private val db: FirebaseFirestore,
+    private val imageUploader: CloudinaryImageUploader
 ) {
 
     suspend fun getAllRecipes(): List<RecipeModel> = withContext(Dispatchers.IO) {
@@ -116,33 +113,7 @@ class RecipeRemoteDataSource @Inject constructor(
     }
 
     suspend fun uploadImage(imageUri: Uri): String {
-        return suspendCancellableCoroutine { continuation ->
-            MediaManager.get()
-                .upload(imageUri)
-                .unsigned("Abid_android")
-                .callback(object : UploadCallback {
-
-                    override fun onStart(requestId: String) {}
-
-                    override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {}
-
-                    override fun onSuccess(requestId: String, resultData: Map<*, *>) {
-                        val imageUrl = resultData["secure_url"] as? String
-                        if (imageUrl != null) {
-                            continuation.resume(imageUrl) // ✅ returns the URL
-                        } else {
-                            continuation.resumeWithException(Exception("Invalid image url"))
-                        }
-                    }
-
-                    override fun onError(requestId: String?, error: ErrorInfo) {
-                        continuation.resumeWithException(Exception(error.description)) // ✅ throws error
-                    }
-
-                    override fun onReschedule(requestId: String?, error: ErrorInfo?) {}
-                })
-                .dispatch()
-        }
+        return imageUploader.uploadImage(imageUri)
     }
 
     suspend fun updateRecipeImageUrl(recipeId: String, imageUrl: String) {
