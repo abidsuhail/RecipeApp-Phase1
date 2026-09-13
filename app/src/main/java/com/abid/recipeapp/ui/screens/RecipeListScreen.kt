@@ -1,6 +1,5 @@
 package com.abid.recipeapp.ui.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,8 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
@@ -41,7 +37,6 @@ import com.abid.recipeapp.util.Constants.ADD_BUTTON
 import com.abid.recipeapp.util.Constants.DISCOVER_RECIPES
 import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.RecipeListViewModel
-import timber.log.Timber
 
 @Composable
 fun RecipeListScreen(
@@ -50,15 +45,6 @@ fun RecipeListScreen(
     onClickAddRecipe: () -> Unit
 ) {
     val recipeListState by recipeListViewModel.state.observeAsState()
-    val context = LocalContext.current
-    SideEffect {
-        Timber.e("SideEffect called")
-        Toast.makeText(context, "SideEffect called", Toast.LENGTH_SHORT).show()
-    }
-    LaunchedEffect(Unit) {
-        Timber.e("LaunchedEffect called")
-        Toast.makeText(context, "LaunchedEffect called", Toast.LENGTH_SHORT).show()
-    }
     Box() {
         Column(modifier = Modifier.padding(top = Dims.Dp10)) {
             RecipeListHeader(onClickAddRecipe)
