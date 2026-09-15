@@ -2,6 +2,7 @@ package com.abid.recipeapp.ui.components.create_recipe
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
@@ -28,9 +29,10 @@ import com.abid.recipeapp.util.Dims
 @Composable
 fun ImagePicker(onSuccessImageUri: (Uri?) -> Unit) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    // Gallery
+
+    // Android Photo Picker — no storage/media permission required
     val galleryLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
+        ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         imageUri = uri
         onSuccessImageUri(imageUri)
@@ -44,7 +46,9 @@ fun ImagePicker(onSuccessImageUri: (Uri?) -> Unit) {
                 interactionSource = remember { MutableInteractionSource() },
                 indication = LocalIndication.current,
                 onClick = {
-                    galleryLauncher.launch("image/*")
+                    galleryLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
                 }
             ),
         contentAlignment = Alignment.Center
