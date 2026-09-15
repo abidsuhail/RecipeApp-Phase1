@@ -19,13 +19,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
@@ -44,26 +44,26 @@ fun RecipeListScreen(
     onClickRecipeItem: (RecipeModel) -> Unit,
     onClickAddRecipe: () -> Unit
 ) {
-    val recipeListState by recipeListViewModel.state.observeAsState()
+    val recipeListState by recipeListViewModel.state.collectAsStateWithLifecycle()
     Box() {
         Column(modifier = Modifier.padding(top = Dims.Dp10)) {
             RecipeListHeader(onClickAddRecipe)
             RecipeCategoriesList(recipeListState) { category ->
                 recipeListViewModel.loadRecipesByFilter(categoryName = category)
             }
-            if (recipeListState?.isRecipesLoading == true || recipeListState?.isCategoriesLoading == true) {
+            if (recipeListState.isRecipesLoading || recipeListState.isCategoriesLoading) {
                 LoadingStateBox()
-            } else if (!recipeListState?.recipesErrorMsg.isNullOrBlank()) {
-                ErrorStateBox(recipeListState!!.recipesErrorMsg!!)
-            } else if (!recipeListState?.categoriesErrorMsg.isNullOrBlank()) {
-                ErrorStateBox(recipeListState!!.categoriesErrorMsg!!)
+            } else if (!recipeListState.recipesErrorMsg.isNullOrBlank()) {
+                ErrorStateBox(recipeListState.recipesErrorMsg!!)
+            } else if (!recipeListState.categoriesErrorMsg.isNullOrBlank()) {
+                ErrorStateBox(recipeListState.categoriesErrorMsg!!)
 
-            } else if (recipeListState?.recipeList?.isNotEmpty() == true) {
+            } else if (recipeListState.recipeList.isNotEmpty()) {
                 RecipeList(
-                    recipeList = recipeListState?.recipeList,
+                    recipeList = recipeListState.recipeList,
                     onClickRecipeItem = onClickRecipeItem
                 )
-            } else if (recipeListState?.recipeList?.isEmpty() == true) {
+            } else {
                 ErrorStateBox(Constants.RECIPE_NOT_FOUND_ERROR_MSG)
             }
 

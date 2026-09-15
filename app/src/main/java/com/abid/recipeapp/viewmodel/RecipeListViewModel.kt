@@ -1,13 +1,15 @@
 package com.abid.recipeapp.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.ui.state.RecipeListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,8 +18,8 @@ class RecipeListViewModel @Inject constructor(
     private val repository: RecipeRepository
 ) : ViewModel() {
 
-    private val _state = MutableLiveData(RecipeListUiState())
-    val state: LiveData<RecipeListUiState> = _state
+    private val _state = MutableStateFlow(RecipeListUiState())
+    val state: StateFlow<RecipeListUiState> = _state.asStateFlow()
 
     init {
         observeRecipes()
@@ -29,7 +31,7 @@ class RecipeListViewModel @Inject constructor(
     private fun observeRecipes() {
         viewModelScope.launch {
             repository.getAllRecipes().collect { recipes ->
-                _state.value = _state.value?.copy(recipeList = recipes)
+                _state.update { it.copy(recipeList = recipes) }
             }
         }
     }
@@ -37,48 +39,48 @@ class RecipeListViewModel @Inject constructor(
     private fun observeCategories() {
         viewModelScope.launch {
             repository.getRecipeCategories().collect { categories ->
-                _state.value = _state.value?.copy(recipesCategories = categories)
+                _state.update { it.copy(recipesCategories = categories) }
             }
         }
     }
 
     private fun refreshAllRecipes() {
         viewModelScope.launch {
-            _state.value = _state.value?.copy(isRecipesLoading = true, recipesErrorMsg = null)
+            _state.update { it.copy(isRecipesLoading = true, recipesErrorMsg = null) }
             try {
                 repository.refreshAllRecipes()
-                _state.value = _state.value?.copy(isRecipesLoading = false)
+                _state.update { it.copy(isRecipesLoading = false) }
             } catch (e: Exception) {
-                _state.value =
-                    _state.value?.copy(isRecipesLoading = false, recipesErrorMsg = e.message)
+                _state.update { it.copy(isRecipesLoading = false, recipesErrorMsg = e.message) }
             }
         }
     }
-
 
     private fun refreshCategories() {
         viewModelScope.launch {
-            _state.value = _state.value?.copy(isCategoriesLoading = true, categoriesErrorMsg = null)
+            _state.update { it.copy(isCategoriesLoading = true, categoriesErrorMsg = null) }
             try {
                 repository.refreshCategories()
-                _state.value = _state.value?.copy(isCategoriesLoading = false)
+                _state.update { it.copy(isCategoriesLoading = false) }
             } catch (e: Exception) {
-                _state.value =
-                    _state.value?.copy(isCategoriesLoading = false, categoriesErrorMsg = e.message)
+                _state.update {
+                    it.copy(
+                        isCategoriesLoading = false,
+                        categoriesErrorMsg = e.message
+                    )
+                }
             }
         }
     }
-
 
     fun loadRecipesByFilter(categoryName: String? = null) {
         viewModelScope.launch {
             try {
-                _state.value = _state.value?.copy(isRecipesLoading = true)
+                _state.update { it.copy(isRecipesLoading = true) }
                 val data = repository.getRecipesByFilters(categoryName)
-                _state.value =
-                    _state.value?.copy(recipeList = data.first(), isRecipesLoading = false)
+                _state.update { it.copy(recipeList = data.first(), isRecipesLoading = false) }
             } catch (e: Exception) {
-                _state.value = _state.value?.copy(recipesErrorMsg = e.message)
+                _state.update { it.copy(recipesErrorMsg = e.message) }
             }
         }
     }
