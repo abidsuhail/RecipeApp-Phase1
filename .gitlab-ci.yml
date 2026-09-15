@@ -1,0 +1,34 @@
+image: cimg/android:2024.01
+
+stages:
+  - build
+  - release
+
+# ============================
+# STAGE 1: BUILD
+# ============================
+build_debug:
+  stage: build
+  script:
+    - ./gradlew assembleDebug
+  artifacts:
+    paths:
+      - app/build/outputs/apk/debug/app-debug.apk
+    expire_in: 1 week
+
+# ============================
+# STAGE 2: RELEASE (only on main)
+# ============================
+build_release:
+  stage: release
+  only:
+    - main
+  before_script:
+    - echo $KEYSTORE_BASE64 | base64 -d > release-key.jks
+    - export KEYSTORE_PATH=$(pwd)/release-key.jks
+  script:
+    - ./gradlew bundleRelease
+  artifacts:
+    paths:
+      - app/build/outputs/bundle/release/app-release.aab
+    expire_in: 1 month
