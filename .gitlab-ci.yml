@@ -2,7 +2,12 @@ image: cimg/android:2024.01
 
 stages:
   - build
+  - test
+  - release
 
+# ============================
+# STAGE 1: BUILD
+# ============================
 build_debug:
   stage: build
   script:
@@ -11,3 +16,33 @@ build_debug:
     paths:
       - app/build/outputs/apk/debug/app-debug.apk
     expire_in: 1 week
+
+# ============================
+# STAGE 2: LINT ONLY
+# ============================
+lint_check:
+  stage: test
+  script:
+    - ./gradlew lint
+  artifacts:
+    when: always
+    paths:
+      - app/build/reports/lint-results-debug.html
+    expire_in: 1 week
+
+# ============================
+# STAGE 3: RELEASE (only on main)
+# ============================
+build_release:
+  stage: release
+  only:
+    - main
+  before_script:
+    - echo $KEYSTORE_BASE64 | base64 -d > release-key.jks
+    - export KEYSTORE_PATH=$(pwd)/release-key.jks
+  script:
+    - ./gradlew bundleRelease
+  artifacts:
+    paths:
+      - app/build/outputs/bundle/release/app-release.aab
+    expire_in: 1 month

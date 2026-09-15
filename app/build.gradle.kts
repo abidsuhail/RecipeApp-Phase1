@@ -29,7 +29,14 @@ android {
             useSupportLibrary = true
         }
     }
-
+    signingConfigs {
+        create("release") {
+            storeFile = file(System.getenv("KEYSTORE_PATH") ?: "release-key.jks")
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("KEY_ALIAS")
+            keyPassword = System.getenv("KEY_PASSWORD")
+        }
+    }
     buildTypes {
         debug {
             buildConfigField(
@@ -40,6 +47,7 @@ android {
         }
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             buildConfigField(
                 "String",
                 "GRAPHQL_ENDPOINT",
