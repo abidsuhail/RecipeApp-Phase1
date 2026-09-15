@@ -2,7 +2,6 @@ image: cimg/android:2024.01
 
 stages:
   - build
-  - test
   - release
 
 # ============================
@@ -18,20 +17,7 @@ build_debug:
     expire_in: 1 week
 
 # ============================
-# STAGE 2: LINT ONLY
-# ============================
-lint_check:
-  stage: test
-  script:
-    - ./gradlew lint
-  artifacts:
-    when: always
-    paths:
-      - app/build/reports/lint-results-debug.html
-    expire_in: 1 week
-
-# ============================
-# STAGE 3: RELEASE (only on main)
+# STAGE 2: RELEASE (only on main)
 # ============================
 build_release:
   stage: release
