@@ -32,7 +32,7 @@ unit_tests:
 
 
 # ============================
-# STAGE 2: RELEASE (only on main)
+# STAGE 3: RELEASE (only on main)
 # ============================
 build_release:
   stage: release

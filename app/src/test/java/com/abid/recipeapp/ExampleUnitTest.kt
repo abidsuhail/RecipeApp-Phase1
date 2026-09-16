@@ -20,7 +20,7 @@ class ExampleUnitTest {
         val entity = model.toEntity()
 
         assertEquals("1", entity.id)
-        assertEquals("Italians", entity.label)
+        assertEquals("Italian", entity.label)
     }
 
     @Test
