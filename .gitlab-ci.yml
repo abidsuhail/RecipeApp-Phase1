@@ -2,6 +2,7 @@ image: cimg/android:2024.01
 
 stages:
   - build
+  - test
   - release
 
 # ============================
@@ -17,7 +18,21 @@ build_debug:
     expire_in: 1 week
 
 # ============================
-# STAGE 2: RELEASE (only on main)
+# STAGE 2: UNIT TESTS
+# ============================
+unit_tests:
+  stage: test
+  script:
+    - ./gradlew testDebugUnitTest
+  artifacts:
+    when: always
+    paths:
+      - app/build/reports/tests/testDebugUnitTest/
+    expire_in: 1 week
+
+
+# ============================
+# STAGE 3: RELEASE (only on main)
 # ============================
 build_release:
   stage: release

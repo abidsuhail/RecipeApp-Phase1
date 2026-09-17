@@ -18,21 +18,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.BottomSheetChipGridItem
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.RecipeList
 import com.abid.recipeapp.ui.components.RecipeSearchBar
-import com.abid.recipeapp.ui.state.SearchFilterOptionsUiState
-import com.abid.recipeapp.ui.state.SearchResultUiState
 import com.abid.recipeapp.ui.theme.LocalAppCustomColors
 import com.abid.recipeapp.util.Constants.APPLY_FILTERS
 import com.abid.recipeapp.util.Constants.CATEGORY
@@ -57,8 +55,8 @@ fun SearchRecipeScreen(
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val searchResultState by vm.searchResultState.observeAsState(initial = SearchResultUiState())
-    val searchFilterState by vm.searchFilterState.observeAsState(initial = SearchFilterOptionsUiState())
+    val searchResultState by vm.searchResultState.collectAsStateWithLifecycle()
+    val searchFilterState by vm.searchFilterState.collectAsStateWithLifecycle()
 
 
     Box(Modifier.padding(Dims.Dp10)) {

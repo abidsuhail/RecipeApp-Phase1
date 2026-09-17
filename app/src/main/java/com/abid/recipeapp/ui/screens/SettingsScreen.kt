@@ -26,15 +26,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abid.recipeapp.BuildConfig
-import com.abid.recipeapp.ui.state.SettingsUiState
 import com.abid.recipeapp.ui.theme.AppThemeMode
 import com.abid.recipeapp.ui.theme.LocalAppCustomColors
 import com.abid.recipeapp.ui.theme.Orange40
@@ -56,7 +55,7 @@ fun SettingsScreen(
     vm: SettingsViewModel = hiltViewModel(),
     onThemeSelected: (AppThemeMode) -> Unit
 ) {
-    val state by vm.state.observeAsState(initial = SettingsUiState(AppThemeMode.SYSTEM))
+    val state by vm.state.collectAsStateWithLifecycle()
 
     Box(Modifier.padding(Dims.Dp10)) {
         Column(

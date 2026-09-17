@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abid.recipeapp.data.model.RecipeModel
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
@@ -24,21 +24,21 @@ fun FavRecipeScreen(
     vm: FavScreenViewModel = hiltViewModel(),
     onClickRecipeItem: (RecipeModel) -> Unit
 ) {
-    val state by vm.state.observeAsState()
+    val state by vm.state.collectAsStateWithLifecycle()
 
     Box(modifier = Modifier.padding(Dims.Dp10)) {
         Column {
             Text(FAVOURITES_SCREEN_HEADING, fontSize = Dims.Sp35)
-            if (state?.isLoading == true) {
+            if (state.isLoading) {
                 LoadingStateBox()
-            } else if (!state?.errorMsg.isNullOrBlank()) {
-                ErrorStateBox(state!!.errorMsg!!)
-            } else if (state?.favRecipeList?.isNotEmpty() == true) {
+            } else if (!state.errorMsg.isNullOrBlank()) {
+                ErrorStateBox(state.errorMsg!!)
+            } else if (state.favRecipeList.isNotEmpty()) {
                 RecipeList(
-                    recipeList = state?.favRecipeList,
+                    recipeList = state.favRecipeList,
                     onClickRecipeItem = onClickRecipeItem
                 )
-            } else if (state?.favRecipeList?.isEmpty() == true) {
+            } else {
                 ErrorStateBox(Constants.FAVOURITE_NOT_FOUND_ERROR_MSG)
             }
 

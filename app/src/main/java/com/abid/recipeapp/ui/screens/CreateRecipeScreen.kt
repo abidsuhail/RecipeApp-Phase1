@@ -32,7 +32,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abid.recipeapp.ui.components.ErrorStateBox
 import com.abid.recipeapp.ui.components.LoadingStateBox
 import com.abid.recipeapp.ui.components.create_recipe.CreateRecipeTopBar
@@ -97,9 +97,9 @@ fun CreateRecipeScreen(
     var nutritionFatsError by remember { mutableStateOf<String?>(null) }
     var uploadedImageUri by remember { mutableStateOf<Uri?>(null) }
 
-    val uiState by vm.uiState.observeAsState()
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uiState!!.recipeModel.instructions.size + uiState!!.recipeModel.ingredients.size) {
+    LaunchedEffect(uiState.recipeModel.instructions.size + uiState.recipeModel.ingredients.size) {
         if (isFirstRender) {
             isFirstRender = false
             return@LaunchedEffect
@@ -113,7 +113,7 @@ fun CreateRecipeScreen(
                 title = {
                     CreateRecipeTopBar(onClickBackBtn = onClickBackBtn, onClickSubmitBtn = {
                         vm.saveRecipe(
-                            uiState!!.recipeModel,
+                            uiState.recipeModel,
                             uploadedImageUri
                         )
                     })
@@ -126,13 +126,13 @@ fun CreateRecipeScreen(
                 .padding(paddingValues)
                 .padding(Dims.Dp12)
         ) {
-            if (uiState?.isLoading == true) {
+            if (uiState.isLoading) {
                 LoadingStateBox()
             }
-            if (uiState?.errorMsg != null) {
-                ErrorStateBox(uiState?.errorMsg!!)
+            if (uiState.errorMsg != null) {
+                ErrorStateBox(uiState.errorMsg!!)
             }
-            if (uiState?.recipeSaveState is RecipeSaveState.Success) {
+            if (uiState.recipeSaveState is RecipeSaveState.Success) {
                 handleGotoHomeScreen()
             }
 
@@ -141,7 +141,7 @@ fun CreateRecipeScreen(
                     uploadedImageUri = uri
                 }
                 OutlinedTextField(
-                    value = uiState!!.recipeModel.title,
+                    value = uiState.recipeModel.title,
                     onValueChange = {
                         vm.onTitleChange(it)
                         recipeNameError = if (it.isBlank()) RECIPE_TITLE_CANNOT_BE_EMPTY else null
@@ -151,7 +151,7 @@ fun CreateRecipeScreen(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 OutlinedTextField(
-                    value = uiState!!.recipeModel.description,
+                    value = uiState.recipeModel.description,
                     onValueChange = {
                         vm.onDescriptionChange(it)
                         descError = if (it.isBlank()) DESCRIPTION_CANNOT_BE_EMPTY else null
@@ -166,7 +166,7 @@ fun CreateRecipeScreen(
                 )
                 Row {
                     OutlinedTextField(
-                        value = uiState!!.recipeModel.prepTime.toString(),
+                        value = uiState.recipeModel.prepTime.toString(),
                         onValueChange = {
                             vm.onPrepTimeChange(it)
                             prepTimeError =
@@ -182,7 +182,7 @@ fun CreateRecipeScreen(
                     )
                     Spacer(Modifier.width(Dims.Dp5))
                     OutlinedTextField(
-                        value = uiState!!.recipeModel.cookTime.toString(),
+                        value = uiState.recipeModel.cookTime.toString(),
                         onValueChange = {
                             vm.onCookTimeChange(it)
                             cookTimeMinError =
@@ -198,7 +198,7 @@ fun CreateRecipeScreen(
                     )
                 }
                 OutlinedTextField(
-                    value = uiState!!.recipeModel.servings.toString(),
+                    value = uiState.recipeModel.servings.toString(),
                     onValueChange = {
                         vm.onServingsChange(it)
                         servingsError = if (it.isBlank()) RECIPE_TITLE_CANNOT_BE_EMPTY else null
@@ -222,7 +222,7 @@ fun CreateRecipeScreen(
                     uiState?.categoriesList?.forEach { item ->
                         Card(
                             colors = CardDefaults.cardColors(
-                                containerColor = if (item.label == uiState!!.recipeModel.category) {
+                                containerColor = if (item.label == uiState.recipeModel.category) {
                                     Orange40
                                 } else {
                                     Color.Unspecified
@@ -253,7 +253,7 @@ fun CreateRecipeScreen(
                     uiState?.cuisinesList?.forEach { item ->
                         Card(
                             colors = CardDefaults.cardColors(
-                                containerColor = if (item.label == uiState!!.recipeModel.cuisine) {
+                                containerColor = if (item.label == uiState.recipeModel.cuisine) {
                                     Orange40
                                 } else {
                                     Color.Unspecified
@@ -284,7 +284,7 @@ fun CreateRecipeScreen(
                     uiState?.difficultiesList?.forEach { item ->
                         Card(
                             colors = CardDefaults.cardColors(
-                                containerColor = if (item.label.name == uiState!!.recipeModel.difficulty.name) {
+                                containerColor = if (item.label.name == uiState.recipeModel.difficulty.name) {
                                     Orange40
                                 } else {
                                     Color.Unspecified
@@ -306,7 +306,7 @@ fun CreateRecipeScreen(
                 Text(NUTRITION)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(
-                        value = uiState!!.recipeModel.nutrition.calories.toString(),
+                        value = uiState.recipeModel.nutrition.calories.toString(),
                         onValueChange = {
                             vm.onCaloriesChange(it)
                             nutritionCaloriesError =
@@ -322,7 +322,7 @@ fun CreateRecipeScreen(
                             .padding(Dims.Dp5)
                     )
                     OutlinedTextField(
-                        value = uiState!!.recipeModel.nutrition.protein.toString(),
+                        value = uiState.recipeModel.nutrition.protein.toString(),
                         onValueChange = {
                             vm.onProteinChange(it)
                             nutritionProteinError =
@@ -340,7 +340,7 @@ fun CreateRecipeScreen(
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(
-                        value = uiState!!.recipeModel.nutrition.carbs.toString(),
+                        value = uiState.recipeModel.nutrition.carbs.toString(),
                         onValueChange = {
                             vm.onCarbsChange(it)
                             nutritionCarbsError =
@@ -356,7 +356,7 @@ fun CreateRecipeScreen(
                             .padding(Dims.Dp5)
                     )
                     OutlinedTextField(
-                        value = uiState!!.recipeModel.nutrition.fat.toString(),
+                        value = uiState.recipeModel.nutrition.fat.toString(),
                         onValueChange = {
                             vm.onFatChange(it)
                             nutritionFatsError =
@@ -393,7 +393,7 @@ fun CreateRecipeScreen(
                             )
                     )
                 }
-                uiState!!.recipeModel.ingredients.forEachIndexed { index, ingredient ->
+                uiState.recipeModel.ingredients.forEachIndexed { index, ingredient ->
                     IngredientRow(
                         ingredientModel = ingredient,
                         onIngredientNameChange = { newIngredientName ->
@@ -427,7 +427,7 @@ fun CreateRecipeScreen(
                             )
                     )
                 }
-                uiState!!.recipeModel.instructions.forEachIndexed { index, instruction ->
+                uiState.recipeModel.instructions.forEachIndexed { index, instruction ->
                     InstructionRow(
                         instruction = instruction,
                         onInstructionChange = { newInstruction ->

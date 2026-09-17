@@ -100,7 +100,7 @@ private fun RecipeCategoriesList(
 
 
 @Composable
-private fun RecipeListHeader(onClickAddRecipe: () -> Unit) {
+fun RecipeListHeader(onClickAddRecipe: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,

@@ -1,8 +1,6 @@
 package com.abid.recipeapp.viewmodel
 
 import android.net.Uri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abid.recipeapp.data.model.CreateRecipeFormStateModel
@@ -13,6 +11,10 @@ import com.abid.recipeapp.data.repository.RecipeRepository
 import com.abid.recipeapp.ui.state.CreateRecipeUiState
 import com.abid.recipeapp.ui.state.RecipeSaveState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,8 +23,8 @@ class CreateRecipeViewModel @Inject constructor(
     private val repository: RecipeRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableLiveData(CreateRecipeUiState(isLoading = true))
-    val uiState: LiveData<CreateRecipeUiState> = _uiState
+    private val _uiState = MutableStateFlow(CreateRecipeUiState(isLoading = true))
+    val uiState: StateFlow<CreateRecipeUiState> = _uiState.asStateFlow()
 
     init {
         observeCategories()
@@ -37,8 +39,8 @@ class CreateRecipeViewModel @Inject constructor(
 
 
     private fun updateRecipe(update: CreateRecipeFormStateModel.() -> CreateRecipeFormStateModel) {
-        _uiState.value = _uiState.value?.let { state ->
-            state.copy(recipeModel = state.recipeModel.update())
+        _uiState.update {
+            it.copy(recipeModel = it.recipeModel.update())
         }
     }
 
@@ -102,12 +104,11 @@ class CreateRecipeViewModel @Inject constructor(
     private fun refreshCategories() {
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value?.copy(isLoading = true, errorMsg = null)
+                _uiState.update { it.copy(isLoading = true, errorMsg = null) }
                 repository.refreshCategories()
-                _uiState.value = _uiState.value?.copy(isLoading = false)
+                _uiState.update { it.copy(isLoading = false) }
             } catch (e: Exception) {
-                _uiState.value =
-                    _uiState.value?.copy(isLoading = false, errorMsg = e.message)
+                _uiState.update { it.copy(isLoading = false, errorMsg = e.message) }
             }
         }
     }
@@ -115,23 +116,23 @@ class CreateRecipeViewModel @Inject constructor(
     private fun observeCategories() {
         viewModelScope.launch {
             repository.getRecipeCategories().collect { categories ->
-                _uiState.value = _uiState.value?.copy(categoriesList = categories)
+                _uiState.update { it.copy(categoriesList = categories) }
             }
         }
     }
 
     private fun observeCuisines() {
         viewModelScope.launch {
-            repository.getAllCuisines().collect { categories ->
-                _uiState.value = _uiState.value?.copy(cuisinesList = categories)
+            repository.getAllCuisines().collect { cuisines ->
+                _uiState.update { it.copy(cuisinesList = cuisines) }
             }
         }
     }
 
     private fun observeDiffLvls() {
         viewModelScope.launch {
-            repository.getAllRecipeDifficulties().collect { categories ->
-                _uiState.value = _uiState.value?.copy(difficultiesList = categories)
+            repository.getAllRecipeDifficulties().collect { difficulties ->
+                _uiState.update { it.copy(difficultiesList = difficulties) }
             }
         }
     }
@@ -139,12 +140,11 @@ class CreateRecipeViewModel @Inject constructor(
     private fun refreshCuisines() {
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value?.copy(isLoading = true)
+                _uiState.update { it.copy(isLoading = true) }
                 repository.refreshAllCuisines()
-                _uiState.value = _uiState.value?.copy(isLoading = false)
+                _uiState.update { it.copy(isLoading = false) }
             } catch (e: Exception) {
-                _uiState.value =
-                    _uiState.value?.copy(isLoading = false, errorMsg = e.message)
+                _uiState.update { it.copy(isLoading = false, errorMsg = e.message) }
             }
         }
     }
@@ -152,12 +152,11 @@ class CreateRecipeViewModel @Inject constructor(
     private fun refreshDifficulties() {
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value?.copy(isLoading = true)
+                _uiState.update { it.copy(isLoading = true) }
                 repository.refreshRecipeDifficulties()
-                _uiState.value = _uiState.value?.copy(isLoading = false)
+                _uiState.update { it.copy(isLoading = false) }
             } catch (e: Exception) {
-                _uiState.value =
-                    _uiState.value?.copy(isLoading = false, errorMsg = e.message)
+                _uiState.update { it.copy(isLoading = false, errorMsg = e.message) }
             }
         }
     }
@@ -165,23 +164,22 @@ class CreateRecipeViewModel @Inject constructor(
     fun saveRecipe(recipeModel: CreateRecipeFormStateModel, imageUri: Uri?) {
         viewModelScope.launch {
             try {
-                _uiState.value = _uiState.value?.copy(isLoading = true)
+                _uiState.update { it.copy(isLoading = true) }
                 if (imageUri == null) {
-                    _uiState.value =
-                        _uiState.value?.copy(
-                            isLoading = false,
-                            errorMsg = "Image uri is null"
-                        )
+                    _uiState.update {
+                        it.copy(isLoading = false, errorMsg = "Image uri is null")
+                    }
                     return@launch
                 }
                 repository.saveRecipe(recipeModel, imageUri)
-                _uiState.value = _uiState.value?.copy(
-                    isLoading = false,
-                    recipeSaveState = RecipeSaveState.Success(recipeModel)
-                )
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        recipeSaveState = RecipeSaveState.Success(recipeModel)
+                    )
+                }
             } catch (e: Exception) {
-                _uiState.value =
-                    _uiState.value?.copy(isLoading = false, errorMsg = e.message)
+                _uiState.update { it.copy(isLoading = false, errorMsg = e.message) }
             }
         }
     }
