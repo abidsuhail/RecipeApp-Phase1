@@ -9,7 +9,7 @@ import com.abid.recipeapp.data.model.RecipeCategoriesDataModel
 import com.abid.recipeapp.data.model.RecipeCuisinesDataModel
 import com.abid.recipeapp.data.model.RecipeDiffLvlDataModel
 import com.abid.recipeapp.data.model.RecipeModel
-import com.abid.recipeapp.data.remote.RecipeGraphQLDataSource
+import com.abid.recipeapp.data.remote.RecipeFirebaseDataSource
 import com.abid.recipeapp.util.datamapper.toRecipeModel
 import com.abid.recipeapp.util.exception.InvalidRecipeIdException
 import com.abid.recipeapp.util.isLocalUri
@@ -24,7 +24,8 @@ import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(
     private val localDataSource: RecipeLocalDataSource,
-    private val remoteDataSource: RecipeGraphQLDataSource,
+    //private val remoteDataSource: RecipeGraphQLDataSource,
+    private val remoteDataSource: RecipeFirebaseDataSource,
     private val networkMonitor: NetworkMonitor
 ) {
     fun getAllRecipes(): Flow<List<RecipeModel>> {
