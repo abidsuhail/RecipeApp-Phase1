@@ -102,11 +102,3 @@ The pipeline builds a debug APK via Gradle on every push, then publishes it as a
 - Clean separation of concerns: ViewModel never touches Room or Firestore directly — only ever through the Repository
 
 ---
-
-## 📄 License
-
-This project is available for review as part of a personal portfolio. Please reach out before reuse.
-
----
-
-*Built by [Abid Suhail](https://gitlab.com/abid1294005/recipeapp-phase1) — feedback and questions welcome.*
