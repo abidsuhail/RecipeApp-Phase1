@@ -28,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.abid.recipeapp.data.model.IngredientsTabModel
 import com.abid.recipeapp.data.model.RecipeModel
@@ -57,6 +57,7 @@ import com.abid.recipeapp.util.Constants.getServingsAndUrList
 import com.abid.recipeapp.util.Dims
 import com.abid.recipeapp.viewmodel.RecipeDetailsViewModel
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 
 private const val RECIPE_IMAGE = "Recipe image"
@@ -68,27 +69,27 @@ fun RecipeDetailsScreen(
     vm: RecipeDetailsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val uiState by vm.uiState.observeAsState()
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uiState?.recipeErrorMsg) {
-        if (uiState?.recipeErrorMsg != null) {
-            delay(1000)
+    LaunchedEffect(uiState.recipeErrorMsg) {
+        if (uiState.recipeErrorMsg != null) {
+            delay(1000.milliseconds)
             onClickBackBtn()
         }
     }
-    LaunchedEffect(uiState?.favErrorMsg) {
-        if (uiState?.favErrorMsg != null) {
-            Toast.makeText(context, uiState?.favErrorMsg, Toast.LENGTH_SHORT).show()
+    LaunchedEffect(uiState.favErrorMsg) {
+        if (uiState.favErrorMsg != null) {
+            Toast.makeText(context, uiState.favErrorMsg, Toast.LENGTH_SHORT).show()
         }
     }
-    if (uiState?.isRecipeLoading == true) {
+    if (uiState.isRecipeLoading) {
         LoadingStateBox()
     }
-    if (uiState?.recipeErrorMsg != null) {
-        ErrorStateBox(uiState?.recipeErrorMsg!!)
+    if (uiState.recipeErrorMsg != null) {
+        ErrorStateBox(uiState.recipeErrorMsg!!)
     }
 
-    if (uiState?.recipe != null) {
+    if (uiState.recipe != null) {
         var isFavorite by remember { mutableStateOf(false) }
         Scaffold(
             floatingActionButton = {
@@ -100,7 +101,7 @@ fun RecipeDetailsScreen(
                     }
                 ) {
                     Icon(
-                        imageVector = if (uiState?.isFav == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        imageVector = if (uiState.isFav == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = FAVORITE_CONTENT_DESC,
                     )
                 }
@@ -117,7 +118,7 @@ fun RecipeDetailsScreen(
                         .height(Dims.Dp300),
                 ) {
                     AsyncImage(
-                        model = uiState?.recipe!!.image,
+                        model = uiState.recipe!!.image,
                         contentDescription = RECIPE_IMAGE,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -129,7 +130,7 @@ fun RecipeDetailsScreen(
                     }
                 }
 
-                RecipeDetailsCard(uiState?.recipe!!, uiState?.ingredientsTabList!!)
+                RecipeDetailsCard(uiState.recipe!!, uiState.ingredientsTabList!!)
             }
         }
     }

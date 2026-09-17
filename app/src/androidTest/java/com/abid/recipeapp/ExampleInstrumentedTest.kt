@@ -62,28 +62,4 @@ class ExampleInstrumentedTest {
         composeTestRule.onNodeWithText("Chole").assertIsDisplayed()
     }
 
-    /*    @Test
-        fun homeScreen_showsLoadingIndicator_whenLoading() {
-            // isRecipesLoading = true → loading UI shows, recipe list hidden
-        }
-
-        @Test
-        fun homeScreen_showsEmptyState_whenNoRecipes() {
-            // recipeList is empty, not loading → appropriate empty message shows
-
-            composeTestRule.setContent {
-                RecipeList(emptyList()) { }
-            }
-            composeTestRule.onNodeWithText(Constants.RECIPE_NOT_FOUND_ERROR_MSG).assertIsDisplayed()
-        }
-
-        @Test
-        fun homeScreen_categoryChip_click_filtersRecipes() {
-            // tapping "Dinner" chip triggers the filter/search function
-        }
-
-        @Test
-        fun noInternetBanner_showsOnlyWhenDisconnected() {
-            // already covered in the earlier example
-        }*/
 }
